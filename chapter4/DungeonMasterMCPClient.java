@@ -18,14 +18,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ai.bedrock.converse.BedrockProxyChatModel;
 import org.springframework.ai.bedrock.converse.BedrockChatOptions;
 import org.springframework.ai.chat.client.ChatClient;
-
-// TODO 1: Import the MCP client classes needed to connect to the MCP server.
-//   You need four imports:
-//     import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;  // Bridges MCP tools → Spring AI
-//     import io.modelcontextprotocol.client.McpClient;                // MCP client
-//     import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;  // HTTP transport
-//     import io.modelcontextprotocol.spec.McpSchema;                  // Protocol types
-
+import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
+import io.modelcontextprotocol.client.McpClient;
+import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
+import io.modelcontextprotocol.spec.McpSchema;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
@@ -36,26 +32,27 @@ void main() {
     // Step 1: Connect to the D&D Dice Roll MCP Server via Streamable HTTP
     log.info("Connecting to D&D Dice Roll MCP Server...");
 
-    // TODO 2: Create the HTTP transport and MCP client that will connect to the server on port 8080.
-    //   1. Create the transport:
-    //      var transport = HttpClientStreamableHttpTransport.builder("http://localhost:8080")
-    //              .endpoint("/mcp")
-    //              .build();
-    //
-    //   2. Create the MCP client:
-    //      var mcpClient = McpClient.sync(transport)
-    //              .clientInfo(new McpSchema.Implementation("dice-mcp-client", "1.0.0"))
-    //              .build();
+    var transport = HttpClientStreamableHttpTransport.builder("http://localhost:8080")
+            .endpoint("/mcp")
+            .build();
+
+    var mcpClient = McpClient.sync(transport)
+            .clientInfo(new McpSchema.Implementation("dice-mcp-client", "1.0.0"))
+            .build();
 
     try {
-        // TODO 3: Initialize the MCP client, discover tools, and bridge them to Spring AI.
-        //   1. Initialize:      mcpClient.initialize();
-        //   2. List tools:      var toolsResult = mcpClient.listTools();
-        //                       var toolNames = toolsResult.tools().stream().map(McpSchema.Tool::name).toList();
-        //                       log.info("Available tools: {}", toolNames);
-        //   3. Bridge to Spring AI:
-        //      var mcpToolProvider = SyncMcpToolCallbackProvider.builder().mcpClients(mcpClient).build();
-        //      var mcpTools = mcpToolProvider.getToolCallbacks();
+        mcpClient.initialize();
+
+        // Step 2: Discover available tools from the MCP Server
+        var toolsResult = mcpClient.listTools();
+        var toolNames = toolsResult.tools().stream().map(McpSchema.Tool::name).toList();
+        log.info("Available tools: {}", toolNames);
+
+        // Step 3: Bridge MCP tools into Spring AI ToolCallbacks
+        var mcpToolProvider = SyncMcpToolCallbackProvider.builder()
+                .mcpClients(mcpClient)
+                .build();
+        var mcpTools = mcpToolProvider.getToolCallbacks();
 
         // Step 4: Create AWS Bedrock ChatModel
         var bedrockClient = BedrockRuntimeClient.builder()
@@ -73,7 +70,7 @@ void main() {
                 .defaultOptions(options)
                 .build();
 
-        // Step 5: Build ChatClient with system prompt (tools come from MCP Server remotely!)
+        // Step 5: Build ChatClient with system prompt (tools registered from MCP Server)
         var agent = ChatClient.builder(chatModel)
                 .defaultSystem("""
                         You are Lady Luck, the mystical keeper of dice and fortune in D&D adventures.
@@ -102,9 +99,7 @@ void main() {
             try {
                 var response = agent.prompt()
                         .user(userInput)
-                        // TODO 4: Pass the MCP tools to the agent so it can call the remote dice server.
-                        //   Note: We use .toolCallbacks() (not .tools()) because MCP tools are already
-                        //   wrapped as ToolCallback objects by SyncMcpToolCallbackProvider.
+                        .toolCallbacks(mcpTools)
                         .call()
                         .content();
 
@@ -117,6 +112,7 @@ void main() {
     } catch (Exception e) {
         IO.println("Connection failed: " + e.getMessage());
         IO.println("Make sure the dice service is running: jbang DiceRollMcpServer.java");
+    } finally {
+        mcpClient.closeGracefully();
     }
-    // Note: In the solution, mcpClient.closeGracefully() is called in finally block
 }

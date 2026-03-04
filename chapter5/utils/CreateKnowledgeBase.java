@@ -31,7 +31,7 @@ import java.util.List;
 ///
 /// Prerequisites:
 ///   1. Download "DnD_BasicRules_2018.pdf" and place it in this directory
-///   2. AWS credentials configured with Bedrock access in us-west-2
+///   2. AWS credentials configured with Bedrock access in eu-central-1
 ///
 /// Usage: jbang CreateKnowledgeBase.java
 ///
