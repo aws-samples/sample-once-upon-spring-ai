@@ -1,0 +1,24 @@
+[
+  {
+    "characterId": "7ec6672b-fd07-42ee-a844-97fb82bae76b",
+    "name": "Ragnar",
+    "characterClass": "Fighter",
+    "race": "Dragonborn",
+    "gender": "Male",
+    "level": 1,
+    "experience": 0,
+    "stats": {
+      "strength": 15,
+      "dexterity": 16,
+      "constitution": 14,
+      "intelligence": 12,
+      "wisdom": 13,
+      "charisma": 11
+    },
+    "inventory": [
+      { "itemName": "Starting Equipment Pack", "quantity": 1 },
+      { "itemName": "Gold Pieces", "quantity": 100 }
+    ],
+    "createdAt": "2026-02-25T01:55:20.937652Z"
+  }
+]
