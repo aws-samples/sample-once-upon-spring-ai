@@ -1,0 +1,94 @@
+# Build output
+*target/
+*build/
+*out/
+*.class
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+*.code-workspace
+.settings/
+.classpath
+.project
+.factorypath
+*.swp
+*~
+
+# IDE/tools
+.claude/
+.omc/
+CLAUDE.md
+.claudeignore
+.mcp.json
+.mcp/
+.kiro/
+.cursor/
+.windsurf/
+.vscode/demo.code-snippets
+
+# Maven
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+
+# Package files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# JVM crash logs
+hs_err_pid*
+replay_pid*
+
+# Spring Boot
+*.pid
+
+# Environment/secrets
+.env
+.env.local
+*.env
+application-local.yml
+application-local.properties
+*-secret.yml
+*-secret.properties
+
+# Test output
+test-output/
+surefire-reports/
+
+# Temp files
+*.tmp
+*.temp
+*.bak
+*.pdf
+chapter5/utils/dm_knowledge_base.json
