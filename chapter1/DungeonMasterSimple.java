@@ -7,7 +7,7 @@
 //DEPS software.amazon.awssdk:bedrockruntime:2.41.34
 //DEPS software.amazon.awssdk:auth:2.41.34
 //DEPS org.slf4j:slf4j-api:2.0.17
-// TODO 1: Add the SLF4J simple logging dependency so you can see what the agent is thinking
+//DEPS org.slf4j:slf4j-simple:2.0.17
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ private static final Logger log = LoggerFactory.getLogger("DungeonMasterSimple")
 
 void main() {
     log.info("=== Starting Dungeon Master AI Agent ===");
-
+    
     // Step 1: Create AWS Bedrock Runtime Client
     var bedrockClient = BedrockRuntimeClient.builder()
         .region(Region.US_WEST_2)
@@ -42,26 +42,28 @@ void main() {
         .defaultOptions(options)
         .build();
 
-    // TODO 2: Build a ChatClient (the "agent") with a system prompt that sets the AI personality.
-    //   Use ChatClient.builder(chatModel) to create the builder.
-    //   Chain .defaultSystem("You are a game master for a Dungeon & Dragon game") to set the persona.
-    //   Call .build() to finalize.
-    //   Store the result in a variable called 'agent'.
+    // Step 4: Build ChatClient with system prompt (defines AI personality)
+    var agent = ChatClient.builder(chatModel)
+        .defaultSystem("You are a game master for a Dungeon & Dragon game")
+        .build();
 
-    // TODO 3: Send a message to the agent and print the response.
-    //   1. Define a player message, e.g. "Hi, I am an adventurer ready for adventure!"
-    //   2. Call agent.prompt().user(playerMessage).call().content() to get the AI response
-    //   3. Log the response using log.info()
-    //   4. Wrap the call in a try/catch block to handle any exceptions
-    //
-    //   Example pattern:
-    //     try {
-    //         var response = agent.prompt().user(playerMessage).call().content();
-    //         log.info("Dungeon Master says:");
-    //         log.info(response);
-    //     } catch (Exception e) {
-    //         log.error("Error invoking AI agent: {}", e.getMessage());
-    //     }
+    // Step 5: Invoke the AI agent
+    var playerMessage = "Hi, I am an adventurer ready for adventure!";
+    log.info("Player: " + playerMessage + "\n");
 
-    log.info("\n=== Ending Dungeon Master AI Agent ===");
+    try {
+        var response = agent
+            .prompt()
+            .user(playerMessage)
+            .call()
+            .content();
+
+        log.info("Dungeon Master says:");
+        log.info(response);
+
+    } catch (Exception e) {
+        log.error("Error invoking AI agent: {}", e.getMessage());
+    } finally {
+        log.info("\n=== Ending Dungeon Master AI Agent ===");
+    }
 }

@@ -90,26 +90,22 @@ public class GameMasterOrchestrator {
     public static void main(final String[] args) {
         System.setProperty("server.port", "8009");
         System.setProperty("spring.application.name", "gamemaster-orchestrator");
-        // TODO 1: Set the remote.agents.urls property with the A2A agent URLs.
-        //   The orchestrator needs to know where the Rules Agent and Character Agent are running.
-        //   At startup, GameMasterService will fetch each agent's
-        //   card from /.well-known/agent-card.json and register them by name.
-
+        System.setProperty("remote.agents.urls", "http://localhost:8000/a2a/,http://localhost:8001/a2a/");
         SpringApplication.run(GameMasterOrchestrator.class, args);
     }
 
-    // TODO 3: Build the ChatClient bean that the orchestrator uses to process user requests.
-    //   The system prompt includes a %s placeholder that gets filled with the discovered agent descriptions.
-    //
-    //   @Bean
-    //   ChatClient chatClient(BedrockProxyChatModel chatModel,
-    //                          GameMasterService remoteAgent) {
-    //       String systemPrompt = SYSTEM_PROMPT.formatted(remoteAgent.getAgentDescriptions());
-    //       log.info("Initializing routing ChatClient with agents: {}", remoteAgent.getAgentNames());
-    //       return ChatClient.builder(chatModel)
-    //               .defaultSystem(systemPrompt)
-    //               .build();
-    //   }
+    @Bean
+    ChatClient chatClient(BedrockProxyChatModel chatModel,
+                           GameMasterService remoteAgent) {
+
+        String systemPrompt = SYSTEM_PROMPT.formatted(remoteAgent.getAgentDescriptions());
+
+        log.info("Initializing routing ChatClient with agents: {}", remoteAgent.getAgentNames());
+
+        return ChatClient.builder(chatModel)
+                .defaultSystem(systemPrompt)
+                .build();
+    }
 }
 
 /// CORS configuration
@@ -131,31 +127,32 @@ class McpClientConfig {
 
     private static final Logger log = LoggerFactory.getLogger("McpClientConfig");
 
-    // TODO 2: Create an MCP client bean that connects to the Dice Roll Server on port 8080
-    //   and returns the tools as Spring AI ToolCallback[].
-    //
-    //   @Bean
-    //   ToolCallback[] mcpTools() {
-    //       try {
-    //           var transport = HttpClientStreamableHttpTransport.builder("http://localhost:8080")
-    //                   .endpoint("/mcp")
-    //                   .build();
-    //           var client = McpClient.sync(transport)
-    //                   .clientInfo(new McpSchema.Implementation("gamemaster-mcp-client", "1.0.0"))
-    //                   .build();
-    //           client.initialize();
-    //           var tools = client.listTools().tools().stream().map(McpSchema.Tool::name).toList();
-    //           log.info("MCP tools discovered: {}", tools);
-    //           return SyncMcpToolCallbackProvider.builder()
-    //                   .mcpClients(client)
-    //                   .build()
-    //                   .getToolCallbacks();
-    //       } catch (Exception e) {
-    //           log.warn("MCP Dice Server not available — dice rolling disabled");
-    //           log.warn("Start it with: cd ../chapter4 && jbang DiceRollMcpServer.java");
-    //           return new ToolCallback[0];
-    //       }
-    //   }
+    @Bean
+    ToolCallback[] mcpTools() {
+        try {
+            var transport = HttpClientStreamableHttpTransport.builder("http://localhost:8080")
+                    .endpoint("/mcp")
+                    .build();
+
+            var client = McpClient.sync(transport)
+                    .clientInfo(new McpSchema.Implementation("gamemaster-mcp-client", "1.0.0"))
+                    .build();
+
+            client.initialize();
+
+            var tools = client.listTools().tools().stream().map(McpSchema.Tool::name).toList();
+            log.info("MCP tools discovered: {}", tools);
+
+            return SyncMcpToolCallbackProvider.builder()
+                    .mcpClients(client)
+                    .build()
+                    .getToolCallbacks();
+        } catch (Exception e) {
+            log.warn("MCP Dice Server not available at http://localhost:8080/mcp — dice rolling disabled");
+            log.warn("Start it with: cd ../chapter4 && jbang DiceRollMcpServer.java");
+            return new ToolCallback[0];
+        }
+    }
 }
 
 /// Spring AI Bedrock ChatModel configuration

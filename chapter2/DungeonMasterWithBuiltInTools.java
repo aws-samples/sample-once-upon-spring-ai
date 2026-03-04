@@ -4,7 +4,7 @@
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
 //DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0-M2
 //DEPS org.springframework.ai:spring-ai-client-chat:2.0.0-M2
-// TODO 1: Add the Spring AI Community agent-utils dependency that provides SmartWebFetchTool.
+//DEPS org.springaicommunity:spring-ai-agent-utils:0.4.2
 //DEPS software.amazon.awssdk:bedrockruntime:2.41.34
 //DEPS software.amazon.awssdk:auth:2.41.34
 //DEPS org.slf4j:slf4j-api:2.0.17
@@ -19,13 +19,13 @@ import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
-// TODO 2: Import the SmartWebFetchTool class from the community library.
+import org.springaicommunity.agent.tools.SmartWebFetchTool;
 
 private static final Logger log = LoggerFactory.getLogger("DungeonMasterWithBuiltInTools");
 
 void main() {
     log.info("=== Starting Dungeon Master AI Agent with Built-in Tools ===");
-
+    
     // Step 1: Create AWS Bedrock Runtime Client
     var bedrockClient = BedrockRuntimeClient.builder()
         .region(Region.US_WEST_2)
@@ -45,20 +45,16 @@ void main() {
         .build();
     var agent = ChatClient.builder(chatModel).build();
 
-    // TODO 3: Create a SmartWebFetchTool and use it to equip the agent.
-    //   1. Build the tool:     var webFetchTool = SmartWebFetchTool.builder(agent).maxContentLength(300_000).build();
-    //   2. Use it in a prompt: agent.prompt().user("...").tools(webFetchTool).call().content();
-    //
-    //   Ask the AI: "Using the website https://en.wikipedia.org/wiki/Dungeons_%26_Dragons
-    //               tell me the name of the designers of Dungeons and Dragons."
-    //
-    //   The SmartWebFetchTool lets the AI autonomously fetch and parse web pages — giving
-    //   your agent the ability to access real-time information from the internet.
+    // Step 4: Create SmartWebFetchTool tool to enable the AI agent to fetch / process web content
+    var webFetchTool = SmartWebFetchTool.builder(agent)
+        .maxContentLength(300_000)
+        .build();
 
     try {
+        // Step 5: Ask the AI to fetch and extract information from Wikipedia
         var response = agent.prompt()
             .user("Using the website https://en.wikipedia.org/wiki/Dungeons_%26_Dragons tell me the name of the designers of Dungeons and Dragons.")
-            // TODO 3 (continued): Add .tools(webFetchTool) here to give the agent web fetching ability
+            .tools(webFetchTool)
             .call()
             .content();
 
