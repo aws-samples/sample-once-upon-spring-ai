@@ -16,12 +16,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Component;
 
 // TODO 1: Import the MCP annotation classes that will expose your tools over the network.
-//   These are the MCP equivalents of @Tool and @ToolParam from Chapter 3.
 
 import java.util.Arrays;
 import java.util.Random;
 
-/// MCP Server that exposes D&D dice rolling tools over HTTP.
+/// MCP Server that exposes dice rolling tools over HTTP.
 /// Run this first, then run DungeonMasterMCPClient.java to connect.
 /// The key difference from Chapter 3: tools are now accessible over the NETWORK via MCP protocol.
 @SpringBootApplication
@@ -38,13 +37,11 @@ class DiceTools {
     private static final Logger log = LoggerFactory.getLogger("DiceTools");
     private static final Random random = new Random();
 
-    /// Record for dice roll output - Java 25 immutable data carrier
     record DiceRollResponse(int[] rolls, int total, String description) {}
 
-    // TODO 2: Annotate this method with @McpTool to expose it as a network-accessible MCP tool.
-    //   This is similar to @Tool from Chapter 3, but the tool will be available over HTTP.
+    // TODO 2: Annotate the method with @McpTool to expose it as an MCP tool
 
-    // TODO 3: Annotate each parameter with @McpToolParam to describe them for MCP clients.
+    // TODO 3: Annotate each parameter with @McpToolParam
     DiceRollResponse rollDice(int faces, int count) {
 
         var rolls = new int[count];

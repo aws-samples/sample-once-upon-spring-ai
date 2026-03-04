@@ -64,56 +64,24 @@ public class RulesAgent {
 
     public static void main(final String[] args) {
         // TODO 1: Configure Spring Boot properties for this A2A agent server.
-        //   Set these system properties before calling SpringApplication.run():
-        //     - "server.port"                  → "8000"     (this agent's HTTP port)
-        //     - "server.servlet.context-path"  → "/a2a"     (A2A endpoints live under /a2a)
-        //     - "spring.application.name"      → "rules-agent"
-        //     - "spring.ai.a2a.server.enabled" → "true"     (activates A2A auto-configuration)
+        //   Use System.setProperty() to set four properties before SpringApplication.run():
+        //     - Server port (this agent runs on port 8000)
+        //     - Servlet context path (A2A convention uses "/a2a")
+        //     - Application name
+        //     - Enable the A2A server auto-configuration
 
         SpringApplication.run(RulesAgent.class, args);
     }
 
     // TODO 2: Create an AgentCard bean that describes this agent to the A2A network.
     //   The AgentCard is published at /.well-known/agent-card.json so other agents can discover you.
-    //
-    //   @Bean
-    //   AgentCard agentCard(@Value("${server.port:8000}") int port,
-    //                       @Value("${server.servlet.context-path:/a2a}") String contextPath) {
-    //       return new AgentCard.Builder()
-    //               .name("Rules Agent")
-    //               .description("Specialized D&D 5e rules lookup agent...")
-    //               .url("http://localhost:" + port + contextPath + "/")
-    //               .version("1.0.0")
-    //               .capabilities(new AgentCapabilities.Builder().streaming(false).build())
-    //               .defaultInputModes(List.of("text"))
-    //               .defaultOutputModes(List.of("text"))
-    //               .skills(List.of(
-    //                   new AgentSkill.Builder()
-    //                       .id("rules_lookup")
-    //                       .name("D&D Rules Lookup")
-    //                       .description("Look up D&D 5e rules, mechanics, combat, spells, and ability checks")
-    //                       .tags(List.of("rules", "dnd", "mechanics"))
-    //                       .examples(List.of("How do attack rolls work?", "What is armor class?"))
-    //                       .build()))
-    //               .protocolVersion("0.3.0")
-    //               .build();
-    //   }
+    //   Use AgentCard.Builder to set: name, description, url, version, capabilities, I/O modes, skills, and protocol version.
+    //   Inject the port and context path via @Value to construct the URL dynamically.
+    //   Define at least one AgentSkill for rules lookup with an id, name, description, tags, and examples.
 
     // TODO 3: Create an AgentExecutor bean that wires the ChatClient with the RulesTools.
-    //   The AgentExecutor is how incoming A2A messages get processed by your agent.
-    //
-    //   @Bean
-    //   AgentExecutor agentExecutor(BedrockProxyChatModel chatModel, RulesTools rulesTools) {
-    //       var chatClient = ChatClient.builder(chatModel)
-    //               .defaultSystem(SYSTEM_PROMPT)
-    //               .defaultTools(rulesTools)
-    //               .build();
-    //
-    //       return new DefaultAgentExecutor(chatClient, (chat, requestContext) -> {
-    //           String userMessage = DefaultAgentExecutor.extractTextFromMessage(requestContext.getMessage());
-    //           return chat.prompt().user(userMessage).call().content();
-    //       });
-    //   }
+    //   Wire a ChatClient with the SYSTEM_PROMPT and RulesTools, then wrap it in a DefaultAgentExecutor.
+    //   The executor's lambda should extract the user message text and invoke the ChatClient.
 }
 
 /// Vector store configuration — loads the knowledge base from utils/

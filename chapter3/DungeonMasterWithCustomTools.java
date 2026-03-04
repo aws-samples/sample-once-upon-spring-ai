@@ -24,25 +24,21 @@ private static final Logger log = LoggerFactory.getLogger("DungeonMasterWithCust
 void main() {
     log.info("=== Starting Dungeon Master AI Agent with Custom Tools ===");
 
-    // Step 1: Create AWS Bedrock Runtime Client
     var bedrockClient = BedrockRuntimeClient.builder()
         .region(Region.US_WEST_2)
         .credentialsProvider(DefaultCredentialsProvider.builder().build())
         .build();
 
-    // Step 2: Configure model options
     var modelId = "global.anthropic.claude-haiku-4-5-20251001-v1:0";
     var options = BedrockChatOptions.builder()
         .model(modelId)
         .build();
 
-    // Step 3: Create Spring AI ChatModel
     var chatModel = BedrockProxyChatModel.builder()
         .bedrockRuntimeClient(bedrockClient)
         .defaultOptions(options)
         .build();
 
-    // Step 4: Build ChatClient with system prompt AND the custom dice tools
     var agent = ChatClient.builder(chatModel)
         .defaultSystem("""
             You are Lady Luck, the mystical keeper of dice and fortune in D&D adventures.
@@ -52,17 +48,13 @@ void main() {
             """)
         .build();
 
-    // Step 5: Invoke the AI agent with a request that requires dice rolling
     var playerMessage = "Help me create a new D&D character! Roll the strength, wisdom, charisma and intelligence abilities scores using 4d6 drop lowest method.";
     log.info("Player: {}\n", playerMessage);
 
     try {
         var response = agent.prompt()
             .user(playerMessage)
-            // TODO 4: Pass the DiceTools to the agent so it can roll dice.
-            //   Create a new DiceTools instance and register it using .tools()
-            //
-            //   Without this, the AI will try to "imagine" dice rolls instead of actually rolling them!
+            // TODO 4: Pass the DiceTools to the agent using .tools()
             .call()
             .content();
 
