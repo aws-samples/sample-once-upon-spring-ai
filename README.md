@@ -4,6 +4,8 @@
 
 _"Roll for Initiative... in Java!"_
 
+# ---> [LINK TO THE AWS WORKSHOP](https://catalog.us-east-1.prod.workshops.aws/workshops/a49bf534-72f6-4571-bf77-ed201854284a)
+
 Welcome, brave adventurer, to the ultimate Spring AI quest! This comprehensive workshop will transform you from a coding apprentice into a master of AI agent orchestration using **Java 25** and **Spring AI**. Through five epic chapters, you'll learn to create, equip, and command digital companions that can think, act, and collaborate like a legendary adventuring party.
 
 ## 🌐 The Complete Adventure Map
