@@ -1,5 +1,133 @@
-<templateSet group="DemoChapter5">
-  <!-- Rules Agent TODOs (RulesAgent.java) -->
+<templateSet group="DnD">
+  <!-- Chapter 1: DungeonMasterSimple.java -->
+  <template name="Ch1TODO1" value="//DEPS org.slf4j:slf4j-simple:2.0.17" description="Chapter 1: Add the SLF4J simple logging dependency" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch1TODO2" value="var agent = ChatClient.builder(chatModel)&#10;    .defaultSystem(&quot;You are a game master for a Dungeon &amp; Dragon game&quot;)&#10;    .build();" description="Chapter 1: Build a ChatClient with a system prompt" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch1TODO3" value="var playerMessage = &quot;Hi, I am an adventurer ready for adventure!&quot;;&#10;log.info(&quot;Player: &quot; + playerMessage + &quot;\n&quot;);&#10;&#10;try {&#10;    var response = agent&#10;        .prompt()&#10;        .user(playerMessage)&#10;        .call()&#10;        .content();&#10;&#10;    log.info(&quot;Dungeon Master says:&quot;);&#10;    log.info(response);&#10;&#10;} catch (Exception e) {&#10;    log.error(&quot;Error invoking AI agent: {}&quot;, e.getMessage());&#10;} finally {&#10;    log.info(&quot;\n=== Ending Dungeon Master AI Agent ===&quot;);&#10;}" description="Chapter 1: Send a message to the agent and print the response" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+  <!-- Chapter 2: DungeonMasterWithBuiltInTools.java -->
+  <template name="Ch2TODO1" value="//DEPS org.springaicommunity:spring-ai-agent-utils:0.4.2" description="Chapter 2: Add the Spring AI Community agent-utils dependency" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch2TODO2" value="import org.springaicommunity.agent.tools.SmartWebFetchTool;" description="Chapter 2: Import the SmartWebFetchTool class" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch2TODO3" value="var webFetchTool = SmartWebFetchTool.builder(agent)&#10;    .maxContentLength(300_000)&#10;    .build();" description="Chapter 2: Create a SmartWebFetchTool instance" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch2TODO3b" value=".tools(webFetchTool)" description="Chapter 2: Add .tools(webFetchTool) to the prompt chain" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+  <!-- Chapter 3: DiceTools.java + DungeonMasterWithCustomTools.java -->
+  <template name="Ch3TODO1" value="import org.springframework.ai.tool.annotation.Tool;&#10;import org.springframework.ai.tool.annotation.ToolParam;" description="Chapter 3: Import @Tool and @ToolParam annotations" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch3TODO2" value="@Tool(description = &quot;Roll dice for D&amp;D game mechanics. Use this for attack rolls, damage, ability checks, or saving throws.&quot;)" description="Chapter 3: Add @Tool annotation with description" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch3TODO3" value="DiceRollResponse rollDice(&#10;    @ToolParam(description = &quot;Number of faces on the dice (e.g. 6, 20)&quot;, required = true) int faces,&#10;    @ToolParam(description = &quot;Number of dice to roll (e.g. 1, 3)&quot;, required = true) int count) {" description="Chapter 3: Add @ToolParam annotations to method parameters" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch3TODO4" value=".tools(new DiceTools())" description="Chapter 3: Pass DiceTools to the agent" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+  <!-- Chapter 4 Server: DiceRollMcpServer.java -->
+  <template name="Ch4ServerTODO1" value="import org.springaicommunity.mcp.annotation.McpTool;&#10;import org.springaicommunity.mcp.annotation.McpToolParam;" description="Chapter 4 Server: Import MCP annotation classes" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch4ServerTODO2" value="@McpTool(description = &quot;Roll dice for D&amp;D game mechanics. Use this for attack rolls, damage, ability checks, or saving throws.&quot;)" description="Chapter 4 Server: Add @McpTool annotation to expose method over MCP" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch4ServerTODO3" value="DiceRollResponse rollDice(&#10;    @McpToolParam(description = &quot;Number of faces on the dice (e.g. 6, 20)&quot;, required = true) int faces,&#10;    @McpToolParam(description = &quot;Number of dice to roll (e.g. 1, 3)&quot;, required = true) int count) {" description="Chapter 4 Server: Add @McpToolParam annotations to parameters" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <!-- Chapter 4 Properties: application.properties -->
+  <template name="Ch4PropsTODO1" value="dice-mcp-server" description="Chapter 4 Props: Set MCP server name" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch4PropsTODO2" value="STREAMABLE" description="Chapter 4 Props: Set MCP server protocol to STREAMABLE" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch4PropsTODO3" value="8080" description="Chapter 4 Props: Set server port to 8080" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+
+  <!-- Chapter 4 Client: DungeonMasterMCPClient.java -->
+  <template name="Ch4ClientTODO1" value="import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;&#10;import io.modelcontextprotocol.client.McpClient;&#10;import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;&#10;import io.modelcontextprotocol.spec.McpSchema;" description="Chapter 4 Client: Import MCP client classes for connecting to MCP server" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch4ClientTODO2" value="var transport = HttpClientStreamableHttpTransport.builder(&quot;http://localhost:8080&quot;)&#10;        .endpoint(&quot;/mcp&quot;)&#10;        .build();&#10;&#10;var mcpClient = McpClient.sync(transport)&#10;        .clientInfo(new McpSchema.Implementation(&quot;dice-mcp-client&quot;, &quot;1.0.0&quot;))&#10;        .build();" description="Chapter 4 Client: Create HTTP transport and MCP client" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch4ClientTODO3" value="mcpClient.initialize();&#10;&#10;// Step 2: Discover available tools from the MCP Server&#10;var toolsResult = mcpClient.listTools();&#10;var toolNames = toolsResult.tools().stream().map(McpSchema.Tool::name).toList();&#10;log.info(&quot;Available tools: {}&quot;, toolNames);&#10;&#10;// Step 3: Bridge MCP tools into Spring AI ToolCallbacks&#10;var mcpToolProvider = SyncMcpToolCallbackProvider.builder()&#10;        .mcpClients(mcpClient)&#10;        .build();&#10;var mcpTools = mcpToolProvider.getToolCallbacks();" description="Chapter 4 Client: Initialize MCP client, discover tools, bridge to Spring AI" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch4ClientTODO4" value=".toolCallbacks(mcpTools)" description="Chapter 4 Client: Pass MCP tools to agent using .toolCallbacks()" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+  <!-- Chapter 5 Rules Agent: RulesAgent.java -->
   <template name="Ch5RulesTODO1" value="System.setProperty(&quot;server.port&quot;, &quot;8000&quot;);&#10;System.setProperty(&quot;server.servlet.context-path&quot;, &quot;/a2a&quot;);&#10;System.setProperty(&quot;spring.application.name&quot;, &quot;rules-agent&quot;);&#10;System.setProperty(&quot;spring.ai.a2a.server.enabled&quot;, &quot;true&quot;);" description="Chapter 5 Rules: Configure Spring Boot properties (port 8000)" toReformat="false" toShortenFQNames="false">
     <context>
       <option name="JAVA_CODE" value="true" />
@@ -18,7 +146,7 @@
     </context>
   </template>
 
-  <!-- Character Agent TODOs (CharacterAgent.java) -->
+  <!-- Chapter 5 Character Agent: CharacterAgent.java -->
   <template name="Ch5CharTODO1" value="System.setProperty(&quot;server.port&quot;, &quot;8001&quot;);&#10;System.setProperty(&quot;server.servlet.context-path&quot;, &quot;/a2a&quot;);&#10;System.setProperty(&quot;spring.application.name&quot;, &quot;character-agent&quot;);&#10;System.setProperty(&quot;spring.ai.a2a.server.enabled&quot;, &quot;true&quot;);" description="Chapter 5 Character: Configure Spring Boot properties (port 8001)" toReformat="false" toShortenFQNames="false">
     <context>
       <option name="JAVA_CODE" value="true" />
@@ -37,7 +165,7 @@
     </context>
   </template>
 
-  <!-- Game Master Orchestrator TODOs (GameMasterOrchestrator.java) -->
+  <!-- Chapter 5 Game Master Orchestrator: GameMasterOrchestrator.java -->
   <template name="Ch5GMTODO1" value="System.setProperty(&quot;remote.agents.urls&quot;, &quot;http://localhost:8000/a2a/,http://localhost:8001/a2a/&quot;);" description="Chapter 5 GM: Set remote A2A agent URLs for Rules and Character agents" toReformat="false" toShortenFQNames="false">
     <context>
       <option name="JAVA_CODE" value="true" />
