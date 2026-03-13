@@ -1,94 +1,35 @@
+# Dependencies
+node_modules/
+
 # Build output
-*target/
-*build/
-*out/
-*.class
+dist/
 
-# IDE
+# Vite
+*.local
+
+# Editor
+.vscode/*
+.kiro/*
+!.vscode/extensions.json
 .idea/
-.vscode/
-*.iml
-*.ipr
-*.iws
-*.code-workspace
-.settings/
-.classpath
-.project
-.factorypath
-*.swp
-*~
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
-# IDE/tools
-.claude/
-.omc/
-CLAUDE.md
-.claudeignore
-.mcp.json
-.mcp/
-.kiro/
-.cursor/
-.windsurf/
-
-# Maven
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
-
-# Gradle
-.gradle/
-gradle-app.setting
-!gradle-wrapper.jar
-.gradletasknamecache
+# OS
+.DS_Store
+Thumbs.db
 
 # Logs
 *.log
-logs/
+npm-debug.log*
 
-# OS files
-.DS_Store
-.DS_Store?
-._*
-Thumbs.db
-ehthumbs.db
+# Test coverage
+coverage/
 
-# Package files
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-# JVM crash logs
-hs_err_pid*
-replay_pid*
-
-# Spring Boot
-*.pid
-
-# Environment/secrets
+# Env files
 .env
 .env.local
-*.env
-application-local.yml
-application-local.properties
-*-secret.yml
-*-secret.properties
-
-# Test output
-test-output/
-surefire-reports/
-
-# Temp files
-*.tmp
-*.temp
-*.bak
-*.pdf
-chapter5/utils/dm_knowledge_base.json
+.env.*.local
