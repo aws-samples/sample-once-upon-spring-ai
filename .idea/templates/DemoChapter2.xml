@@ -1,0 +1,25 @@
+<templateSet group="DemoChapter2">
+  <template name="Ch2TODO1" value="//DEPS org.springaicommunity:spring-ai-agent-utils:0.4.2" description="Chapter 2: Add the Spring AI Community agent-utils dependency" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch2TODO2" value="import org.springaicommunity.agent.tools.SmartWebFetchTool;" description="Chapter 2: Import the SmartWebFetchTool class" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch2TODO3" value="var webFetchTool = SmartWebFetchTool.builder(agent)&#10;    .maxContentLength(300_000)&#10;    .build();" description="Chapter 2: Create a SmartWebFetchTool instance" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch2TODO3b" value=".tools(webFetchTool)" description="Chapter 2: Add .tools(webFetchTool) to the prompt chain" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+</templateSet>

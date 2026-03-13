@@ -1,0 +1,19 @@
+<templateSet group="DemoChapter1">
+  <template name="Ch1TODO1" value="//DEPS org.slf4j:slf4j-simple:2.0.17" description="Chapter 1: Add the SLF4J simple logging dependency" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch1TODO2" value="var agent = ChatClient.builder(chatModel)&#10;    .defaultSystem(&quot;You are a game master for a Dungeon &amp; Dragon game&quot;)&#10;    .build();" description="Chapter 1: Build a ChatClient with a system prompt" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch1TODO3" value="var playerMessage = &quot;Hi, I am an adventurer ready for adventure!&quot;;&#10;log.info(&quot;Player: &quot; + playerMessage + &quot;\n&quot;);&#10;&#10;try {&#10;    var response = agent&#10;        .prompt()&#10;        .user(playerMessage)&#10;        .call()&#10;        .content();&#10;&#10;    log.info(&quot;Dungeon Master says:&quot;);&#10;    log.info(response);&#10;&#10;} catch (Exception e) {&#10;    log.error(&quot;Error invoking AI agent: {}&quot;, e.getMessage());&#10;} finally {&#10;    log.info(&quot;\n=== Ending Dungeon Master AI Agent ===&quot;);&#10;}" description="Chapter 1: Send a message to the agent and print the response" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+</templateSet>
