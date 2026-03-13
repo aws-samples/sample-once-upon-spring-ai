@@ -1,0 +1,58 @@
+<templateSet group="DemoChapter5">
+  <!-- Rules Agent TODOs (RulesAgent.java) -->
+  <template name="Ch5RulesTODO1" value="System.setProperty(&quot;server.port&quot;, &quot;8000&quot;);&#10;System.setProperty(&quot;server.servlet.context-path&quot;, &quot;/a2a&quot;);&#10;System.setProperty(&quot;spring.application.name&quot;, &quot;rules-agent&quot;);&#10;System.setProperty(&quot;spring.ai.a2a.server.enabled&quot;, &quot;true&quot;);" description="Chapter 5 Rules: Configure Spring Boot properties (port 8000)" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch5RulesTODO2" value="@Bean&#10;AgentCard agentCard(@Value(&quot;\${server.port:8000}&quot;) int port,&#10;                    @Value(&quot;\${server.servlet.context-path:/a2a}&quot;) String contextPath) {&#10;    return new AgentCard.Builder()&#10;            .name(&quot;Rules Agent&quot;)&#10;            .description(&quot;&quot;&quot;&#10;                Specialized D&amp;D 5e rules lookup agent that provides fast, authoritative rule clarifications&#10;                from the Basic Rules. Queries a vector knowledge base containing indexed D&amp;D content and returns&#10;                brief, page-referenced rule explanations.&quot;&quot;&quot;)&#10;            .url(&quot;http://localhost:&quot; + port + contextPath + &quot;/&quot;)&#10;            .version(&quot;1.0.0&quot;)&#10;            .capabilities(new AgentCapabilities.Builder().streaming(false).build())&#10;            .defaultInputModes(List.of(&quot;text&quot;))&#10;            .defaultOutputModes(List.of(&quot;text&quot;))&#10;            .skills(List.of(&#10;                new AgentSkill.Builder()&#10;                    .id(&quot;rules_lookup&quot;)&#10;                    .name(&quot;D&amp;D Rules Lookup&quot;)&#10;                    .description(&quot;Look up D&amp;D 5e rules, mechanics, combat, spells, and ability checks&quot;)&#10;                    .tags(List.of(&quot;rules&quot;, &quot;dnd&quot;, &quot;mechanics&quot;))&#10;                    .examples(List.of(&quot;How do attack rolls work?&quot;, &quot;What is armor class?&quot;))&#10;                    .build()))&#10;            .protocolVersion(&quot;0.3.0&quot;)&#10;            .build();&#10;}" description="Chapter 5 Rules: Create AgentCard bean with vector knowledge base description" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch5RulesTODO3" value="@Bean&#10;AgentExecutor agentExecutor(BedrockProxyChatModel chatModel, RulesTools rulesTools) {&#10;    var chatClient = ChatClient.builder(chatModel)&#10;            .defaultSystem(SYSTEM_PROMPT)&#10;            .defaultTools(rulesTools)&#10;            .build();&#10;&#10;    return new DefaultAgentExecutor(chatClient, (chat, requestContext) -&gt; {&#10;        String userMessage = DefaultAgentExecutor.extractTextFromMessage(requestContext.getMessage());&#10;        return chat.prompt().user(userMessage).call().content();&#10;    });&#10;}" description="Chapter 5 Rules: Create AgentExecutor bean" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <!-- Character Agent TODOs (CharacterAgent.java) -->
+  <template name="Ch5CharTODO1" value="System.setProperty(&quot;server.port&quot;, &quot;8001&quot;);&#10;System.setProperty(&quot;server.servlet.context-path&quot;, &quot;/a2a&quot;);&#10;System.setProperty(&quot;spring.application.name&quot;, &quot;character-agent&quot;);&#10;System.setProperty(&quot;spring.ai.a2a.server.enabled&quot;, &quot;true&quot;);" description="Chapter 5 Character: Configure Spring Boot properties (port 8001)" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch5CharTODO2" value="@Bean&#10;AgentCard agentCard(@Value(&quot;\${server.port:8001}&quot;) int port,&#10;                    @Value(&quot;\${server.servlet.context-path:/a2a}&quot;) String contextPath) {&#10;    return new AgentCard.Builder()&#10;            .name(&quot;Character Agent&quot;)&#10;            .description(&quot;&quot;&quot;&#10;                Specialized D&amp;D character management agent that handles character creation, storage, and retrieval.&#10;                Creates new characters with proper ability score generation (4d6 drop lowest), manages character data&#10;                in persistent storage, and provides character lookup services. Maintains complete character profiles&#10;                including stats, inventory, and progression data for D&amp;D campaigns.&quot;&quot;&quot;)&#10;            .url(&quot;http://localhost:&quot; + port + contextPath + &quot;/&quot;)&#10;            .version(&quot;1.0.0&quot;)&#10;            .capabilities(new AgentCapabilities.Builder().streaming(false).build())&#10;            .defaultInputModes(List.of(&quot;text&quot;))&#10;            .defaultOutputModes(List.of(&quot;text&quot;))&#10;            .skills(List.of(&#10;                new AgentSkill.Builder()&#10;                    .id(&quot;create_character&quot;)&#10;                    .name(&quot;Create Character&quot;)&#10;                    .description(&quot;Create a new D&amp;D character with rolled ability scores&quot;)&#10;                    .tags(List.of(&quot;character&quot;, &quot;creation&quot;, &quot;dnd&quot;))&#10;                    .examples(List.of(&quot;Create a female Elf Wizard named Lyria&quot;))&#10;                    .build(),&#10;                new AgentSkill.Builder()&#10;                    .id(&quot;find_character&quot;)&#10;                    .name(&quot;Find Character&quot;)&#10;                    .description(&quot;Find an existing character by name&quot;)&#10;                    .tags(List.of(&quot;character&quot;, &quot;lookup&quot;))&#10;                    .examples(List.of(&quot;Find the character named Ragnar&quot;))&#10;                    .build(),&#10;                new AgentSkill.Builder()&#10;                    .id(&quot;list_characters&quot;)&#10;                    .name(&quot;List Characters&quot;)&#10;                    .description(&quot;List all characters in the database&quot;)&#10;                    .tags(List.of(&quot;character&quot;, &quot;list&quot;))&#10;                    .examples(List.of(&quot;List all characters&quot;))&#10;                    .build()))&#10;            .protocolVersion(&quot;0.3.0&quot;)&#10;            .build();&#10;}" description="Chapter 5 Character: Create AgentCard bean with 3 skills" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch5CharTODO3" value="@Bean&#10;AgentExecutor agentExecutor(BedrockProxyChatModel chatModel, CharacterTools characterTools) {&#10;    var chatClient = ChatClient.builder(chatModel)&#10;            .defaultSystem(SYSTEM_PROMPT)&#10;            .defaultTools(characterTools)&#10;            .build();&#10;&#10;    return new DefaultAgentExecutor(chatClient, (chat, requestContext) -&gt; {&#10;        String userMessage = DefaultAgentExecutor.extractTextFromMessage(requestContext.getMessage());&#10;        return chat.prompt().user(userMessage).call().content();&#10;    });&#10;}" description="Chapter 5 Character: Create AgentExecutor bean" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <!-- Game Master Orchestrator TODOs (GameMasterOrchestrator.java) -->
+  <template name="Ch5GMTODO1" value="System.setProperty(&quot;remote.agents.urls&quot;, &quot;http://localhost:8000/a2a/,http://localhost:8001/a2a/&quot;);" description="Chapter 5 GM: Set remote A2A agent URLs for Rules and Character agents" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch5GMTODO2" value="@Bean&#10;ToolCallback[] mcpTools() {&#10;    try {&#10;        var transport = HttpClientStreamableHttpTransport.builder(&quot;http://localhost:8080&quot;)&#10;                .endpoint(&quot;/mcp&quot;)&#10;                .build();&#10;&#10;        var client = McpClient.sync(transport)&#10;                .clientInfo(new McpSchema.Implementation(&quot;gamemaster-mcp-client&quot;, &quot;1.0.0&quot;))&#10;                .build();&#10;&#10;        client.initialize();&#10;&#10;        var tools = client.listTools().tools().stream().map(McpSchema.Tool::name).toList();&#10;        log.info(&quot;MCP tools discovered: {}&quot;, tools);&#10;&#10;        return SyncMcpToolCallbackProvider.builder()&#10;                .mcpClients(client)&#10;                .build()&#10;                .getToolCallbacks();&#10;    } catch (Exception e) {&#10;        log.warn(&quot;MCP Dice Server not available at http://localhost:8080/mcp \u2014 dice rolling disabled&quot;);&#10;        log.warn(&quot;Start it with: cd ../chapter4 &amp;&amp; jbang DiceRollMcpServer.java&quot;);&#10;        return new ToolCallback[0];&#10;    }&#10;}" description="Chapter 5 GM: Create MCP client bean connecting to Dice Roll Server" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch5GMTODO3" value="@Bean&#10;ChatClient chatClient(BedrockProxyChatModel chatModel,&#10;                       GameMasterService remoteAgent) {&#10;&#10;    String systemPrompt = SYSTEM_PROMPT.formatted(remoteAgent.getAgentDescriptions());&#10;&#10;    log.info(&quot;Initializing routing ChatClient with agents: {}&quot;, remoteAgent.getAgentNames());&#10;&#10;    return ChatClient.builder(chatModel)&#10;            .defaultSystem(systemPrompt)&#10;            .build();&#10;}" description="Chapter 5 GM: Build ChatClient bean with agent-aware system prompt" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+</templateSet>

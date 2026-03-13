@@ -1,0 +1,64 @@
+<templateSet group="DemoChapter4">
+  <!-- MCP Server TODOs (DiceRollMcpServer.java) -->
+  <template name="Ch4ServerTODO1" value="import org.springaicommunity.mcp.annotation.McpTool;&#10;import org.springaicommunity.mcp.annotation.McpToolParam;" description="Chapter 4 Server: Import MCP annotation classes" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch4ServerTODO2" value="@McpTool(description = &quot;Roll dice for D&amp;D game mechanics. Use this for attack rolls, damage, ability checks, or saving throws.&quot;)" description="Chapter 4 Server: Add @McpTool annotation to expose method over MCP" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch4ServerTODO3" value="DiceRollResponse rollDice(&#10;    @McpToolParam(description = &quot;Number of faces on the dice (e.g. 6, 20)&quot;, required = true) int faces,&#10;    @McpToolParam(description = &quot;Number of dice to roll (e.g. 1, 3)&quot;, required = true) int count) {" description="Chapter 4 Server: Add @McpToolParam annotations to parameters" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <!-- Properties TODOs (application.properties) -->
+  <template name="Ch4PropsTODO1" value="dice-mcp-server" description="Chapter 4 Props: Set MCP server name" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch4PropsTODO2" value="STREAMABLE" description="Chapter 4 Props: Set MCP server protocol to STREAMABLE" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch4PropsTODO3" value="8080" description="Chapter 4 Props: Set server port to 8080" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+
+  <!-- MCP Client TODOs (DungeonMasterMCPClient.java) -->
+  <template name="Ch4ClientTODO1" value="import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;&#10;import io.modelcontextprotocol.client.McpClient;&#10;import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;&#10;import io.modelcontextprotocol.spec.McpSchema;" description="Chapter 4 Client: Import MCP client classes for connecting to MCP server" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch4ClientTODO2" value="var transport = HttpClientStreamableHttpTransport.builder(&quot;http://localhost:8080&quot;)&#10;        .endpoint(&quot;/mcp&quot;)&#10;        .build();&#10;&#10;var mcpClient = McpClient.sync(transport)&#10;        .clientInfo(new McpSchema.Implementation(&quot;dice-mcp-client&quot;, &quot;1.0.0&quot;))&#10;        .build();" description="Chapter 4 Client: Create HTTP transport and MCP client" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch4ClientTODO3" value="mcpClient.initialize();&#10;&#10;// Step 2: Discover available tools from the MCP Server&#10;var toolsResult = mcpClient.listTools();&#10;var toolNames = toolsResult.tools().stream().map(McpSchema.Tool::name).toList();&#10;log.info(&quot;Available tools: {}&quot;, toolNames);&#10;&#10;// Step 3: Bridge MCP tools into Spring AI ToolCallbacks&#10;var mcpToolProvider = SyncMcpToolCallbackProvider.builder()&#10;        .mcpClients(mcpClient)&#10;        .build();&#10;var mcpTools = mcpToolProvider.getToolCallbacks();" description="Chapter 4 Client: Initialize MCP client, discover tools, bridge to Spring AI" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+
+  <template name="Ch4ClientTODO4" value=".toolCallbacks(mcpTools)" description="Chapter 4 Client: Pass MCP tools to agent using .toolCallbacks()" toReformat="false" toShortenFQNames="false">
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+</templateSet>
