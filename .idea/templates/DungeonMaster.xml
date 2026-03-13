@@ -1,4 +1,4 @@
-<templateSet group="DnD">
+<templateSet group="DungeonMaster">
   <!-- Chapter 1: DungeonMasterSimple.java -->
   <template name="Ch1TODO1" value="//DEPS org.slf4j:slf4j-simple:2.0.17" description="Chapter 1: Add the SLF4J simple logging dependency" toReformat="false" toShortenFQNames="false">
     <context>
