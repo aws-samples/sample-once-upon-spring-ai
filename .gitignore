@@ -6,7 +6,6 @@
 
 # IDE
 .idea/
-.vscode/
 *.iml
 *.ipr
 *.iws
