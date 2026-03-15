@@ -110,5 +110,4 @@ void main() {
         IO.println("Connection failed: " + e.getMessage());
         IO.println("Make sure the dice service is running: jbang DiceRollMcpServer.java");
     }
-    // Note: In the solution, mcpClient.closeGracefully() is called in finally block
 }
