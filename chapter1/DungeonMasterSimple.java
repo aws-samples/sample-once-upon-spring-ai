@@ -10,6 +10,7 @@
 
 // TODO 1: Add the SLF4J simple logging dependency so you can see what the agent is thinking
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.bedrock.converse.BedrockProxyChatModel;
