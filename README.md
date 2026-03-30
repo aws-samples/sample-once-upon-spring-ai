@@ -83,7 +83,7 @@ Before embarking on this legendary adventure, ensure you have:
    export AWS_SECRET_ACCESS_KEY=your-secret-key
    export AWS_REGION=us-west-2
    ```
-   You can use any model available in your Amazon Bedrock account — just update the model ID in each chapter's source file.
+   You can use any model available in your Amazon Bedrock account — just update the model ID in configuration file in `config` folder.
 
 4. **A sense of adventure** and willingness to experiment! 🎲
 

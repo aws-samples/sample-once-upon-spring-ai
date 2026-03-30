@@ -3,7 +3,7 @@
 //JAVA 25+
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
 //DEPS org.springframework.boot:spring-boot-starter-web:4.0.2
-//DEPS org.springframework.ai:spring-ai-starter-mcp-server-webmvc:2.0.0-M2
+//DEPS org.springframework.ai:spring-ai-starter-mcp-server-webflux:2.0.0-M2
 //DEPS org.springaicommunity:mcp-annotations:0.8.0
 //DEPS io.modelcontextprotocol.sdk:mcp:1.0.0
 
@@ -13,22 +13,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 import org.springaicommunity.mcp.annotation.McpTool;
 import org.springaicommunity.mcp.annotation.McpToolParam;
 
-// import io.modelcontextprotocol.server.McpServerFeatures;
-// import io.modelcontextprotocol.spec.McpSchema;
-// import io.modelcontextprotocol.spec.McpSchema.GetPromptResult;
-// import io.modelcontextprotocol.spec.McpSchema.PromptMessage;
-// import io.modelcontextprotocol.spec.McpSchema.Role;
-// import io.modelcontextprotocol.spec.McpSchema.TextContent;
-
 import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 
 /// MCP Server that exposes D&D dice rolling tools over HTTP
@@ -47,14 +37,13 @@ class DiceTools {
     private static final Logger log = LoggerFactory.getLogger("DiceTools");
     private static final Random random = new Random();
 
-    /// Record for dice roll output - Java 25 immutable data carrier
     record DiceRollResponse(int[] rolls, int total, String description) {}
 
     @McpTool(description = "Roll dice for D&D game mechanics. Use this for attack rolls, damage, ability checks, or saving throws.")
     DiceRollResponse rollDice(
         @McpToolParam(description = "Number of faces on the dice (e.g. 6, 20)", required = true) int faces,
-        @McpToolParam(description = "Number of dice to roll (e.g. 1, 3)", required = true) int count) {
-
+        @McpToolParam(description = "Number of dice to roll (e.g. 1, 3)", required = true) int count) 
+    {
         var rolls = new int[count];
         var total = 0;
 
