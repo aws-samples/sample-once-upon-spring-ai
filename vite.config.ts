@@ -1,13 +1,14 @@
-import { fileURLToPath, URL } from 'node:url'
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
+// https://vite.dev/config/
 export default defineConfig({
-  base: '/sample-once-upon-agentic-ai/',
-  plugins: [vue()],
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
+  plugins: [react()],
+  server: {
+    proxy: {
+      "/inquire": "http://localhost:8009",
+      "/user": "http://localhost:8009",
+      "/health": "http://localhost:8009",
     },
   },
-})
+});

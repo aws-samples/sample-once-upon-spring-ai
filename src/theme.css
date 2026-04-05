@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --bg-deep: #0c0a14;
+  --bg-surface: #151222;
+  --bg-card: #1c1830;
+  --bg-card-hover: #231f3a;
+  --bg-input: #12101e;
+  --gold: #d4a843;
+  --gold-bright: #f0d060;
+  --gold-dim: #8a6d2b;
+  --red: #c0392b;
+  --red-glow: rgba(192,57,43,0.3);
+  --green: #27ae60;
+  --blue: #3498db;
+  --purple: #8e44ad;
+  --text: #e8e4f0;
+  --text-dim: #9590a8;
+  --text-muted: #5c5775;
+  --border: rgba(212,168,67,0.15);
+  --border-strong: rgba(212,168,67,0.3);
+  --glass: rgba(28,24,48,0.7);
+  --glass-light: rgba(255,255,255,0.03);
+  --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  --shadow-gold: 0 0 20px rgba(212,168,67,0.15);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+  --font-display: 'Cinzel', serif;
+  --font-body: 'Crimson Text', Georgia, serif;
+  --font-ui: 'Inter', system-ui, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  height: 100%;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
+  font-family: var(--font-body);
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg-deep);
+  background-image:
+    radial-gradient(ellipse at 15% 10%, rgba(212,168,67,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 80%, rgba(142,68,173,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(12,10,20,1) 0%, #0c0a14 100%);
+  background-attachment: fixed;
+}
+
+#root { min-height: 100vh; }
+
+button {
+  cursor: pointer;
+  border: none;
+  font-family: var(--font-ui);
+  transition: all 0.2s ease;
+}
+
+input, select, textarea {
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+/* Glass card */
+.glass-card {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
