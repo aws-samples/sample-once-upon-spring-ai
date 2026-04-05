@@ -4,10 +4,10 @@
 //SOURCES RulesTools.java
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
 //DEPS org.springframework.boot:spring-boot-starter-web:4.0.2
-//DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0-M2
-//DEPS org.springframework.ai:spring-ai-client-chat:2.0.0-M2
-//DEPS org.springframework.ai:spring-ai-vector-store:2.0.0-M2
-//DEPS org.springframework.ai:spring-ai-bedrock:2.0.0-M2
+//DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0-M4
+//DEPS org.springframework.ai:spring-ai-client-chat:2.0.0-M4
+//DEPS org.springframework.ai:spring-ai-vector-store:2.0.0-M4
+//DEPS org.springframework.ai:spring-ai-bedrock:2.0.0-M4
 //DEPS org.springaicommunity:spring-ai-a2a-server-autoconfigure:0.2.0
 //DEPS software.amazon.awssdk:bedrockruntime:2.41.34
 //DEPS software.amazon.awssdk:auth:2.41.34
@@ -57,9 +57,13 @@ import java.util.Map;
 public class RulesAgent {
 
     private static final String SYSTEM_PROMPT = """
-        You are a D&D rules expert. When asked about rules, use the queryDndRules tool once
-        to find the relevant rule, then provide a clear, concise answer with the page reference.
-        Keep responses brief and focused on the specific rule requested.
+        You are a D&D 5e rules expert. When asked about rules, ALWAYS use the queryDndRules tool
+        to find the relevant rule from the official source — never answer from memory alone.
+        Provide a clear, concise answer that includes:
+        1. The rule mechanic (what dice to roll, what modifiers apply, DCs, etc.)
+        2. The page reference from the source material
+        3. Any relevant conditions, advantages, or disadvantages
+        Keep responses focused, actionable, and ready for the Game Master to use in gameplay.
         """;
 
     public static void main(final String[] args) {
@@ -88,9 +92,18 @@ public class RulesAgent {
                     new AgentSkill.Builder()
                         .id("rules_lookup")
                         .name("D&D Rules Lookup")
-                        .description("Look up D&D 5e rules, mechanics, combat, spells, and ability checks")
-                        .tags(List.of("rules", "dnd", "mechanics"))
-                        .examples(List.of("How do attack rolls work?", "What is armor class?"))
+                        .description("""
+                            Look up any D&D 5e rule from the official Basic Rules knowledge base. Covers combat, \
+                            spellcasting, ability checks, saving throws, conditions, movement, equipment, and more. \
+                            Returns the exact rule with page references.""")
+                        .tags(List.of("rules", "dnd", "mechanics", "combat", "spells", "conditions"))
+                        .examples(List.of(
+                            "How do attack rolls work?",
+                            "What is armor class and how is it calculated?",
+                            "Rules for perception checks",
+                            "How does spellcasting work for sorcerers?",
+                            "What happens when a character is grappled?",
+                            "Rules for saving throws"))
                         .build()))
                 .protocolVersion("0.3.0")
                 .build();

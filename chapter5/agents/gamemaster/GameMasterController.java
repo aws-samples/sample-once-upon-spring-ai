@@ -1,6 +1,7 @@
 package com.amazonaws;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -32,7 +33,7 @@ record StoryOutput(
     String response,
     List<String> actionsSuggestions,
     String details,
-    List<DiceOutput> diceRolls
+    List<DiceOutput> dicesRolls
 ) {}
 
 /// REST controller — the main API the frontend or user interacts with.
@@ -45,7 +46,8 @@ class GameMasterController {
     private final ChatClient chatClient;
     private final GameMasterService remoteAgent;
     private final ToolCallback[] mcpTools;
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     private final List<Map<String, String>> conversationHistory =
             Collections.synchronizedList(new ArrayList<>());
 
@@ -73,7 +75,7 @@ class GameMasterController {
             if (!file.exists()) return Map.of("error", "Character database not found");
 
             List<Map<String, Object>> characters = mapper.readValue(
-                    file, new TypeReference<List<Map<String, Object>>>() {});
+                    file, new TypeReference<>() {});
 
             return characters.stream()
                     .filter(c -> userName.equalsIgnoreCase((String) c.get("name")))
@@ -100,16 +102,20 @@ class GameMasterController {
             log.info("Orchestrator response ready");
 
             try {
-                var storyOutput = mapper.readValue(content, StoryOutput.class);
+                var cleaned = content
+                        .replaceAll("```json\\s*", "")
+                        .replaceAll("```", "")
+                        .trim();
+                var storyOutput = mapper.readValue(cleaned, StoryOutput.class);
                 conversationHistory.add(Map.of("role", "assistant", "content", storyOutput.response()));
                 return Map.of("response", storyOutput);
-            } catch (Exception parseEx) {
+            } catch (Exception _) {
                 var fallback = new StoryOutput(content, List.of(), "Direct response", List.of());
                 conversationHistory.add(Map.of("role", "assistant", "content", content));
                 return Map.of("response", fallback);
             }
         } catch (Exception e) {
-            log.error("Error processing request: {}", e.getMessage());
+            log.error("Error processing request", e);
             return Map.of("error", "Internal server error: " + e.getMessage());
         }
     }

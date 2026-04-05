@@ -2,8 +2,8 @@
 
 //JAVA 25+
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
-//DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0-M2
-//DEPS org.springframework.ai:spring-ai-client-chat:2.0.0-M2
+//DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0-M4
+//DEPS org.springframework.ai:spring-ai-client-chat:2.0.0-M4
 //DEPS software.amazon.awssdk:bedrockruntime:2.41.34
 //DEPS software.amazon.awssdk:auth:2.41.34
 //DEPS org.slf4j:slf4j-api:2.0.17
