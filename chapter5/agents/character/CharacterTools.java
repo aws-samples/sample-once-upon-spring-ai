@@ -2,7 +2,9 @@ package com.amazonaws;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +20,13 @@ import java.util.List;
 import java.util.UUID;
 
 /// Immutable character data records — Java 25 style
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 record Stats(int strength, int dexterity, int constitution, int intelligence, int wisdom, int charisma) {}
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 record InventoryItem(String itemName, int quantity) {}
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 record Character(
     String characterId, String name, String characterClass, String race, String gender,
     int level, int experience, Stats stats, List<InventoryItem> inventory, String createdAt
@@ -102,9 +107,11 @@ class CharacterTools {
         store.insert(character);
         log.info("Created character: {} (ID: {}, {} {})", name, characterId, characterClass, race);
 
-        return "Character created: %s — %s %s (ID: %s). Stats: STR=%d DEX=%d CON=%d INT=%d WIS=%d CHA=%d"
+        return ("Character created: %s — %s %s (ID: %s). Stats: STR=%d DEX=%d CON=%d INT=%d WIS=%d CHA=%d. "
+                + "Inventory: %s")
                 .formatted(name, race, characterClass, characterId,
-                        strength, dexterity, constitution, intelligence, wisdom, charisma);
+                        strength, dexterity, constitution, intelligence, wisdom, charisma,
+                        formatInventory(inventory));
     }
 
     @Tool(description = "Find a character by name")
@@ -117,10 +124,12 @@ class CharacterTools {
         if (match.isEmpty()) return "Character with name '%s' not found".formatted(name);
 
         var c = match.get();
-        return "Found: %s — %s %s, Level %d. Stats: STR=%d DEX=%d CON=%d INT=%d WIS=%d CHA=%d"
-                .formatted(c.name(), c.race(), c.characterClass(), c.level(),
+        return ("Found: %s — %s %s, Level %d, XP=%d. Stats: STR=%d DEX=%d CON=%d INT=%d WIS=%d CHA=%d. "
+                + "Inventory: %s")
+                .formatted(c.name(), c.race(), c.characterClass(), c.level(), c.experience(),
                         c.stats().strength(), c.stats().dexterity(), c.stats().constitution(),
-                        c.stats().intelligence(), c.stats().wisdom(), c.stats().charisma());
+                        c.stats().intelligence(), c.stats().wisdom(), c.stats().charisma(),
+                        formatInventory(c.inventory()));
     }
 
     @Tool(description = "List all characters in the database")
@@ -130,8 +139,88 @@ class CharacterTools {
 
         var sb = new StringBuilder("Characters in database (%d):\n".formatted(all.size()));
         for (var c : all) {
-            sb.append("- %s (%s %s, Level %d)\n".formatted(c.name(), c.race(), c.characterClass(), c.level()));
+            sb.append("- %s (%s %s, Level %d, Inventory: %s)\n"
+                    .formatted(c.name(), c.race(), c.characterClass(), c.level(),
+                            formatInventory(c.inventory())));
         }
         return sb.toString();
+    }
+
+    @Tool(description = "Add an item to a character's inventory. Use after looting, purchasing, or receiving quest rewards.")
+    String addInventoryItem(
+            @ToolParam(description = "The character's name") String characterName,
+            @ToolParam(description = "Name of the item to add") String itemName,
+            @ToolParam(description = "Quantity to add") int quantity) {
+
+        log.info("Adding {}x {} to {}'s inventory", quantity, itemName, characterName);
+        var all = store.loadAll();
+        for (int i = 0; i < all.size(); i++) {
+            var c = all.get(i);
+            if (!c.name().equalsIgnoreCase(characterName)) continue;
+
+            var updatedInventory = new ArrayList<>(c.inventory());
+            var existing = updatedInventory.stream()
+                    .filter(item -> item.itemName().equalsIgnoreCase(itemName))
+                    .findFirst();
+
+            if (existing.isPresent()) {
+                var old = existing.get();
+                updatedInventory.remove(old);
+                updatedInventory.add(new InventoryItem(old.itemName(), old.quantity() + quantity));
+            } else {
+                updatedInventory.add(new InventoryItem(itemName, quantity));
+            }
+
+            all.set(i, new Character(c.characterId(), c.name(), c.characterClass(), c.race(),
+                    c.gender(), c.level(), c.experience(), c.stats(), updatedInventory, c.createdAt()));
+            store.saveAll(all);
+            return "Added %dx %s to %s's inventory. Current inventory: %s"
+                    .formatted(quantity, itemName, c.name(), formatInventory(updatedInventory));
+        }
+        return "Character '%s' not found.".formatted(characterName);
+    }
+
+    @Tool(description = "Remove an item from a character's inventory. Use when items are consumed, sold, lost, or broken.")
+    String removeInventoryItem(
+            @ToolParam(description = "The character's name") String characterName,
+            @ToolParam(description = "Name of the item to remove") String itemName,
+            @ToolParam(description = "Quantity to remove") int quantity) {
+
+        log.info("Removing {}x {} from {}'s inventory", quantity, itemName, characterName);
+        var all = store.loadAll();
+        for (int i = 0; i < all.size(); i++) {
+            var c = all.get(i);
+            if (!c.name().equalsIgnoreCase(characterName)) continue;
+
+            var updatedInventory = new ArrayList<>(c.inventory());
+            var existing = updatedInventory.stream()
+                    .filter(item -> item.itemName().equalsIgnoreCase(itemName))
+                    .findFirst();
+
+            if (existing.isEmpty()) {
+                return "%s doesn't have '%s' in their inventory.".formatted(c.name(), itemName);
+            }
+
+            var old = existing.get();
+            updatedInventory.remove(old);
+            var remaining = old.quantity() - quantity;
+            if (remaining > 0) {
+                updatedInventory.add(new InventoryItem(old.itemName(), remaining));
+            }
+
+            all.set(i, new Character(c.characterId(), c.name(), c.characterClass(), c.race(),
+                    c.gender(), c.level(), c.experience(), c.stats(), updatedInventory, c.createdAt()));
+            store.saveAll(all);
+            return "Removed %dx %s from %s's inventory. Current inventory: %s"
+                    .formatted(quantity, itemName, c.name(), formatInventory(updatedInventory));
+        }
+        return "Character '%s' not found.".formatted(characterName);
+    }
+
+    private static String formatInventory(List<InventoryItem> inventory) {
+        if (inventory == null || inventory.isEmpty()) return "empty";
+        return inventory.stream()
+                .map(item -> "%s x%d".formatted(item.itemName(), item.quantity()))
+                .collect(java.util.stream.Collectors.joining(", "));
     }
 }

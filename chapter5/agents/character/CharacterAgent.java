@@ -4,8 +4,8 @@
 //SOURCES CharacterTools.java
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
 //DEPS org.springframework.boot:spring-boot-starter-web:4.0.2
-//DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0-M2
-//DEPS org.springframework.ai:spring-ai-client-chat:2.0.0-M2
+//DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0-M4
+//DEPS org.springframework.ai:spring-ai-client-chat:2.0.0-M4
 //DEPS org.springaicommunity:spring-ai-a2a-server-autoconfigure:0.2.0
 //DEPS software.amazon.awssdk:bedrockruntime:2.41.34
 //DEPS software.amazon.awssdk:auth:2.41.34
@@ -47,12 +47,13 @@ import java.util.Map;
 public class CharacterAgent {
 
     private static final String SYSTEM_PROMPT = """
-        You are a D&D character management specialist. When creating characters, always roll ability scores
-        using the traditional method: roll 4d6 and drop the lowest die for each of the six abilities
-        (Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma).
+        You are a D&D character management specialist. You handle character creation, lookup, and inventory.
+        When creating characters, always roll ability scores using the traditional method: roll 4d6 and drop
+        the lowest die for each of the six abilities (Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma).
         Use the appropriate tools to create, find, or list characters as requested.
-        Provide clear confirmations when characters are created and helpful summaries when characters are found.
-        Keep responses focused and include relevant character details like class, race, and key stats.
+        When finding a character, always include their full stats, level, XP, AND inventory in the response.
+        For inventory management, use addInventoryItem and removeInventoryItem to track equipment, loot, and gold.
+        Keep responses focused and always include ALL character details: class, race, stats, and inventory.
         """;
 
     public static void main(final String[] args) {
@@ -90,15 +91,27 @@ public class CharacterAgent {
     //                       .build(),
     //                   new AgentSkill.Builder()
     //                       .id("find_character").name("Find Character")
-    //                       .description("Find an existing character by name")
-    //                       .tags(List.of("character", "lookup"))
+    //                       .description("Find an existing character by name — returns full stats, level, XP, and inventory")
+    //                       .tags(List.of("character", "lookup", "inventory"))
     //                       .examples(List.of("Find the character named Ragnar"))
     //                       .build(),
     //                   new AgentSkill.Builder()
     //                       .id("list_characters").name("List Characters")
-    //                       .description("List all characters in the database")
+    //                       .description("List all characters in the database with their inventory")
     //                       .tags(List.of("character", "list"))
     //                       .examples(List.of("List all characters"))
+    //                       .build(),
+    //                   new AgentSkill.Builder()
+    //                       .id("add_inventory").name("Add Inventory Item")
+    //                       .description("Add an item to a character's inventory — use for loot, purchases, or quest rewards")
+    //                       .tags(List.of("character", "inventory", "loot"))
+    //                       .examples(List.of("Add a Longsword to Ragnar's inventory", "Give Lyria 50 gold pieces"))
+    //                       .build(),
+    //                   new AgentSkill.Builder()
+    //                       .id("remove_inventory").name("Remove Inventory Item")
+    //                       .description("Remove an item from a character's inventory — use when items are consumed, sold, or lost")
+    //                       .tags(List.of("character", "inventory"))
+    //                       .examples(List.of("Remove a health potion from Ragnar's inventory"))
     //                       .build()))
     //               .protocolVersion("0.3.0")
     //               .build();

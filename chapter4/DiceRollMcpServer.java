@@ -3,9 +3,7 @@
 //JAVA 25+
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
 //DEPS org.springframework.boot:spring-boot-starter-web:4.0.2
-//DEPS org.springframework.ai:spring-ai-starter-mcp-server-webmvc:2.0.0-M2
-//DEPS org.springaicommunity:mcp-annotations:0.8.0
-//DEPS io.modelcontextprotocol.sdk:mcp:1.0.0
+//DEPS org.springframework.ai:spring-ai-starter-mcp-server-webmvc:2.0.0-M4
 
 package com.amazonaws;
 
@@ -16,6 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Component;
 
 // TODO 1: Import the MCP annotation classes that will expose your tools over the network.
+//   Hint: The annotations are in org.springframework.ai.mcp.annotation (McpTool, McpToolParam)
 
 
 import java.util.Arrays;

@@ -6,22 +6,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import io.a2a.A2A;
 import io.a2a.client.Client;
-import io.a2a.client.ClientEvent;
 import io.a2a.client.TaskEvent;
 import io.a2a.client.config.ClientConfig;
 import io.a2a.client.transport.jsonrpc.JSONRPCTransport;
 import io.a2a.client.transport.jsonrpc.JSONRPCTransportConfig;
 import io.a2a.spec.AgentCard;
-import io.a2a.spec.Artifact;
 import io.a2a.spec.Message;
-import io.a2a.spec.Part;
-import io.a2a.spec.Task;
 import io.a2a.spec.TextPart;
 
 import org.slf4j.Logger;
@@ -41,14 +35,12 @@ class GameMasterService {
     private final Map<String, AgentCard> cards = new HashMap<>();
 
     GameMasterService(@Value("${remote.agents.urls}") List<String> agentUrls) {
-        for (String url : agentUrls) {
+        for (var url : agentUrls) {
             try {
                 log.info("Resolving agent card from: {}", url);
-
-                String path = new URI(url).getPath();
-                AgentCard card = A2A.getAgentCard(url, path + ".well-known/agent-card.json", null);
-
-                this.cards.put(card.name(), card);
+                var path = new URI(url).getPath();
+                var card = A2A.getAgentCard(url, path + ".well-known/agent-card.json", null);
+                cards.put(card.name(), card);
                 log.info("Discovered agent: {} at {}", card.name(), url);
             } catch (Exception e) {
                 log.error("Failed to connect to agent at {}: {}", url, e.getMessage());
@@ -66,10 +58,10 @@ class GameMasterService {
 
         log.info("Sending message to agent '{}': {}", agentName, task);
 
-        AgentCard agentCard = this.cards.get(agentName);
+        var agentCard = cards.get(agentName);
         if (agentCard == null) {
-            String availableAgents = String.join(", ", this.cards.keySet());
-            return "Agent '%s' not found. Available agents: %s".formatted(agentName, availableAgents);
+            return "Agent '%s' not found. Available agents: %s"
+                    .formatted(agentName, String.join(", ", cards.keySet()));
         }
 
         try {
@@ -78,44 +70,32 @@ class GameMasterService {
                     .parts(List.of(new TextPart(task, null)))
                     .build();
 
-            CompletableFuture<String> responseFuture = new CompletableFuture<>();
-            AtomicReference<String> responseText = new AtomicReference<>("");
+            var responseFuture = new CompletableFuture<String>();
 
-            BiConsumer<ClientEvent, AgentCard> consumer = (event, card) -> {
-                if (event instanceof TaskEvent taskEvent) {
-                    Task completedTask = taskEvent.getTask();
-                    log.info("Received task response: status={}", completedTask.getStatus().state());
-
-                    if (completedTask.getArtifacts() != null) {
-                        var sb = new StringBuilder();
-                        for (Artifact artifact : completedTask.getArtifacts()) {
-                            if (artifact.parts() != null) {
-                                for (Part<?> part : artifact.parts()) {
-                                    if (part instanceof TextPart textPart) {
-                                        sb.append(textPart.getText());
+            var client = Client.builder(agentCard)
+                    .clientConfig(new ClientConfig.Builder().setAcceptedOutputModes(List.of("text")).build())
+                    .withTransport(JSONRPCTransport.class, new JSONRPCTransportConfig())
+                    .addConsumers(List.of((event, _) -> {
+                        if (event instanceof TaskEvent taskEvent) {
+                            var completedTask = taskEvent.getTask();
+                            log.info("Received task response: status={}", completedTask.getStatus().state());
+                            var sb = new StringBuilder();
+                            if (completedTask.getArtifacts() != null) {
+                                for (var artifact : completedTask.getArtifacts()) {
+                                    if (artifact.parts() == null) continue;
+                                    for (var part : artifact.parts()) {
+                                        if (part instanceof TextPart textPart) sb.append(textPart.getText());
                                     }
                                 }
                             }
+                            responseFuture.complete(sb.toString());
                         }
-                        responseText.set(sb.toString());
-                    }
-                    responseFuture.complete(responseText.get());
-                }
-            };
-
-            var clientConfig = new ClientConfig.Builder()
-                    .setAcceptedOutputModes(List.of("text"))
-                    .build();
-
-            var client = Client.builder(agentCard)
-                    .clientConfig(clientConfig)
-                    .withTransport(JSONRPCTransport.class, new JSONRPCTransportConfig())
-                    .addConsumers(List.of(consumer))
+                    }))
                     .build();
 
             client.sendMessage(message);
 
-            String result = responseFuture.get(60, TimeUnit.SECONDS);
+            var result = responseFuture.get(60, TimeUnit.SECONDS);
             log.info("Agent '{}' response: {}", agentName, result);
             return "[Raw data from %s — rewrite in your own Game Master voice]: %s".formatted(agentName, result);
         } catch (Exception e) {
@@ -124,16 +104,32 @@ class GameMasterService {
         }
     }
 
+    /// Builds rich agent descriptions from A2A agent cards, including skills
+    /// discovered via A2A.getAgentCard(). This gives the LLM full visibility into
+    /// what each remote agent can do.
     String getAgentDescriptions() {
-        return this.cards.values().stream()
-                .map(card -> """
-                    {"name": "%s", "description": "%s"}""".formatted(
-                        card.name(),
-                        card.description() != null ? card.description() : "No description"))
+        return cards.values().stream()
+                .map(card -> {
+                    var sb = new StringBuilder();
+                    sb.append("Agent: %s\n".formatted(card.name()));
+                    sb.append("  Description: %s\n".formatted(
+                            card.description() != null ? card.description() : "No description"));
+                    if (card.skills() != null && !card.skills().isEmpty()) {
+                        sb.append("  Skills:\n");
+                        for (var skill : card.skills()) {
+                            sb.append("    - %s: %s\n".formatted(skill.name(), skill.description()));
+                            if (skill.examples() != null && !skill.examples().isEmpty()) {
+                                sb.append("      Examples: %s\n".formatted(
+                                        String.join(", ", skill.examples())));
+                            }
+                        }
+                    }
+                    return sb.toString();
+                })
                 .collect(Collectors.joining("\n"));
     }
 
     List<String> getAgentNames() {
-        return List.copyOf(this.cards.keySet());
+        return List.copyOf(cards.keySet());
     }
 }
