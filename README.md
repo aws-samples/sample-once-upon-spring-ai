@@ -42,10 +42,10 @@ Your journey through the realms of AI agents is carefully structured as a progre
 
 ### 🏰 [Chapter 5: The Council of Agents - A2A Mastery](chapter5/)
 **Command multiple agents in perfect harmony**
-- Build a complete multi-agent D&D system
+- Build a complete multi-agent D&D system with character inventory management
 - Master Agent-to-Agent (A2A) communication with `AgentCard` and `AgentExecutor`
 - Orchestrate specialized agents (Rules, Character, Game Master) working together
-- Combine A2A, MCP, and RAG in a single architecture
+- Combine A2A, MCP, RAG, and conversation memory in a single architecture
 
 ## 🎒 Preparing for Your Quest
 
@@ -141,7 +141,6 @@ Spring AI is a powerful framework for creating AI-powered applications in Java -
 ```
 once-upon-spring-ai/
 ├── README.md
-├── AGENTS.md                          # Development guide
 ├── chapter1/                          # 🧙‍♂️ The Art of Agent Summoning
 │   └── DungeonMasterSimple.java
 ├── chapter2/                          # ⚔️ AI Agent with Built-in Tools
@@ -155,9 +154,16 @@ once-upon-spring-ai/
 │   └── application.properties
 └── chapter5/                          # 🏰 The Council of Agents (A2A)
     ├── agents/
-    │   ├── rules/                     # D&D rules lookup agent
-    │   ├── character/                 # Character management agent
-    │   └── gamemaster/                # Orchestrator agent
+    │   ├── rules/                     # D&D rules lookup agent (RAG)
+    │   │   ├── RulesAgent.java
+    │   │   └── RulesTools.java
+    │   ├── character/                 # Character & inventory management agent
+    │   │   ├── CharacterAgent.java
+    │   │   └── CharacterTools.java
+    │   └── gamemaster/                # Orchestrator with memory & A2A + MCP
+    │       ├── GameMasterOrchestrator.java
+    │       ├── GameMasterService.java
+    │       └── GameMasterController.java
     └── utils/
         └── CreateKnowledgeBase.java   # PDF to vector store ingestion
 ```
