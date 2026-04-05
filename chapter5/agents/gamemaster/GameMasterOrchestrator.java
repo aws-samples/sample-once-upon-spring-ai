@@ -82,9 +82,9 @@ public class GameMasterOrchestrator {
 
         When responding, always structure your output as JSON with these fields:
         - "response": Your synthesized narrative response as Game Master (MUST be in your own words, not a copy of agent output)
-        - "actionsSuggestions": A list of 3 suggested actions for the player
+        - "actions_suggestions": A list of 3 suggested actions for the player
         - "details": Brief summary of which tools/agents were consulted
-        - "diceRolls": A list of dice rolls, each with "diceType", "result", and "reason"
+        - "dices_rolls": A list of dice rolls, each with "dice_type", "result", and "reason"
         """;
 
     public static void main(final String[] args) {

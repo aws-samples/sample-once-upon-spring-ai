@@ -2,6 +2,8 @@ package com.amazonaws;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +24,10 @@ import java.util.Map;
 
 record InquireRequest(String question) {}
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 record DiceOutput(String diceType, String result, String reason) {}
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 record StoryOutput(
     String response,
     List<String> actionsSuggestions,

@@ -2,7 +2,9 @@ package com.amazonaws;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +20,13 @@ import java.util.List;
 import java.util.UUID;
 
 /// Immutable character data records — Java 25 style
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 record Stats(int strength, int dexterity, int constitution, int intelligence, int wisdom, int charisma) {}
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 record InventoryItem(String itemName, int quantity) {}
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 record Character(
     String characterId, String name, String characterClass, String race, String gender,
     int level, int experience, Stats stats, List<InventoryItem> inventory, String createdAt
