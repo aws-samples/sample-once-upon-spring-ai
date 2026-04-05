@@ -42,9 +42,10 @@ Your journey through the realms of AI agents is carefully structured as a progre
 
 ### 🏰 [Chapter 5: The Council of Agents - A2A Mastery](chapter5/)
 **Command multiple agents in perfect harmony**
-- Build a complete multi-agent D&D system
+- Build a complete multi-agent D&D system with character inventory management
 - Master Agent-to-Agent (A2A) communication with `AgentCard` and `AgentExecutor`
 - Orchestrate specialized agents (Rules, Character, Game Master) working together
+- Implement conversation memory with `MessageChatMemoryAdvisor`
 - Combine A2A, MCP, and RAG in a single architecture
 
 ## 🎒 Preparing for Your Quest
@@ -154,11 +155,21 @@ sample-once-upon-spring-ai/
 │   └── application.properties
 └── chapter5/                          # 🏰 The Council of Agents (A2A)
     ├── agents/
-    │   ├── rules/                     # D&D rules lookup agent
-    │   ├── character/                 # Character management agent
-    │   └── gamemaster/                # Orchestrator agent
+    │   ├── rules/
+    │   │   ├── RulesAgent.java        # D&D rules lookup agent with RAG
+    │   │   └── RulesTools.java        # PDF knowledge base search tools
+    │   ├── character/
+    │   │   ├── CharacterAgent.java    # Character management agent
+    │   │   ├── CharacterTools.java    # Character CRUD & inventory tools
+    │   │   └── characters.json        # Persistent character storage
+    │   └── gamemaster/
+    │       ├── GameMasterOrchestrator.java  # Spring Boot app with A2A + MCP
+    │       ├── GameMasterService.java       # Agent discovery & orchestration
+    │       └── GameMasterController.java    # REST API endpoints
+    ├── test/
+    │   └── test.http                  # HTTP test requests
     └── utils/
-        └── CreateKnowledgeBase.java   # PDF to vector store ingestion
+        ├── CreateKnowledgeBase.java   # PDF to vector store ingestion
 ```
 
 ## ☁️ Amazon Bedrock Models
