@@ -2,12 +2,10 @@
 
 //JAVA 25+
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
-//DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0-M4
-//DEPS org.springframework.ai:spring-ai-client-chat:2.0.0-M4
-//DEPS org.springframework.ai:spring-ai-mcp:2.0.0-M4
+//SOURCES ../config/BedrockChatModelConfig.java
+//DEPS org.springframework.ai:spring-ai-client-chat:2.0.0-M2
+//DEPS org.springframework.ai:spring-ai-mcp:2.0.0-M2
 //DEPS io.modelcontextprotocol.sdk:mcp:1.0.0
-//DEPS software.amazon.awssdk:bedrockruntime:2.41.34
-//DEPS software.amazon.awssdk:auth:2.41.34
 //DEPS org.slf4j:slf4j-api:2.0.17
 //DEPS org.slf4j:slf4j-simple:2.0.17
 
@@ -15,16 +13,12 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.ai.bedrock.converse.BedrockProxyChatModel;
-import org.springframework.ai.bedrock.converse.BedrockChatOptions;
 import org.springframework.ai.chat.client.ChatClient;
+
 import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
 import io.modelcontextprotocol.spec.McpSchema;
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
 private static final Logger log = LoggerFactory.getLogger("DungeonMasterMCPClient");
 
@@ -33,12 +27,11 @@ void main() {
     log.info("Connecting to D&D Dice Roll MCP Server...");
 
     var transport = HttpClientStreamableHttpTransport.builder("http://localhost:8080")
-            .endpoint("/mcp")
-            .build();
+        .build();
 
     var mcpClient = McpClient.sync(transport)
-            .clientInfo(new McpSchema.Implementation("dice-mcp-client", "1.0.0"))
-            .build();
+        .clientInfo(new McpSchema.Implementation("dice-mcp-client", "1.0.0"))
+        .build();
 
     try {
         mcpClient.initialize();
@@ -55,20 +48,7 @@ void main() {
         var mcpTools = mcpToolProvider.getToolCallbacks();
 
         // Step 4: Create AWS Bedrock ChatModel
-        var bedrockClient = BedrockRuntimeClient.builder()
-                .region(Region.US_WEST_2)
-                .credentialsProvider(DefaultCredentialsProvider.builder().build())
-                .build();
-
-        var modelId = "us.anthropic.claude-haiku-4-5-20251001-v1:0";
-        var options = BedrockChatOptions.builder()
-                .model(modelId)
-                .build();
-
-        var chatModel = BedrockProxyChatModel.builder()
-                .bedrockRuntimeClient(bedrockClient)
-                .defaultOptions(options)
-                .build();
+        var chatModel = BedrockChatModelConfig.createChatModel();
 
         // Step 5: Build ChatClient with system prompt (tools registered from MCP Server)
         var agent = ChatClient.builder(chatModel)
