@@ -31,7 +31,7 @@ void main() {
         .build();
 
     // Step 2: Configure model options (which Claude model to use)
-    var modelId = "global.anthropic.claude-haiku-4-5-20251001-v1:0";
+    var modelId = "us.anthropic.claude-haiku-4-5-20251001-v1:0";
     var options = BedrockChatOptions.builder()
         .model(modelId)
         .build();
