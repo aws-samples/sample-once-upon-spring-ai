@@ -5,6 +5,8 @@
 *.class
 
 # IDE
+.idea/
+.vscode/
 *.iml
 *.ipr
 *.iws
@@ -26,6 +28,7 @@ CLAUDE.md
 .kiro/
 .cursor/
 .windsurf/
+.vscode/
 
 # Maven
 pom.xml.tag
