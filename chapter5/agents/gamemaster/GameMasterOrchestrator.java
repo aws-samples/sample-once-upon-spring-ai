@@ -52,7 +52,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
@@ -197,9 +197,11 @@ class ChatModelConfig {
 
     @Bean
     BedrockProxyChatModel chatModel() {
+        var bearerToken = System.getenv("AWS_BEARER_TOKEN_BEDROCK");
         var bedrockClient = BedrockRuntimeClient.builder()
                 .region(Region.US_WEST_2)
-                .credentialsProvider(DefaultCredentialsProvider.builder().build())
+                .credentialsProvider(AnonymousCredentialsProvider.create())
+                .overrideConfiguration(c -> c.putHeader("Authorization", "Bearer " + bearerToken))
                 .build();
 
         var options = BedrockChatOptions.builder()

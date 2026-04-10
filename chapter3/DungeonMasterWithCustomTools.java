@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ai.bedrock.converse.BedrockProxyChatModel;
 import org.springframework.ai.bedrock.converse.BedrockChatOptions;
 import org.springframework.ai.chat.client.ChatClient;
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
@@ -24,10 +24,18 @@ private static final Logger log = LoggerFactory.getLogger("DungeonMasterWithCust
 void main() {
     log.info("=== Starting Dungeon Master AI Agent with Custom Tools ===");
 
-    // Step 1: Create AWS Bedrock Runtime Client
+    // Step 1: Read the Bedrock API key from environment
+    var bearerToken = System.getenv("AWS_BEARER_TOKEN_BEDROCK");
+    if (bearerToken == null || bearerToken.isBlank()) {
+        log.error("Set AWS_BEARER_TOKEN_BEDROCK first — get your key from the Amazon Bedrock Console → API keys → Short-term API keys");
+        return;
+    }
+
+    // Step 2: Create AWS Bedrock Runtime Client with API key (bearer token auth)
     var bedrockClient = BedrockRuntimeClient.builder()
         .region(Region.US_WEST_2)
-        .credentialsProvider(DefaultCredentialsProvider.builder().build())
+        .credentialsProvider(AnonymousCredentialsProvider.create())
+        .overrideConfiguration(c -> c.putHeader("Authorization", "Bearer " + bearerToken))
         .build();
 
     // Step 2: Configure model options

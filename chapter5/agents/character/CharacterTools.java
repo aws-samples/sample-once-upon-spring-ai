@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /// Immutable character data records — Java 25 style
@@ -32,37 +33,61 @@ record Character(
     int level, int experience, Stats stats, List<InventoryItem> inventory, String createdAt
 ) {}
 
-/// Persistent JSON-based character storage
+/// Persistent JSON-based character storage — thread-safe via synchronized in-memory list.
 @Service
 class CharacterStore {
 
     private static final Logger log = LoggerFactory.getLogger(CharacterStore.class);
     private static final String DB_FILE = "characters.json";
     private final ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+    private final List<Character> characters;
 
-    List<Character> loadAll() {
+    CharacterStore() {
         var file = new File(DB_FILE);
-        if (!file.exists()) return new ArrayList<>();
-        try {
-            return mapper.readValue(file, new TypeReference<List<Character>>() {});
-        } catch (IOException e) {
-            log.error("Error reading characters DB: {}", e.getMessage());
-            return new ArrayList<>();
+        if (file.exists()) {
+            try {
+                characters = new ArrayList<>(mapper.readValue(file, new TypeReference<List<Character>>() {}));
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to load characters DB", e);
+            }
+        } else {
+            characters = new ArrayList<>();
         }
     }
 
-    void saveAll(List<Character> characters) {
+    synchronized List<Character> getAll() {
+        return List.copyOf(characters);
+    }
+
+    synchronized Optional<Character> findByName(String name) {
+        return characters.stream()
+                .filter(c -> c.name().equalsIgnoreCase(name))
+                .findFirst();
+    }
+
+    synchronized void insert(Character character) {
+        characters.add(character);
+        persist();
+    }
+
+    synchronized Optional<Character> updateByName(String name, java.util.function.UnaryOperator<Character> updater) {
+        for (int i = 0; i < characters.size(); i++) {
+            if (characters.get(i).name().equalsIgnoreCase(name)) {
+                var updated = updater.apply(characters.get(i));
+                characters.set(i, updated);
+                persist();
+                return Optional.of(updated);
+            }
+        }
+        return Optional.empty();
+    }
+
+    private void persist() {
         try {
             mapper.writeValue(new File(DB_FILE), characters);
         } catch (IOException e) {
             log.error("Error writing characters DB: {}", e.getMessage());
         }
-    }
-
-    void insert(Character character) {
-        var all = loadAll();
-        all.add(character);
-        saveAll(all);
     }
 }
 
@@ -117,9 +142,7 @@ class CharacterTools {
     @Tool(description = "Find a character by name")
     String findCharacterByName(@ToolParam(description = "The character's name to search for") String name) {
         log.info("Searching for character: '{}'", name);
-        var match = store.loadAll().stream()
-                .filter(c -> c.name().equalsIgnoreCase(name))
-                .findFirst();
+        var match = store.findByName(name);
 
         if (match.isEmpty()) return "Character with name '%s' not found".formatted(name);
 
@@ -134,7 +157,7 @@ class CharacterTools {
 
     @Tool(description = "List all characters in the database")
     String listAllCharacters() {
-        var all = store.loadAll();
+        var all = store.getAll();
         if (all.isEmpty()) return "No characters found in the database.";
 
         var sb = new StringBuilder("Characters in database (%d):\n".formatted(all.size()));
@@ -153,11 +176,7 @@ class CharacterTools {
             @ToolParam(description = "Quantity to add") int quantity) {
 
         log.info("Adding {}x {} to {}'s inventory", quantity, itemName, characterName);
-        var all = store.loadAll();
-        for (int i = 0; i < all.size(); i++) {
-            var c = all.get(i);
-            if (!c.name().equalsIgnoreCase(characterName)) continue;
-
+        var result = store.updateByName(characterName, c -> {
             var updatedInventory = new ArrayList<>(c.inventory());
             var existing = updatedInventory.stream()
                     .filter(item -> item.itemName().equalsIgnoreCase(itemName))
@@ -171,13 +190,14 @@ class CharacterTools {
                 updatedInventory.add(new InventoryItem(itemName, quantity));
             }
 
-            all.set(i, new Character(c.characterId(), c.name(), c.characterClass(), c.race(),
-                    c.gender(), c.level(), c.experience(), c.stats(), updatedInventory, c.createdAt()));
-            store.saveAll(all);
-            return "Added %dx %s to %s's inventory. Current inventory: %s"
-                    .formatted(quantity, itemName, c.name(), formatInventory(updatedInventory));
-        }
-        return "Character '%s' not found.".formatted(characterName);
+            return new Character(c.characterId(), c.name(), c.characterClass(), c.race(),
+                    c.gender(), c.level(), c.experience(), c.stats(), updatedInventory, c.createdAt());
+        });
+
+        return result
+                .map(c -> "Added %dx %s to %s's inventory. Current inventory: %s"
+                        .formatted(quantity, itemName, c.name(), formatInventory(c.inventory())))
+                .orElse("Character '%s' not found.".formatted(characterName));
     }
 
     @Tool(description = "Remove an item from a character's inventory. Use when items are consumed, sold, lost, or broken.")
@@ -187,34 +207,35 @@ class CharacterTools {
             @ToolParam(description = "Quantity to remove") int quantity) {
 
         log.info("Removing {}x {} from {}'s inventory", quantity, itemName, characterName);
-        var all = store.loadAll();
-        for (int i = 0; i < all.size(); i++) {
-            var c = all.get(i);
-            if (!c.name().equalsIgnoreCase(characterName)) continue;
 
+        var character = store.findByName(characterName);
+        if (character.isEmpty()) return "Character '%s' not found.".formatted(characterName);
+
+        var hasItem = character.get().inventory().stream()
+                .anyMatch(item -> item.itemName().equalsIgnoreCase(itemName));
+        if (!hasItem) return "%s doesn't have '%s' in their inventory.".formatted(character.get().name(), itemName);
+
+        var result = store.updateByName(characterName, c -> {
             var updatedInventory = new ArrayList<>(c.inventory());
             var existing = updatedInventory.stream()
                     .filter(item -> item.itemName().equalsIgnoreCase(itemName))
-                    .findFirst();
+                    .findFirst()
+                    .get();
 
-            if (existing.isEmpty()) {
-                return "%s doesn't have '%s' in their inventory.".formatted(c.name(), itemName);
-            }
-
-            var old = existing.get();
-            updatedInventory.remove(old);
-            var remaining = old.quantity() - quantity;
+            updatedInventory.remove(existing);
+            var remaining = existing.quantity() - quantity;
             if (remaining > 0) {
-                updatedInventory.add(new InventoryItem(old.itemName(), remaining));
+                updatedInventory.add(new InventoryItem(existing.itemName(), remaining));
             }
 
-            all.set(i, new Character(c.characterId(), c.name(), c.characterClass(), c.race(),
-                    c.gender(), c.level(), c.experience(), c.stats(), updatedInventory, c.createdAt()));
-            store.saveAll(all);
-            return "Removed %dx %s from %s's inventory. Current inventory: %s"
-                    .formatted(quantity, itemName, c.name(), formatInventory(updatedInventory));
-        }
-        return "Character '%s' not found.".formatted(characterName);
+            return new Character(c.characterId(), c.name(), c.characterClass(), c.race(),
+                    c.gender(), c.level(), c.experience(), c.stats(), updatedInventory, c.createdAt());
+        });
+
+        return result
+                .map(c -> "Removed %dx %s from %s's inventory. Current inventory: %s"
+                        .formatted(quantity, itemName, c.name(), formatInventory(c.inventory())))
+                .orElse("Character '%s' not found.".formatted(characterName));
     }
 
     private static String formatInventory(List<InventoryItem> inventory) {
