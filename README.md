@@ -78,15 +78,29 @@ Before embarking on this legendary adventure, ensure you have:
    java -version   # Should show: openjdk version "25"
    ```
 
-3. **AWS credentials** configured with **permissions to Amazon Bedrock**
-   ```bash
-   export AWS_ACCESS_KEY_ID=your-access-key
-   export AWS_SECRET_ACCESS_KEY=your-secret-key
-   export AWS_REGION=us-west-2
-   ```
-   You can use any model available in your Amazon Bedrock account — just update the model ID in each chapter's source file.
+3. **Amazon Bedrock API Key** — this content uses **Amazon Bedrock** so make sure to get your API key to get started
 
-4. **A sense of adventure** and willingness to experiment! 🎲
+   1. Sign in to the [Amazon Bedrock Console](https://console.aws.amazon.com/bedrock)
+   2. In the left navigation pane, select **API keys**
+   3. Click the **Short-term API keys** tab, then choose **Generate short-term API key**
+   4. Copy the generated API key and set it as an environment variable:
+
+   ```bash
+   export AWS_BEARER_TOKEN_BEDROCK=<your-api-key>
+   ```
+
+   > **Note:** Short-term API keys expire automatically and require no AWS CLI installation or IAM key pair management.
+
+4. **IntelliJ IDEA IDE** (optional) — for full IntelliJ IDEA IDE support, feel free to export any chapter as a Maven project for example:
+   ```bash
+   cd chapter1
+   jbang export maven DungeonMasterSimple.java
+   ```
+   This generates a `DungeonMasterSimple/` subfolder with a standard `pom.xml` and Maven wrapper. Open that folder in your IntelliJ IDE for autocomplete, autoimport, and error highlighting. You still run code with `jbang` from the CLI — the export is for IDE support only.
+
+   > **Note:** Keep the exported Maven project in its subfolder to avoid conflicts between `pom.xml` and JBang files.
+
+5. **A sense of adventure** and willingness to experiment! 🎲
 
 ### 🚀 Run Your First Chapter
 
