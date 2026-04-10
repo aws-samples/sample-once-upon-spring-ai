@@ -45,7 +45,8 @@ Your journey through the realms of AI agents is carefully structured as a progre
 - Build a complete multi-agent D&D system with character inventory management
 - Master Agent-to-Agent (A2A) communication with `AgentCard` and `AgentExecutor`
 - Orchestrate specialized agents (Rules, Character, Game Master) working together
-- Combine A2A, MCP, RAG, and conversation memory in a single architecture
+- Implement conversation memory with `MessageChatMemoryAdvisor`
+- Combine A2A, MCP, and RAG in a single architecture
 
 ## 🎒 Preparing for Your Quest
 
@@ -153,7 +154,7 @@ Spring AI is a powerful framework for creating AI-powered applications in Java -
 ## 🗂️ Project Structure
 
 ```
-once-upon-spring-ai/
+sample-once-upon-spring-ai/
 ├── README.md
 ├── chapter1/                          # 🧙‍♂️ The Art of Agent Summoning
 │   └── DungeonMasterSimple.java
@@ -168,27 +169,30 @@ once-upon-spring-ai/
 │   └── application.properties
 └── chapter5/                          # 🏰 The Council of Agents (A2A)
     ├── agents/
-    │   ├── rules/                     # D&D rules lookup agent (RAG)
-    │   │   ├── RulesAgent.java
-    │   │   └── RulesTools.java
-    │   ├── character/                 # Character & inventory management agent
-    │   │   ├── CharacterAgent.java
-    │   │   └── CharacterTools.java
-    │   └── gamemaster/                # Orchestrator with memory & A2A + MCP
-    │       ├── GameMasterOrchestrator.java
-    │       ├── GameMasterService.java
-    │       └── GameMasterController.java
+    │   ├── rules/
+    │   │   ├── RulesAgent.java        # D&D rules lookup agent with RAG
+    │   │   └── RulesTools.java        # PDF knowledge base search tools
+    │   ├── character/
+    │   │   ├── CharacterAgent.java    # Character management agent
+    │   │   ├── CharacterTools.java    # Character CRUD & inventory tools
+    │   │   └── characters.json        # Persistent character storage
+    │   └── gamemaster/
+    │       ├── GameMasterOrchestrator.java  # Spring Boot app with A2A + MCP
+    │       ├── GameMasterService.java       # Agent discovery & orchestration
+    │       └── GameMasterController.java    # REST API endpoints
+    ├── test/
+    │   └── test.http                  # HTTP test requests
     └── utils/
-        └── CreateKnowledgeBase.java   # PDF to vector store ingestion
+        ├── CreateKnowledgeBase.java   # PDF to vector store ingestion
 ```
 
 ## ☁️ Amazon Bedrock Models
 
-Participants must have **permissions to Amazon Bedrock** in their AWS account. You can use any model available in your Bedrock console — simply update the model ID in each chapter's source file to match your preferred model.
+You must have **permissions to Amazon Bedrock** in an AWS account. You can use any model available in your Bedrock console — simply update the model ID in each chapter's source file to match your preferred model.
 
-The workshop examples default to:
+This content default to:
 
-- 🎭 **Anthropic Claude** (via Bedrock) — All chapters
+- 🎭 **Anthropic Claude** (via Amazon Bedrock) — All chapters
 - 🧮 **Amazon Titan Embed Text V2** — Chapter 5 (vector store embeddings)
 
 ## 🎓 Learning Objectives
