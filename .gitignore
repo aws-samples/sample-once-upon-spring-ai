@@ -28,6 +28,7 @@ CLAUDE.md
 .kiro/
 .cursor/
 .windsurf/
+.vscode/
 
 # Maven
 pom.xml.tag

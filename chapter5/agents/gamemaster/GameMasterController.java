@@ -1,6 +1,5 @@
 package com.amazonaws;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -71,16 +69,9 @@ class GameMasterController {
     @GetMapping("/user/{userName}")
     Object getUser(@PathVariable String userName) {
         try {
-            var file = new File("./../character/characters.json");
-            if (!file.exists()) return Map.of("error", "Character database not found");
-
-            List<Map<String, Object>> characters = mapper.readValue(
-                    file, new TypeReference<>() {});
-
-            return characters.stream()
-                    .filter(c -> userName.equalsIgnoreCase((String) c.get("name")))
-                    .findFirst()
-                    .orElse(Map.of("error", "Character with name '%s' not found".formatted(userName)));
+            var result = remoteAgent.sendMessage("Character Agent",
+                    "Find the character named %s. Return their full stats, level, XP, and inventory.".formatted(userName));
+            return Map.of("response", result);
         } catch (Exception e) {
             return Map.of("error", e.getMessage());
         }
