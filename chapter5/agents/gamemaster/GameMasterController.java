@@ -38,7 +38,7 @@ record StoryOutput(
 
 /// REST controller — the main API the frontend or user interacts with.
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:5173")
 class GameMasterController {
 
     private static final Logger log = LoggerFactory.getLogger("GameMasterController");
