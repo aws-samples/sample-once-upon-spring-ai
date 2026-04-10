@@ -80,7 +80,7 @@ Before embarking on this legendary adventure, ensure you have:
 
 3. **Amazon Bedrock API Key** — this content uses **Amazon Bedrock** so make sure to get your API key to get started
 
-   1. Sign in to the [Amazon Bedrock Console](https://console.aws.amazon.com/bedrock)
+   1. Sign in to the <a href="https://console.aws.amazon.com/bedrock" target="_blank">Amazon Bedrock Console</a>
    2. In the left navigation pane, select **API keys**
    3. Click the **Short-term API keys** tab, then choose **Generate short-term API key**
    4. Copy the generated API key and set it as an environment variable:
