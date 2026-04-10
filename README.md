@@ -188,11 +188,11 @@ sample-once-upon-spring-ai/
 
 ## ☁️ Amazon Bedrock Models
 
-Participants must have **permissions to Amazon Bedrock** in their AWS account. You can use any model available in your Bedrock console — simply update the model ID in each chapter's source file to match your preferred model.
+You must have **permissions to Amazon Bedrock** in an AWS account. You can use any model available in your Bedrock console — simply update the model ID in each chapter's source file to match your preferred model.
 
-The workshop examples default to:
+This content default to:
 
-- 🎭 **Anthropic Claude** (via Bedrock) — All chapters
+- 🎭 **Anthropic Claude** (via Amazon Bedrock) — All chapters
 - 🧮 **Amazon Titan Embed Text V2** — Chapter 5 (vector store embeddings)
 
 ## 🎓 Learning Objectives
