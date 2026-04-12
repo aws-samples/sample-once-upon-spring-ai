@@ -19,6 +19,7 @@
 *~
 
 # IDE/tools
+.playwright-mcp/
 .claude/
 .omc/
 CLAUDE.md
