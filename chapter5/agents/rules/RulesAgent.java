@@ -1,8 +1,8 @@
 ///usr/bin/env jbang "$0" "$@" ; exit $?
 
 //JAVA 25+
-//SOURCES RulesTools.java
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
+//SOURCES RulesTools.java,../../../config/BedrockChatModelConfig.java
 //DEPS org.springframework.boot:spring-boot-starter-web:4.0.2
 //DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0-M4
 //DEPS org.springframework.ai:spring-ai-client-chat:2.0.0-M4
@@ -25,7 +25,6 @@ import io.micrometer.observation.ObservationRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springaicommunity.a2a.server.executor.DefaultAgentExecutor;
-import org.springframework.ai.bedrock.converse.BedrockChatOptions;
 import org.springframework.ai.bedrock.converse.BedrockProxyChatModel;
 import org.springframework.ai.bedrock.titan.BedrockTitanEmbeddingModel;
 import org.springframework.ai.bedrock.titan.api.TitanEmbeddingBedrockApi;
@@ -37,18 +36,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Value;
-
-import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
 import java.io.File;
 import java.time.Duration;
 import java.util.List;
-import java.util.Map;
 
 /// Rules Agent — D&D 5e rules lookup via A2A protocol with vector knowledge base.
 /// Prerequisites: Run utils/CreateKnowledgeBase.java first to generate the knowledge base.
@@ -161,20 +153,6 @@ class RulesAgentConfig {
 
     @Bean
     BedrockProxyChatModel chatModel() {
-        var bearerToken = System.getenv("AWS_BEARER_TOKEN_BEDROCK");
-        var bedrockClient = BedrockRuntimeClient.builder()
-                .region(Region.US_WEST_2)
-                .credentialsProvider(AnonymousCredentialsProvider.create())
-                .overrideConfiguration(c -> c.putHeader("Authorization", "Bearer " + bearerToken))
-                .build();
-
-        var options = BedrockChatOptions.builder()
-                .model("us.anthropic.claude-haiku-4-5-20251001-v1:0")
-                .build();
-
-        return BedrockProxyChatModel.builder()
-                .bedrockRuntimeClient(bedrockClient)
-                .defaultOptions(options)
-                .build();
+        return BedrockChatModelConfig.createChatModel();
     }
 }

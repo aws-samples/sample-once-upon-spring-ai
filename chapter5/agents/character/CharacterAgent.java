@@ -1,8 +1,8 @@
 ///usr/bin/env jbang "$0" "$@" ; exit $?
 
 //JAVA 25+
-//SOURCES CharacterTools.java
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
+//SOURCES CharacterTools.java,../../../config/BedrockChatModelConfig.java
 //DEPS org.springframework.boot:spring-boot-starter-web:4.0.2
 //DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0-M4
 //DEPS org.springframework.ai:spring-ai-client-chat:2.0.0-M4
@@ -21,7 +21,6 @@ import io.a2a.spec.AgentCard;
 import io.a2a.spec.AgentSkill;
 
 import org.springaicommunity.a2a.server.executor.DefaultAgentExecutor;
-import org.springframework.ai.bedrock.converse.BedrockChatOptions;
 import org.springframework.ai.bedrock.converse.BedrockProxyChatModel;
 import org.springframework.ai.chat.client.ChatClient;
 
@@ -32,10 +31,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Value;
-
-import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
 import java.util.List;
 import java.util.Map;
@@ -139,21 +134,7 @@ class CharacterAgentConfig {
 
     @Bean
     BedrockProxyChatModel chatModel() {
-        var bearerToken = System.getenv("AWS_BEARER_TOKEN_BEDROCK");
-        var bedrockClient = BedrockRuntimeClient.builder()
-                .region(Region.US_WEST_2)
-                .credentialsProvider(AnonymousCredentialsProvider.create())
-                .overrideConfiguration(c -> c.putHeader("Authorization", "Bearer " + bearerToken))
-                .build();
-
-        var options = BedrockChatOptions.builder()
-                .model("us.anthropic.claude-haiku-4-5-20251001-v1:0")
-                .build();
-
-        return BedrockProxyChatModel.builder()
-                .bedrockRuntimeClient(bedrockClient)
-                .defaultOptions(options)
-                .build();
+        return BedrockChatModelConfig.createChatModel();
     }
 }
 

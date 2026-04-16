@@ -23,18 +23,14 @@ import io.modelcontextprotocol.spec.McpSchema;
 private static final Logger log = LoggerFactory.getLogger("DungeonMasterMCPClient");
 
 void main() {
-    // Step 0: Read the Bedrock API key from environment
-    var bearerToken = System.getenv("AWS_BEARER_TOKEN_BEDROCK");
-    if (bearerToken == null || bearerToken.isBlank()) {
-        log.error("Set AWS_BEARER_TOKEN_BEDROCK first — get your key from the Amazon Bedrock Console → API keys → Short-term API keys");
-        return;
-    }
 
     // Step 1: Connect to the D&D Dice Roll MCP Server via Streamable HTTP
     log.info("Connecting to D&D Dice Roll MCP Server...");
 
-    var transport = HttpClientStreamableHttpTransport.builder("http://localhost:8080")
-        .build();
+    var transport = HttpClientStreamableHttpTransport
+            .builder("http://localhost:8080")
+            .endpoint("/mcp")
+            .build();
 
     var mcpClient = McpClient.sync(transport)
         .clientInfo(new McpSchema.Implementation("dice-mcp-client", "1.0.0"))
