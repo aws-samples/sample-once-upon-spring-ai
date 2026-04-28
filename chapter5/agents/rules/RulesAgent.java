@@ -13,6 +13,7 @@
 //DEPS software.amazon.awssdk:auth:2.41.34
 //DEPS org.slf4j:slf4j-api:2.0.17
 //DEPS org.springframework:spring-core:7.0.3
+//RUNTIME_OPTIONS -Daws.region=us-west-2
 
 package com.amazonaws;
 

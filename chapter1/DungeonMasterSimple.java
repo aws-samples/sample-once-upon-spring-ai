@@ -7,6 +7,7 @@
 //DEPS software.amazon.awssdk:bedrockruntime:2.41.34
 //DEPS software.amazon.awssdk:auth:2.41.34
 //DEPS org.slf4j:slf4j-api:2.0.17
+//RUNTIME_OPTIONS -Daws.region=us-west-2
 
 // TODO 1: Add the SLF4J simple logging dependency so you can see what the agent is thinking
 
