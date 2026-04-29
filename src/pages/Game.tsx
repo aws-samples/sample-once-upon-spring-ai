@@ -138,7 +138,7 @@ export default function Game() {
 }
 
 function StatsPanel({ stats }: { stats: CharacterStats | null }) {
-  if (!stats)
+  if (!stats?.stats)
     return (
       <div className="stats-panel glass-card">
         <div className="portrait">⚔️</div>
