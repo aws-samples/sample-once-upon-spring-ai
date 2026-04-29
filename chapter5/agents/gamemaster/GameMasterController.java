@@ -35,8 +35,18 @@ record StoryOutput(
 ) {}
 
 /// REST controller — the main API the frontend or user interacts with.
+/// Uses `originPatterns` (not `origins`) so wildcard hosts are supported.
+/// Covers local dev (localhost, 127.0.0.1) plus subdomain-based proxies on
+/// `.localhost` such as `<session-id>-5173.localhost` used by cloud IDEs.
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin(originPatterns = {
+        "http://localhost:*",
+        "http://127.0.0.1:*",
+        "http://*.localhost",
+        "http://*.localhost:*",
+        "https://*.localhost",
+        "https://*.localhost:*"
+})
 class GameMasterController {
 
     private static final Logger log = LoggerFactory.getLogger("GameMasterController");
