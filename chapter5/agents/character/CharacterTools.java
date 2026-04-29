@@ -1,5 +1,6 @@
 package com.amazonaws;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -25,12 +26,16 @@ import java.util.UUID;
 record Stats(int strength, int dexterity, int constitution, int intelligence, int wisdom, int charisma) {}
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-record InventoryItem(String itemName, int quantity) {}
+record InventoryItem(@JsonAlias("itemName") String itemName, int quantity) {}
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 record Character(
-    String characterId, String name, String characterClass, String race, String gender,
-    int level, int experience, Stats stats, List<InventoryItem> inventory, String createdAt
+    @JsonAlias("characterId") String characterId,
+    String name,
+    @JsonAlias("characterClass") String characterClass,
+    String race, String gender,
+    int level, int experience, Stats stats, List<InventoryItem> inventory,
+    @JsonAlias("createdAt") String createdAt
 ) {}
 
 /// Persistent JSON-based character storage — thread-safe via synchronized in-memory list.
