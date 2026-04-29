@@ -75,10 +75,25 @@ class GameMasterController {
     @GetMapping("/user/{userName}")
     Object getUser(@PathVariable String userName) {
         try {
-            var result = remoteAgent.sendMessage("Character Agent",
-                    "Find the character named %s. Return their full stats, level, XP, and inventory.".formatted(userName));
-            return Map.of("response", result);
+            var result = remoteAgent.sendMessage("Character Agent", """
+                    Find the character named %s using the findCharacterByName tool.
+                    Respond with ONLY the raw JSON object returned by the tool — no prose,
+                    no markdown code fences, no commentary. The response MUST start with {
+                    and end with }, and MUST include these snake_case fields:
+                    character_id, name, character_class, race, gender, level, experience,
+                    stats (with strength, dexterity, constitution, intelligence, wisdom,
+                    charisma), inventory, created_at.
+                    """.formatted(userName));
+
+            var start = result.indexOf('{');
+            var end = result.lastIndexOf('}');
+            if (start < 0 || end <= start) {
+                log.warn("Character Agent did not return JSON for '{}': {}", userName, result);
+                return Map.of("error", "Character not found or response unparseable");
+            }
+            return mapper.readValue(result.substring(start, end + 1), Map.class);
         } catch (Exception e) {
+            log.error("Error fetching user '{}'", userName, e);
             return Map.of("error", e.getMessage());
         }
     }
