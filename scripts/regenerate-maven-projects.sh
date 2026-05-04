@@ -29,10 +29,12 @@ jbang export maven --force -O chapter4-maven-client  chapter4/DungeonMasterMCPCl
 # Chapter 5 — multi-module Maven project. Each entry point becomes a module;
 # parent pom is the hand-authored template in scripts/.
 mkdir -p chapter5-maven
-jbang export maven --force -O chapter5-maven/rules       chapter5/agents/rules/RulesAgent.java
-jbang export maven --force -O chapter5-maven/character   chapter5/agents/character/CharacterAgent.java
-jbang export maven --force -O chapter5-maven/gamemaster  chapter5/agents/gamemaster/GameMasterOrchestrator.java
-jbang export maven --force -O chapter5-maven/utils       chapter5/utils/CreateKnowledgeBase.java
+pushd chapter5-maven > /dev/null
+jbang export maven --force -O rules       "$REPO_ROOT/chapter5/agents/rules/RulesAgent.java"
+jbang export maven --force -O character   "$REPO_ROOT/chapter5/agents/character/CharacterAgent.java"
+jbang export maven --force -O gamemaster  "$REPO_ROOT/chapter5/agents/gamemaster/GameMasterOrchestrator.java"
+jbang export maven --force -O utils       "$REPO_ROOT/chapter5/utils/CreateKnowledgeBase.java"
+popd > /dev/null
 cp scripts/chapter5-parent-pom.xml chapter5-maven/pom.xml
 
 echo "Done. Generated folders:"
