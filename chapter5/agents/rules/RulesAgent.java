@@ -2,6 +2,7 @@
 
 //JAVA 25+
 //SOURCES RulesTools.java
+//FILES dm_knowledge_base.json=./../../utils/dm_knowledge_base.json
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
 //DEPS org.springframework.boot:spring-boot-starter-web:4.0.2
 //DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0-M4
@@ -38,6 +39,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,7 +48,7 @@ import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
-import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -89,12 +91,12 @@ public class RulesAgent {
     //   The executor's lambda should extract the user message text and invoke the ChatClient.
 }
 
-/// Vector store configuration — loads the knowledge base from utils/
+/// Vector store configuration — loads the knowledge base from classpath
 @Configuration
 class VectorStoreConfig {
 
     private static final Logger log = LoggerFactory.getLogger("VectorStoreConfig");
-    private static final String VECTOR_STORE_FILE = "./../../utils/dm_knowledge_base.json";
+    private static final String VECTOR_STORE_RESOURCE = "dm_knowledge_base.json";
 
     @Bean
     BedrockTitanEmbeddingModel embeddingModel() {
@@ -106,15 +108,17 @@ class VectorStoreConfig {
     }
 
     @Bean
-    VectorStore vectorStore(BedrockTitanEmbeddingModel embeddingModel) {
+    VectorStore vectorStore(BedrockTitanEmbeddingModel embeddingModel) throws IOException {
         var store = SimpleVectorStore.builder(embeddingModel).build();
 
-        var file = new File(VECTOR_STORE_FILE);
-        if (file.exists()) {
-            store.load(file);
-            log.info("Loaded knowledge base from: {} ({} bytes)", VECTOR_STORE_FILE, file.length());
+        var resource = new ClassPathResource(VECTOR_STORE_RESOURCE);
+        if (resource.exists()) {
+            store.load(resource);
+            log.info("Loaded knowledge base from classpath: {} ({} bytes)",
+                    VECTOR_STORE_RESOURCE, resource.contentLength());
         } else {
-            log.warn("Knowledge base not found: {}. Run CreateKnowledgeBase.java first!", VECTOR_STORE_FILE);
+            log.warn("Knowledge base not found on classpath: {}. Run CreateKnowledgeBase.java first!",
+                    VECTOR_STORE_RESOURCE);
         }
 
         return store;
