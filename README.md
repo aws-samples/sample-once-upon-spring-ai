@@ -48,6 +48,24 @@ Your journey through the realms of AI agents is carefully structured as a progre
 - Implement conversation memory with `MessageChatMemoryAdvisor`
 - Combine A2A, MCP, and RAG in a single architecture
 
+## 🗺️ Choose Your Path
+
+This workshop has **two equally supported paths**. Pick the one that fits how you want to work, and follow the corresponding instructions in [Chapter 0](https://catalog.us-east-1.prod.workshops.aws/workshops/a49bf534-72f6-4571-bf77-ed201854284a).
+
+### 🧙 The JBang Path
+
+**For:** Java developers curious to try a new way of running Java, and non-Java developers who want a minimal setup.
+
+Tooling: JBang CLI + any text editor. You run code like `jbang chapter1/DungeonMasterSimple.java`.
+
+### ⚔️ The IntelliJ Path
+
+**For:** Java developers who want to work the way they usually do.
+
+Tooling: IntelliJ IDEA + Maven. **No JBang required.** You open `chapter1-maven/` in IntelliJ and click the green gutter arrow next to `main()`.
+
+⚠️ Pick one path and stick to it. Mixing paths (editing the JBang file while running the Maven project) is the fastest way to get confused.
+
 ## 🎒 Preparing for Your Quest
 
 ### Essential Gear (Prerequisites)
@@ -91,16 +109,7 @@ Before embarking on this legendary adventure, ensure you have:
 
    > **Note:** Short-term API keys expire automatically and require no AWS CLI installation or IAM key pair management.
 
-4. **IntelliJ IDEA IDE** (optional) — for full IntelliJ IDEA IDE support, feel free to export any chapter as a Maven project for example:
-   ```bash
-   cd chapter1
-   jbang export maven DungeonMasterSimple.java
-   ```
-   This generates a `DungeonMasterSimple/` subfolder with a standard `pom.xml` and Maven wrapper. Open that folder in your IntelliJ IDE for autocomplete, autoimport, and error highlighting. You still run code with `jbang` from the CLI — the export is for IDE support only.
-
-   > **Note:** Keep the exported Maven project in its subfolder to avoid conflicts between `pom.xml` and JBang files.
-
-5. **A sense of adventure** and willingness to experiment! 🎲
+4. **A sense of adventure** and willingness to experiment! 🎲
 
 ### 🚀 Run Your First Chapter
 
@@ -150,6 +159,12 @@ Spring AI is a powerful framework for creating AI-powered applications in Java -
 - 🌐 **MCP**: Model Context Protocol for connecting to external tool servers
 - 🏰 **A2A**: Agent-to-Agent protocol for multi-agent communication
 - 🎒 **JBang**: Build tool that runs `.java` files directly with embedded `//DEPS` metadata
+
+## 🤖 Generated Folders
+
+The `chapter*-maven*/` folders are **auto-generated** from the JBang sources in `chapterN/` by a GitHub Action on every push to `main`. Do not hand-edit them — any changes will be overwritten on the next sync.
+
+If you want to change workshop code, edit the JBang source (`chapterN/YourFile.java`). CI will regenerate the Maven projects for you.
 
 ## 🗂️ Project Structure
 
