@@ -7,10 +7,8 @@
 //DEPS software.amazon.awssdk:bedrockruntime:2.41.34
 //DEPS software.amazon.awssdk:auth:2.41.34
 //DEPS org.slf4j:slf4j-api:2.0.17
+//DEPS org.slf4j:slf4j-simple:2.0.17
 //RUNTIME_OPTIONS -Daws.region=us-west-2
-
-// TODO 1: Add the SLF4J simple logging dependency so you can see what the agent is thinking
-
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,10 +47,10 @@ void main() {
         .defaultOptions(options)
         .build();
 
-    // TODO 2: Build a ChatClient with a system prompt that sets the AI personality
+    // TODO 1: Build a ChatClient with a system prompt that sets the AI personality
 
 
-    // TODO 3: Send a message to the agent and print the response
+    // TODO 2: Send a message to the agent and print the response
     
 
     log.info("\n=== Ending Dungeon Master AI Agent ===");
