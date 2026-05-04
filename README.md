@@ -162,9 +162,7 @@ Spring AI is a powerful framework for creating AI-powered applications in Java -
 
 ## 🤖 Generated Folders
 
-The `chapter*-maven*/` folders are **auto-generated** from the JBang sources in `chapterN/` by a GitHub Action on every push to `main`. Do not hand-edit them — any changes will be overwritten on the next sync.
-
-If you want to change workshop code, edit the JBang source (`chapterN/YourFile.java`). CI will regenerate the Maven projects for you.
+The `chapter*-maven*/` folders are **auto-generated** from the JBang sources in `chapterN/` by a GitHub Action on every push to `main`. Do not hand-edit them — CI will regenerate the Maven projects for you (i.e: any changes will be overwritten on the next sync).
 
 ## 🗂️ Project Structure
 
