@@ -14,6 +14,21 @@ cd "$REPO_ROOT"
 
 echo "Regenerating Maven projects under $REPO_ROOT ..."
 
+# RulesAgent.java declares `//FILES dm_knowledge_base.json=./../../utils/dm_knowledge_base.json`.
+# The source copy is gitignored (it's produced by participants running CreateKnowledgeBase.java),
+# so a fresh checkout on CI does not have it and `jbang export` would abort with
+# "Failed to get contents from resource './../../utils/dm_knowledge_base.json'".
+# The committed Maven copy (chapter5-maven/rules/src/main/resources/) carries the
+# same content and is our distribution seed — use it to satisfy //FILES if the
+# participant-generated source is absent, then remove the temporary seed afterwards.
+KB_SEED_IN_MAVEN="chapter5-maven/rules/src/main/resources/dm_knowledge_base.json"
+KB_SOURCE="chapter5/utils/dm_knowledge_base.json"
+SEEDED_FROM_MAVEN=false
+if [ ! -f "$KB_SOURCE" ] && [ -f "$KB_SEED_IN_MAVEN" ]; then
+    cp "$KB_SEED_IN_MAVEN" "$KB_SOURCE"
+    SEEDED_FROM_MAVEN=true
+fi
+
 # Remove previous output. Glob is anchored to REPO_ROOT via cd above.
 rm -rf chapter*-maven chapter*-maven-*
 
@@ -36,6 +51,13 @@ jbang export maven --force -O gamemaster  "$REPO_ROOT/chapter5/agents/gamemaster
 jbang export maven --force -O utils       "$REPO_ROOT/chapter5/utils/CreateKnowledgeBase.java"
 popd > /dev/null
 cp scripts/chapter5-parent-pom.xml chapter5-maven/pom.xml
+
+# If we seeded the source KB from the committed Maven copy, remove it again so
+# the gitignored path stays clean on disk. The export already copied it into
+# chapter5-maven/rules/src/main/resources/ for distribution.
+if [ "$SEEDED_FROM_MAVEN" = true ]; then
+    rm -f "$KB_SOURCE"
+fi
 
 echo "Done. Generated folders:"
 ls -d chapter*-maven chapter*-maven-* 2>/dev/null | sort
