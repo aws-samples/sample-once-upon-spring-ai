@@ -4,6 +4,7 @@
 //SOURCES RulesTools.java
 //FILES dm_knowledge_base.json=./../../utils/dm_knowledge_base.json
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
+//DEPS io.netty:netty-bom:4.2.9.Final@pom
 //DEPS org.springframework.boot:spring-boot-starter-web:4.0.2
 //DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0-M4
 //DEPS org.springframework.ai:spring-ai-client-chat:2.0.0-M4
@@ -14,7 +15,7 @@
 //DEPS software.amazon.awssdk:auth:2.41.34
 //DEPS org.slf4j:slf4j-api:2.0.17
 //DEPS org.springframework:spring-core:7.0.3
-//RUNTIME_OPTIONS -Daws.region=us-west-2
+//RUNTIME_OPTIONS -Daws.region=us-west-2 --enable-native-access=ALL-UNNAMED
 
 package com.amazonaws;
 
