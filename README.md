@@ -148,7 +148,7 @@ echo "Bedrock:  ${AWS_BEARER_TOKEN_BEDROCK:+OK (length=${#AWS_BEARER_TOKEN_BEDRO
 ```
 You should see `openjdk version "25"` line and `Bedrock: OK (length=NNNN)`.
 
-If `Bedrock` says `MISSING`, revisit step 2 above.
+If `Bedrock` says `MISSING`, revisit Amazon Bedrock API Key step above.
 
 ## 🎯 How to Embark on Your Quest
 
