@@ -89,6 +89,7 @@ test-output/
 surefire-reports/
 
 # Temp files
+docs/
 *.tmp
 *.temp
 *.bak

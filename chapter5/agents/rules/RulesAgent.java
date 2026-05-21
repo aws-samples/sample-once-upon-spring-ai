@@ -2,7 +2,9 @@
 
 //JAVA 25+
 //SOURCES RulesTools.java
+//FILES dm_knowledge_base.json=./../../utils/dm_knowledge_base.json
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
+//DEPS io.netty:netty-bom:4.2.9.Final@pom
 //DEPS org.springframework.boot:spring-boot-starter-web:4.0.2
 //DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0-M4
 //DEPS org.springframework.ai:spring-ai-client-chat:2.0.0-M4
@@ -13,7 +15,7 @@
 //DEPS software.amazon.awssdk:auth:2.41.34
 //DEPS org.slf4j:slf4j-api:2.0.17
 //DEPS org.springframework:spring-core:7.0.3
-//RUNTIME_OPTIONS -Daws.region=us-west-2
+//RUNTIME_OPTIONS -Daws.region=us-west-2 --enable-native-access=ALL-UNNAMED
 
 package com.amazonaws;
 
@@ -38,6 +40,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,7 +49,7 @@ import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
-import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -68,68 +71,33 @@ public class RulesAgent {
         """;
 
     public static void main(final String[] args) {
-        System.setProperty("server.port", "8000");
-        System.setProperty("server.servlet.context-path", "/a2a");
-        System.setProperty("spring.application.name", "rules-agent");
-        System.setProperty("spring.ai.a2a.server.enabled", "true");
+        // TODO 1: Configure Spring Boot properties for this A2A agent server.
+        //   Use System.setProperty() to set four properties before SpringApplication.run():
+        //     - Server port (this agent runs on port 8000)
+        //     - Servlet context path (A2A convention uses "/a2a")
+        //     - Application name
+        //     - Enable the A2A server auto-configuration
+
         SpringApplication.run(RulesAgent.class, args);
     }
 
-    @Bean
-    AgentCard agentCard(@Value("${server.port:8000}") int port,
-                        @Value("${server.servlet.context-path:/a2a}") String contextPath) {
-        return new AgentCard.Builder()
-                .name("Rules Agent")
-                .description("""
-                    Specialized D&D 5e rules lookup agent that provides fast, authoritative rule clarifications
-                    from the Basic Rules. Queries a vector knowledge base containing indexed D&D content and returns
-                    brief, page-referenced rule explanations.""")
-                .url("http://localhost:" + port + contextPath + "/")
-                .version("1.0.0")
-                .capabilities(new AgentCapabilities.Builder().streaming(false).build())
-                .defaultInputModes(List.of("text"))
-                .defaultOutputModes(List.of("text"))
-                .skills(List.of(
-                    new AgentSkill.Builder()
-                        .id("rules_lookup")
-                        .name("D&D Rules Lookup")
-                        .description("""
-                            Look up any D&D 5e rule from the official Basic Rules knowledge base. Covers combat, \
-                            spellcasting, ability checks, saving throws, conditions, movement, equipment, and more. \
-                            Returns the exact rule with page references.""")
-                        .tags(List.of("rules", "dnd", "mechanics", "combat", "spells", "conditions"))
-                        .examples(List.of(
-                            "How do attack rolls work?",
-                            "What is armor class and how is it calculated?",
-                            "Rules for perception checks",
-                            "How does spellcasting work for sorcerers?",
-                            "What happens when a character is grappled?",
-                            "Rules for saving throws"))
-                        .build()))
-                .protocolVersion("0.3.0")
-                .build();
-    }
+    // TODO 2: Create an AgentCard bean that describes this agent to the A2A network.
+    //   The AgentCard is published at /.well-known/agent-card.json so other agents can discover you.
+    //   Use AgentCard.Builder to set: name, description, url, version, capabilities, I/O modes, skills, and protocol version.
+    //   Inject the port and context path via @Value to construct the URL dynamically.
+    //   Define at least one AgentSkill for rules lookup with an id, name, description, tags, and examples.
 
-    @Bean
-    AgentExecutor agentExecutor(BedrockProxyChatModel chatModel, RulesTools rulesTools) {
-        var chatClient = ChatClient.builder(chatModel)
-                .defaultSystem(SYSTEM_PROMPT)
-                .defaultTools(rulesTools)
-                .build();
-
-        return new DefaultAgentExecutor(chatClient, (chat, requestContext) -> {
-            String userMessage = DefaultAgentExecutor.extractTextFromMessage(requestContext.getMessage());
-            return chat.prompt().user(userMessage).call().content();
-        });
-    }
+    // TODO 3: Create an AgentExecutor bean that wires the ChatClient with the RulesTools.
+    //   Wire a ChatClient with the SYSTEM_PROMPT and RulesTools, then wrap it in a DefaultAgentExecutor.
+    //   The executor's lambda should extract the user message text and invoke the ChatClient.
 }
 
-/// Vector store configuration — loads the knowledge base from utils/
+/// Vector store configuration — loads the knowledge base from classpath
 @Configuration
 class VectorStoreConfig {
 
     private static final Logger log = LoggerFactory.getLogger("VectorStoreConfig");
-    private static final String VECTOR_STORE_FILE = "./../../utils/dm_knowledge_base.json";
+    private static final String VECTOR_STORE_RESOURCE = "dm_knowledge_base.json";
 
     @Bean
     BedrockTitanEmbeddingModel embeddingModel() {
@@ -141,15 +109,17 @@ class VectorStoreConfig {
     }
 
     @Bean
-    VectorStore vectorStore(BedrockTitanEmbeddingModel embeddingModel) {
+    VectorStore vectorStore(BedrockTitanEmbeddingModel embeddingModel) throws IOException {
         var store = SimpleVectorStore.builder(embeddingModel).build();
 
-        var file = new File(VECTOR_STORE_FILE);
-        if (file.exists()) {
-            store.load(file);
-            log.info("Loaded knowledge base from: {} ({} bytes)", VECTOR_STORE_FILE, file.length());
+        var resource = new ClassPathResource(VECTOR_STORE_RESOURCE);
+        if (resource.exists()) {
+            store.load(resource);
+            log.info("Loaded knowledge base from classpath: {} ({} bytes)",
+                    VECTOR_STORE_RESOURCE, resource.contentLength());
         } else {
-            log.warn("Knowledge base not found: {}. Run CreateKnowledgeBase.java first!", VECTOR_STORE_FILE);
+            log.warn("Knowledge base not found on classpath: {}. Run CreateKnowledgeBase.java first!",
+                    VECTOR_STORE_RESOURCE);
         }
 
         return store;
@@ -162,11 +132,11 @@ class RulesAgentConfig {
 
     @Bean
     BedrockProxyChatModel chatModel() {
-        var bearerToken = System.getenv("AWS_BEARER_TOKEN_BEDROCK");
         var bedrockClient = BedrockRuntimeClient.builder()
                 .region(Region.US_WEST_2)
                 .credentialsProvider(AnonymousCredentialsProvider.create())
-                .overrideConfiguration(c -> c.putHeader("Authorization", "Bearer " + bearerToken))
+                .overrideConfiguration(c -> c.putHeader("Authorization",
+                        "Bearer " + System.getenv("AWS_BEARER_TOKEN_BEDROCK")))
                 .build();
 
         var options = BedrockChatOptions.builder()

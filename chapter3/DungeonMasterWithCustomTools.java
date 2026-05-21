@@ -3,13 +3,14 @@
 //JAVA 25+
 //SOURCES DiceTools.java
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
+//DEPS io.netty:netty-bom:4.2.9.Final@pom
 //DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0-M4
 //DEPS org.springframework.ai:spring-ai-client-chat:2.0.0-M4
 //DEPS software.amazon.awssdk:bedrockruntime:2.41.34
 //DEPS software.amazon.awssdk:auth:2.41.34
 //DEPS org.slf4j:slf4j-api:2.0.17
 //DEPS org.slf4j:slf4j-simple:2.0.17
-//RUNTIME_OPTIONS -Daws.region=us-west-2
+//RUNTIME_OPTIONS -Daws.region=us-west-2 --enable-native-access=ALL-UNNAMED
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,33 +26,28 @@ private static final Logger log = LoggerFactory.getLogger("DungeonMasterWithCust
 void main() {
     log.info("=== Starting Dungeon Master AI Agent with Custom Tools ===");
 
-    // Step 1: Read the Bedrock API key from environment
     var bearerToken = System.getenv("AWS_BEARER_TOKEN_BEDROCK");
     if (bearerToken == null || bearerToken.isBlank()) {
         log.error("Set AWS_BEARER_TOKEN_BEDROCK first — get your key from the Amazon Bedrock Console → API keys → Short-term API keys");
         return;
     }
 
-    // Step 2: Create AWS Bedrock Runtime Client with API key (bearer token auth)
     var bedrockClient = BedrockRuntimeClient.builder()
         .region(Region.US_WEST_2)
         .credentialsProvider(AnonymousCredentialsProvider.create())
         .overrideConfiguration(c -> c.putHeader("Authorization", "Bearer " + bearerToken))
         .build();
 
-    // Step 2: Configure model options
     var modelId = "us.anthropic.claude-haiku-4-5-20251001-v1:0";
     var options = BedrockChatOptions.builder()
         .model(modelId)
         .build();
 
-    // Step 3: Create Spring AI ChatModel
     var chatModel = BedrockProxyChatModel.builder()
         .bedrockRuntimeClient(bedrockClient)
         .defaultOptions(options)
         .build();
 
-    // Step 4: Build ChatClient with system prompt AND the custom dice tools
     var agent = ChatClient.builder(chatModel)
         .defaultSystem("""
             You are Lady Luck, the mystical keeper of dice and fortune in D&D adventures.
@@ -61,14 +57,13 @@ void main() {
             """)
         .build();
 
-    // Step 5: Invoke the AI agent with a request that requires dice rolling
     var playerMessage = "Help me create a new D&D character! Roll the strength, wisdom, charisma and intelligence abilities scores using 4d6 drop lowest method.";
     log.info("Player: {}\n", playerMessage);
 
     try {
         var response = agent.prompt()
             .user(playerMessage)
-            .tools(new DiceTools())
+            // TODO 4: Pass the DiceTools to the agent using .tools()
             .call()
             .content();
 

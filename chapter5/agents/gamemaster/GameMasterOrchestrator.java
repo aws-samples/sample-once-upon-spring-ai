@@ -4,6 +4,7 @@
 //SOURCES GameMasterService.java
 //SOURCES GameMasterController.java
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
+//DEPS io.netty:netty-bom:4.2.9.Final@pom
 //DEPS org.springframework.boot:spring-boot-starter-web:4.0.2
 //DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0-M4
 //DEPS org.springframework.ai:spring-ai-client-chat:2.0.0-M4
@@ -16,7 +17,7 @@
 //DEPS com.fasterxml.jackson.core:jackson-databind:2.18.4
 //DEPS org.slf4j:slf4j-api:2.0.17
 //DEPS org.springframework:spring-core:7.0.3
-//RUNTIME_OPTIONS -Daws.region=us-west-2
+//RUNTIME_OPTIONS -Daws.region=us-west-2 --enable-native-access=ALL-UNNAMED
 
 package com.amazonaws;
 
@@ -45,7 +46,6 @@ import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.ai.model.tool.ToolExecutionResult;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.definition.ToolDefinition;
-import org.springframework.ai.tool.resolution.ToolCallbackResolver;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -120,7 +120,11 @@ public class GameMasterOrchestrator {
     public static void main(final String[] args) {
         System.setProperty("server.port", "8009");
         System.setProperty("spring.application.name", "gamemaster-orchestrator");
-        System.setProperty("remote.agents.urls", "http://localhost:8000/a2a/,http://localhost:8001/a2a/");
+        // TODO 1: Set the remote.agents.urls property with the A2A agent URLs
+        //   The orchestrator needs to know where the Rules Agent and Character Agent are running.
+        //   At startup, GameMasterService will fetch each agent's
+        //   card from /.well-known/agent-card.json and register them by name.
+
         SpringApplication.run(GameMasterOrchestrator.class, args);
     }
 
@@ -129,20 +133,21 @@ public class GameMasterOrchestrator {
         return MessageWindowChatMemory.builder().maxMessages(20).build();
     }
 
-    @Bean
-    ChatClient chatClient(BedrockProxyChatModel chatModel,
-                           GameMasterService remoteAgent,
-                           ChatMemory chatMemory) {
-
-        var systemPrompt = SYSTEM_PROMPT.formatted(remoteAgent.getAgentDescriptions());
-
-        log.info("Initializing routing ChatClient with agents: {}", remoteAgent.getAgentNames());
-
-        return ChatClient.builder(chatModel)
-                .defaultSystem(systemPrompt)
-                .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
-                .build();
-    }
+    // TODO 3: Build the ChatClient bean that the orchestrator uses to process user requests.
+    //   The system prompt includes a %s placeholder that gets filled with the discovered agent descriptions.
+    //   Also wire in the ChatMemory via MessageChatMemoryAdvisor so the orchestrator remembers conversation context.
+    //
+    //   @Bean
+    //   ChatClient chatClient(BedrockProxyChatModel chatModel,
+    //                          GameMasterService remoteAgent,
+    //                          ChatMemory chatMemory) {
+    //       var systemPrompt = SYSTEM_PROMPT.formatted(remoteAgent.getAgentDescriptions());
+    //       log.info("Initializing routing ChatClient with agents: {}", remoteAgent.getAgentNames());
+    //       return ChatClient.builder(chatModel)
+    //               .defaultSystem(systemPrompt)
+    //               .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
+    //               .build();
+    //   }
 }
 
 /// CORS configuration
@@ -151,8 +156,8 @@ class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("*")
-                .allowedMethods("*")
+                .allowedOrigins("http://localhost:5173")
+                .allowedMethods("GET", "POST")
                 .allowedHeaders("*");
     }
 }
@@ -164,32 +169,31 @@ class McpClientConfig {
 
     private static final Logger log = LoggerFactory.getLogger("McpClientConfig");
 
-    @Bean
-    ToolCallback[] mcpTools() {
-        try {
-            var transport = HttpClientStreamableHttpTransport.builder("http://localhost:8080")
-                    .endpoint("/mcp")
-                    .build();
-
-            var client = McpClient.sync(transport)
-                    .clientInfo(new McpSchema.Implementation("gamemaster-mcp-client", "1.0.0"))
-                    .build();
-
-            client.initialize();
-
-            var tools = client.listTools().tools().stream().map(McpSchema.Tool::name).toList();
-            log.info("MCP tools discovered: {}", tools);
-
-            return SyncMcpToolCallbackProvider.builder()
-                    .mcpClients(client)
-                    .build()
-                    .getToolCallbacks();
-        } catch (Exception e) {
-            log.warn("MCP Dice Server not available at http://localhost:8080/mcp — dice rolling disabled");
-            log.warn("Start it with: cd ../chapter4 && jbang DiceRollMcpServer.java");
-            return new ToolCallback[0];
-        }
-    }
+    // TODO 2: Create an MCP client bean that connects to the Dice Roll Server on port 8080
+    //   and returns the tools as Spring AI ToolCallback[].
+    //
+    //   @Bean
+    //   ToolCallback[] mcpTools() {
+    //       try {
+    //           var transport = HttpClientStreamableHttpTransport.builder("http://localhost:8080")
+    //                   .endpoint("/mcp")
+    //                   .build();
+    //           var client = McpClient.sync(transport)
+    //                   .clientInfo(new McpSchema.Implementation("gamemaster-mcp-client", "1.0.0"))
+    //                   .build();
+    //           client.initialize();
+    //           var tools = client.listTools().tools().stream().map(McpSchema.Tool::name).toList();
+    //           log.info("MCP tools discovered: {}", tools);
+    //           return SyncMcpToolCallbackProvider.builder()
+    //                   .mcpClients(client)
+    //                   .build()
+    //                   .getToolCallbacks();
+    //       } catch (Exception e) {
+    //           log.warn("MCP Dice Server not available — dice rolling disabled");
+    //           log.warn("Start it with: cd ../chapter4 && jbang DiceRollMcpServer.java");
+    //           return new ToolCallback[0];
+    //       }
+    //   }
 }
 
 /// Spring AI Bedrock ChatModel configuration
@@ -198,11 +202,11 @@ class ChatModelConfig {
 
     @Bean
     BedrockProxyChatModel chatModel() {
-        var bearerToken = System.getenv("AWS_BEARER_TOKEN_BEDROCK");
         var bedrockClient = BedrockRuntimeClient.builder()
                 .region(Region.US_WEST_2)
                 .credentialsProvider(AnonymousCredentialsProvider.create())
-                .overrideConfiguration(c -> c.putHeader("Authorization", "Bearer " + bearerToken))
+                .overrideConfiguration(c -> c.putHeader("Authorization",
+                        "Bearer " + System.getenv("AWS_BEARER_TOKEN_BEDROCK")))
                 .build();
 
         var options = BedrockChatOptions.builder()

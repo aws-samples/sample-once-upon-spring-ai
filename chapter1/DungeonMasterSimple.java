@@ -2,13 +2,14 @@
 
 //JAVA 25+
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
+//DEPS io.netty:netty-bom:4.2.9.Final@pom
 //DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0-M4
 //DEPS org.springframework.ai:spring-ai-client-chat:2.0.0-M4
 //DEPS software.amazon.awssdk:bedrockruntime:2.41.34
 //DEPS software.amazon.awssdk:auth:2.41.34
 //DEPS org.slf4j:slf4j-api:2.0.17
 //DEPS org.slf4j:slf4j-simple:2.0.17
-//RUNTIME_OPTIONS -Daws.region=us-west-2
+//RUNTIME_OPTIONS -Daws.region=us-west-2 --enable-native-access=ALL-UNNAMED
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,54 +26,33 @@ private static final Logger log = LoggerFactory.getLogger("DungeonMasterSimple")
 void main() {
     log.info("=== Starting Dungeon Master AI Agent ===");
 
-    // Step 1: Read the Bedrock API key from environment
     var bearerToken = System.getenv("AWS_BEARER_TOKEN_BEDROCK");
     if (bearerToken == null || bearerToken.isBlank()) {
         log.error("Set AWS_BEARER_TOKEN_BEDROCK first — get your key from the Amazon Bedrock Console → API keys → Short-term API keys");
         return;
     }
 
-    // Step 2: Create AWS Bedrock Runtime Client with API key (bearer token auth)
     var bedrockClient = BedrockRuntimeClient.builder()
         .region(Region.US_WEST_2)
         .credentialsProvider(AnonymousCredentialsProvider.create())
         .overrideConfiguration(c -> c.putHeader("Authorization", "Bearer " + bearerToken))
         .build();
 
-    // Step 3: Configure model options (which Claude model to use)
     var modelId = "us.anthropic.claude-haiku-4-5-20251001-v1:0";
     var options = BedrockChatOptions.builder()
         .model(modelId)
         .build();
 
-    // Step 4: Create Spring AI ChatModel (wraps Bedrock client)
     var chatModel = BedrockProxyChatModel.builder()
         .bedrockRuntimeClient(bedrockClient)
         .defaultOptions(options)
         .build();
 
-    // Step 5: Build ChatClient with system prompt (defines AI personality)
-    var agent = ChatClient.builder(chatModel)
-        .defaultSystem("You are a game master for a Dungeon & Dragon game")
-        .build();
+    // TODO 1: Build a ChatClient with a system prompt that sets the AI personality
 
-    // Step 6: Invoke the AI agent
-    var playerMessage = "Hi, I am an adventurer ready for adventure!";
-    log.info("Player: " + playerMessage + "\n");
 
-    try {
-        var response = agent
-            .prompt()
-            .user(playerMessage)
-            .call()
-            .content();
+    // TODO 2: Send a message to the agent and print the response
+    
 
-        log.info("Dungeon Master says:");
-        log.info(response);
-
-    } catch (Exception e) {
-        log.error("Error invoking AI agent: {}", e.getMessage());
-    } finally {
-        log.info("\n=== Ending Dungeon Master AI Agent ===");
-    }
+    log.info("\n=== Ending Dungeon Master AI Agent ===");
 }

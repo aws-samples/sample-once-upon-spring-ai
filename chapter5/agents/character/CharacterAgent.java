@@ -3,6 +3,7 @@
 //JAVA 25+
 //SOURCES CharacterTools.java
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
+//DEPS io.netty:netty-bom:4.2.9.Final@pom
 //DEPS org.springframework.boot:spring-boot-starter-web:4.0.2
 //DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0-M4
 //DEPS org.springframework.ai:spring-ai-client-chat:2.0.0-M4
@@ -12,7 +13,7 @@
 //DEPS com.fasterxml.jackson.core:jackson-databind:2.18.4
 //DEPS org.slf4j:slf4j-api:2.0.17
 //DEPS org.springframework:spring-core:7.0.3
-//RUNTIME_OPTIONS -Daws.region=us-west-2
+//RUNTIME_OPTIONS -Daws.region=us-west-2 --enable-native-access=ALL-UNNAMED
 
 package com.amazonaws;
 
@@ -58,80 +59,81 @@ public class CharacterAgent {
         """;
 
     public static void main(final String[] args) {
-        System.setProperty("server.port", "8001");
-        System.setProperty("server.servlet.context-path", "/a2a");
-        System.setProperty("spring.application.name", "character-agent");
-        System.setProperty("spring.ai.a2a.server.enabled", "true");
+        // TODO 1: Configure Spring Boot properties for this A2A agent server.
+        //   Set these system properties before calling SpringApplication.run():
+        //     - "server.port"                  → "8001"     (Character Agent runs on port 8001)
+        //     - "server.servlet.context-path"  → "/a2a"     (same A2A path convention)
+        //     - "spring.application.name"      → "character-agent"
+        //     - "spring.ai.a2a.server.enabled" → "true"
+        //   If you completed the Rules Agent, this follows the exact same pattern!
+
         SpringApplication.run(CharacterAgent.class, args);
     }
 
-    @Bean
-    AgentCard agentCard(@Value("${server.port:8001}") int port,
-                        @Value("${server.servlet.context-path:/a2a}") String contextPath) {
-        return new AgentCard.Builder()
-                .name("Character Agent")
-                .description("""
-                    Specialized D&D character management agent that handles character creation, storage, and retrieval.
-                    Creates new characters with proper ability score generation (4d6 drop lowest), manages character data
-                    in persistent storage, and provides character lookup services. Maintains complete character profiles
-                    including stats, inventory, and progression data for D&D campaigns.""")
-                .url("http://localhost:" + port + contextPath + "/")
-                .version("1.0.0")
-                .capabilities(new AgentCapabilities.Builder().streaming(false).build())
-                .defaultInputModes(List.of("text"))
-                .defaultOutputModes(List.of("text"))
-                .skills(List.of(
-                    new AgentSkill.Builder()
-                        .id("create_character")
-                        .name("Create Character")
-                        .description("Create a new D&D character with rolled ability scores and starting inventory")
-                        .tags(List.of("character", "creation", "dnd"))
-                        .examples(List.of("Create a female Elf Wizard named Lyria"))
-                        .build(),
-                    new AgentSkill.Builder()
-                        .id("find_character")
-                        .name("Find Character")
-                        .description("Find an existing character by name — returns full stats, level, XP, and inventory")
-                        .tags(List.of("character", "lookup", "inventory"))
-                        .examples(List.of("Find the character named Ragnar"))
-                        .build(),
-                    new AgentSkill.Builder()
-                        .id("list_characters")
-                        .name("List Characters")
-                        .description("List all characters in the database with their inventory")
-                        .tags(List.of("character", "list"))
-                        .examples(List.of("List all characters"))
-                        .build(),
-                    new AgentSkill.Builder()
-                        .id("add_inventory")
-                        .name("Add Inventory Item")
-                        .description("Add an item to a character's inventory — use for loot, purchases, or quest rewards")
-                        .tags(List.of("character", "inventory", "loot"))
-                        .examples(List.of("Add a Longsword to Ragnar's inventory", "Give Lyria 50 gold pieces"))
-                        .build(),
-                    new AgentSkill.Builder()
-                        .id("remove_inventory")
-                        .name("Remove Inventory Item")
-                        .description("Remove an item from a character's inventory — use when items are consumed, sold, or lost")
-                        .tags(List.of("character", "inventory"))
-                        .examples(List.of("Remove a health potion from Ragnar's inventory"))
-                        .build()))
-                .protocolVersion("0.3.0")
-                .build();
-    }
+    // TODO 2: Create an AgentCard bean describing this agent's character management capabilities.
+    //   Follow the same pattern as the Rules Agent, but with character-specific skills:
+    //
+    //   @Bean
+    //   AgentCard agentCard(@Value("${server.port:8001}") int port,
+    //                       @Value("${server.servlet.context-path:/a2a}") String contextPath) {
+    //       return new AgentCard.Builder()
+    //               .name("Character Agent")
+    //               .description("Specialized D&D character management agent...")
+    //               .url("http://localhost:" + port + contextPath + "/")
+    //               .version("1.0.0")
+    //               .capabilities(new AgentCapabilities.Builder().streaming(false).build())
+    //               .defaultInputModes(List.of("text"))
+    //               .defaultOutputModes(List.of("text"))
+    //               .skills(List.of(
+    //                   new AgentSkill.Builder()
+    //                       .id("create_character").name("Create Character")
+    //                       .description("Create a new D&D character with rolled ability scores")
+    //                       .tags(List.of("character", "creation", "dnd"))
+    //                       .examples(List.of("Create a female Elf Wizard named Lyria"))
+    //                       .build(),
+    //                   new AgentSkill.Builder()
+    //                       .id("find_character").name("Find Character")
+    //                       .description("Find an existing character by name — returns full stats, level, XP, and inventory")
+    //                       .tags(List.of("character", "lookup", "inventory"))
+    //                       .examples(List.of("Find the character named Ragnar"))
+    //                       .build(),
+    //                   new AgentSkill.Builder()
+    //                       .id("list_characters").name("List Characters")
+    //                       .description("List all characters in the database with their inventory")
+    //                       .tags(List.of("character", "list"))
+    //                       .examples(List.of("List all characters"))
+    //                       .build(),
+    //                   new AgentSkill.Builder()
+    //                       .id("add_inventory").name("Add Inventory Item")
+    //                       .description("Add an item to a character's inventory — use for loot, purchases, or quest rewards")
+    //                       .tags(List.of("character", "inventory", "loot"))
+    //                       .examples(List.of("Add a Longsword to Ragnar's inventory", "Give Lyria 50 gold pieces"))
+    //                       .build(),
+    //                   new AgentSkill.Builder()
+    //                       .id("remove_inventory").name("Remove Inventory Item")
+    //                       .description("Remove an item from a character's inventory — use when items are consumed, sold, or lost")
+    //                       .tags(List.of("character", "inventory"))
+    //                       .examples(List.of("Remove a health potion from Ragnar's inventory"))
+    //                       .build()))
+    //               .protocolVersion("0.3.0")
+    //               .build();
+    //   }
 
-    @Bean
-    AgentExecutor agentExecutor(BedrockProxyChatModel chatModel, CharacterTools characterTools) {
-        var chatClient = ChatClient.builder(chatModel)
-                .defaultSystem(SYSTEM_PROMPT)
-                .defaultTools(characterTools)
-                .build();
-
-        return new DefaultAgentExecutor(chatClient, (chat, requestContext) -> {
-            String userMessage = DefaultAgentExecutor.extractTextFromMessage(requestContext.getMessage());
-            return chat.prompt().user(userMessage).call().content();
-        });
-    }
+    // TODO 3: Create an AgentExecutor bean that wires the ChatClient with the CharacterTools.
+    //   Same pattern as the Rules Agent, but using CharacterTools instead of RulesTools:
+    //
+    //   @Bean
+    //   AgentExecutor agentExecutor(BedrockProxyChatModel chatModel, CharacterTools characterTools) {
+    //       var chatClient = ChatClient.builder(chatModel)
+    //               .defaultSystem(SYSTEM_PROMPT)
+    //               .defaultTools(characterTools)
+    //               .build();
+    //
+    //       return new DefaultAgentExecutor(chatClient, (chat, requestContext) -> {
+    //           String userMessage = DefaultAgentExecutor.extractTextFromMessage(requestContext.getMessage());
+    //           return chat.prompt().user(userMessage).call().content();
+    //       });
+    //   }
 }
 
 /// Bedrock ChatModel configuration
@@ -140,11 +142,11 @@ class CharacterAgentConfig {
 
     @Bean
     BedrockProxyChatModel chatModel() {
-        var bearerToken = System.getenv("AWS_BEARER_TOKEN_BEDROCK");
         var bedrockClient = BedrockRuntimeClient.builder()
                 .region(Region.US_WEST_2)
                 .credentialsProvider(AnonymousCredentialsProvider.create())
-                .overrideConfiguration(c -> c.putHeader("Authorization", "Bearer " + bearerToken))
+                .overrideConfiguration(c -> c.putHeader("Authorization",
+                        "Bearer " + System.getenv("AWS_BEARER_TOKEN_BEDROCK")))
                 .build();
 
         var options = BedrockChatOptions.builder()
