@@ -2,7 +2,7 @@ name: Regenerate Maven projects
 
 on:
   push:
-    branches: [main]
+    branches: [main, solution]
     paths:
       - 'chapter1/**/*.java'
       - 'chapter2/**/*.java'
