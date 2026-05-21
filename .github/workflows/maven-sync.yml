@@ -1,0 +1,50 @@
+name: Regenerate Maven projects
+
+on:
+  push:
+    branches: [main, solution]
+    paths:
+      - 'chapter1/**/*.java'
+      - 'chapter2/**/*.java'
+      - 'chapter3/**/*.java'
+      - 'chapter4/**/*.java'
+      - 'chapter5/**/*.java'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: maven-sync
+  cancel-in-progress: false
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'corretto'
+
+      - name: Install JBang
+        run: |
+          curl -Ls https://sh.jbang.dev | bash -s - app setup
+          echo "$HOME/.jbang/bin" >> "$GITHUB_PATH"
+
+      - name: Regenerate Maven projects
+        run: ./scripts/regenerate-maven-projects.sh
+
+      - name: Commit and push if changed
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name  'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add chapter*-maven chapter*-maven-*
+            git commit -m 'chore: regenerate Maven projects'
+            git push
+          else
+            echo "No changes — Maven projects already in sync."
+          fi
