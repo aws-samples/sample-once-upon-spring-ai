@@ -2,17 +2,19 @@
 
 //JAVA 25+
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
+//DEPS io.netty:netty-bom:4.2.9.Final@pom
 //DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0-M4
 //DEPS org.springframework.ai:spring-ai-client-chat:2.0.0-M4
 
-// TODO 1: Add the Spring AI Community agent-utils dependency that provides SmartWebFetchTool.
+// Step 1: Spring AI Community agent-utils dependency provides the built-in SmartWebFetchTool.
+//DEPS org.springaicommunity:spring-ai-agent-utils:0.5.0
 
 
 //DEPS software.amazon.awssdk:bedrockruntime:2.41.34
 //DEPS software.amazon.awssdk:auth:2.41.34
 //DEPS org.slf4j:slf4j-api:2.0.17
 //DEPS org.slf4j:slf4j-simple:2.0.17
-//RUNTIME_OPTIONS -Daws.region=us-west-2
+//RUNTIME_OPTIONS -Daws.region=us-west-2 --enable-native-access=ALL-UNNAMED
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +25,8 @@ import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
-// TODO 2: Import the SmartWebFetchTool class from the community library.
+// Step 2: Import the SmartWebFetchTool class from the community library.
+import org.springaicommunity.agent.tools.SmartWebFetchTool;
 
 
 private static final Logger log = LoggerFactory.getLogger("DungeonMasterWithBuiltInTools");
@@ -54,11 +57,16 @@ void main() {
         .build();
     var agent = ChatClient.builder(chatModel).build();
 
-    // TODO 3: Create a SmartWebFetchTool and use it to equip the agent.
+    // Step 3: Create the SmartWebFetchTool — equips the agent to fetch and process web content
+    var webFetchTool = SmartWebFetchTool.builder(agent)
+        .maxContentLength(300_000)
+        .build();
 
     try {
+        // Step 4: Ask the agent and pass the web-fetch tool so it can read Wikipedia
         var response = agent.prompt()
             .user("Using the website https://en.wikipedia.org/wiki/Dungeons_%26_Dragons tell me the name of the designers of Dungeons and Dragons.")
+            .tools(webFetchTool)
             .call()
             .content();
 

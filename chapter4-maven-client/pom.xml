@@ -8,6 +8,18 @@
 	<version>999-SNAPSHOT</version>
 	<description></description>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>io.netty</groupId>
+				<artifactId>netty-bom</artifactId>
+				<version>4.2.9.Final</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.ai</groupId>
@@ -25,6 +37,12 @@
 			<groupId>org.springframework.ai</groupId>
 			<artifactId>spring-ai-mcp</artifactId>
 			<version>2.0.0-M4</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.modelcontextprotocol.sdk</groupId>
+			<artifactId>mcp</artifactId>
+			<version>1.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

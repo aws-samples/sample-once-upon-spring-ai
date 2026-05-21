@@ -2,13 +2,14 @@
 
 //JAVA 25+
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
+//DEPS io.netty:netty-bom:4.2.9.Final@pom
 //DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0-M4
 //DEPS org.springframework.ai:spring-ai-client-chat:2.0.0-M4
 //DEPS software.amazon.awssdk:bedrockruntime:2.41.34
 //DEPS software.amazon.awssdk:auth:2.41.34
 //DEPS org.slf4j:slf4j-api:2.0.17
 //DEPS org.slf4j:slf4j-simple:2.0.17
-//RUNTIME_OPTIONS -Daws.region=us-west-2
+//RUNTIME_OPTIONS -Daws.region=us-west-2 --enable-native-access=ALL-UNNAMED
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,11 +48,28 @@ void main() {
         .defaultOptions(options)
         .build();
 
-    // TODO 1: Build a ChatClient with a system prompt that sets the AI personality
+    // Step 5: Build ChatClient with system prompt (defines AI personality)
+    var agent = ChatClient.builder(chatModel)
+        .defaultSystem("You are a game master for a Dungeon & Dragon game")
+        .build();
 
+    // Step 6: Invoke the AI agent
+    var playerMessage = "Hi, I am an adventurer ready for adventure!";
+    log.info("Player: " + playerMessage + "\n");
 
-    // TODO 2: Send a message to the agent and print the response
-    
+    try {
+        var response = agent
+            .prompt()
+            .user(playerMessage)
+            .call()
+            .content();
 
-    log.info("\n=== Ending Dungeon Master AI Agent ===");
+        log.info("Dungeon Master says:");
+        log.info(response);
+
+    } catch (Exception e) {
+        log.error("Error invoking AI agent: {}", e.getMessage());
+    } finally {
+        log.info("\n=== Ending Dungeon Master AI Agent ===");
+    }
 }
