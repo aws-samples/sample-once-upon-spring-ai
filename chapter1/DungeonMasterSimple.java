@@ -48,11 +48,28 @@ void main() {
         .defaultOptions(options)
         .build();
 
-    // TODO 1: Build a ChatClient with a system prompt that sets the AI personality
+    // Step 5: Build ChatClient with system prompt (defines AI personality)
+    var agent = ChatClient.builder(chatModel)
+        .defaultSystem("You are a game master for a Dungeon & Dragon game")
+        .build();
 
+    // Step 6: Invoke the AI agent
+    var playerMessage = "Hi, I am an adventurer ready for adventure!";
+    log.info("Player: " + playerMessage + "\n");
 
-    // TODO 2: Send a message to the agent and print the response
-    
+    try {
+        var response = agent
+            .prompt()
+            .user(playerMessage)
+            .call()
+            .content();
 
-    log.info("\n=== Ending Dungeon Master AI Agent ===");
+        log.info("Dungeon Master says:");
+        log.info(response);
+
+    } catch (Exception e) {
+        log.error("Error invoking AI agent: {}", e.getMessage());
+    } finally {
+        log.info("\n=== Ending Dungeon Master AI Agent ===");
+    }
 }
