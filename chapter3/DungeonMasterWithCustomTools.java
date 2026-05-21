@@ -63,7 +63,8 @@ void main() {
     try {
         var response = agent.prompt()
             .user(playerMessage)
-            // TODO 4: Pass the DiceTools to the agent using .tools()
+            // Step 4: Equip the agent with the DiceTools so it can roll dice during reasoning
+            .tools(new DiceTools())
             .call()
             .content();
 
