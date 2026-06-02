@@ -10,7 +10,6 @@
 //DEPS org.springaicommunity:spring-ai-a2a-server-autoconfigure:0.2.0
 //DEPS software.amazon.awssdk:bedrockruntime:2.41.34
 //DEPS software.amazon.awssdk:auth:2.41.34
-//DEPS com.fasterxml.jackson.core:jackson-databind:2.18.4
 //DEPS org.slf4j:slf4j-api:2.0.17
 //DEPS org.springframework:spring-core:7.0.3
 //RUNTIME_OPTIONS -Daws.region=us-west-2 --enable-native-access=ALL-UNNAMED
