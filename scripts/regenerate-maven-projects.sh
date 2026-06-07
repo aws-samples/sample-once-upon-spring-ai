@@ -52,6 +52,31 @@ jbang export maven --force -O utils       "$REPO_ROOT/chapter5/utils/CreateKnowl
 popd > /dev/null
 cp scripts/chapter5-parent-pom.xml chapter5-maven/pom.xml
 
+# Strip JBang-only directives from the generated Maven .java sources.
+# `jbang export maven` copies the shebang and every //DIRECTIVE comment verbatim
+# into the exported class. They are harmless to javac but confusing to IntelliJ
+# users — a stray `//DEPS` that doesn't match pom.xml looks like a real dependency
+# that's missing. The Maven build gets everything it needs from pom.xml, so these
+# lines are pure noise on the IntelliJ path. Remove them.
+#
+# Directives stripped: the `///usr/bin/env jbang` shebang plus
+# //JAVA //JAVAC_OPTIONS //RUNTIME_OPTIONS //DEPS //REPOS //SOURCES //FILES //GAV.
+echo "Stripping JBang directives from generated Maven sources ..."
+find chapter*-maven chapter*-maven-* -name '*.java' -type f -print0 \
+  | while IFS= read -r -d '' f; do
+        # Delete shebang and JBang directive lines, then collapse any run of blank
+        # lines left at the very top of the file so classes start cleanly.
+        sed -E \
+            -e '/^\/\/\/usr\/bin\/env jbang/d' \
+            -e '/^\/\/(JAVA|JAVAC_OPTIONS|RUNTIME_OPTIONS|DEPS|REPOS|SOURCES|FILES|GAV)([[:space:]]|$)/d' \
+            "$f" > "$f.tmp"
+        # Remove leading blank lines left at the top of the file (jbang export emits
+        # CRLF endings, so treat a lone carriage return as blank too). Once the first
+        # line with real content is seen, print everything unchanged.
+        awk '{ line=$0; sub(/\r$/, "", line) } line=="" && !seen { next } { seen=1; print }' "$f.tmp" > "$f"
+        rm -f "$f.tmp"
+    done
+
 # If we seeded the source KB from the committed Maven copy, remove it again so
 # the gitignored path stays clean on disk. The export already copied it into
 # chapter5-maven/rules/src/main/resources/ for distribution.
