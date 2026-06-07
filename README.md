@@ -268,18 +268,48 @@ By completing this workshop, you'll master:
 
 ---
 
-## 📚 Additional Resources
+## 📚 Additional Resources — Continue Your Quest
 
-### Official Documentation & Tools
+This workshop is a **low-bar, practical intro**. Spring AI has many more abstractions than we
+could cover in five chapters. If you want to go deeper, here's a curated path — grouped so you
+can dive into whatever caught your interest.
 
-- 📖 **[Spring AI Documentation](https://docs.spring.io/spring-ai/reference/)** - Complete reference and guides
-- 📖 **[JBang Documentation](https://www.jbang.dev/documentation/jbang-all/latest/index.html)** - JBang user guide
-- ☁️ **[Amazon Bedrock Documentation](https://docs.aws.amazon.com/bedrock/)** - Model access and setup
+### 🧙‍♂️ Spring AI — go beyond the intro
 
-### Community & Protocols
+- 📖 **[Spring AI Reference Documentation](https://docs.spring.io/spring-ai/reference/)** — the complete guide
+- 🤖 **[ChatClient API](https://docs.spring.io/spring-ai/reference/api/chatclient.html)** — fluent prompts, system prompts, entity mapping
+- 🧩 **[Advisors API](https://docs.spring.io/spring-ai/reference/api/advisors.html)** — the interceptor chain behind memory, RAG, and logging (Chapter 5 uses `MessageChatMemoryAdvisor`)
+- 🔧 **[Tool Calling](https://docs.spring.io/spring-ai/reference/api/tools.html)** — the full `@Tool` / `@ToolParam` model from Chapters 3–4
+- 📚 **[Retrieval-Augmented Generation (RAG)](https://docs.spring.io/spring-ai/reference/api/retrieval-augmented-generation.html)** — the patterns behind Chapter 5's rules agent
+- 🗂️ **[Vector Stores](https://docs.spring.io/spring-ai/reference/api/vectordbs.html)** — swap the in-memory `SimpleVectorStore` for OpenSearch, pgvector, and more
+- 🧠 **[Chat Memory](https://docs.spring.io/spring-ai/reference/api/chat-memory.html)** — short-term conversation memory, the foundation for stateful agents
+- 💻 **[Spring AI GitHub](https://github.com/spring-projects/spring-ai)** — source, issues, and release notes
+- 🌱 **[Spring AI Community](https://github.com/spring-ai-community)** — `agent-utils` (Chapter 2) and the A2A bindings (Chapter 5) live here
 
-- 🌐 **[A2A Protocol](https://a2a-protocol.org/latest/)** - Agent-to-Agent specification
-- 🔌 **[Model Context Protocol](https://modelcontextprotocol.io/)** - MCP specification
+### ☁️ Amazon Bedrock
+
+- ☁️ **[Amazon Bedrock Documentation](https://docs.aws.amazon.com/bedrock/)** — model access and setup
+- 🎭 **[Bedrock Converse API](https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html)** — the unified inference API `BedrockProxyChatModel` calls under the hood
+- 🔑 **[Bedrock API keys](https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys.html)** — the short-term key you generated in setup
+- 🧮 **[Titan Text Embeddings V2](https://docs.aws.amazon.com/bedrock/latest/userguide/titan-embedding-models.html)** — the embedding model powering Chapter 5's RAG
+
+### 🌐 Protocols — MCP & A2A
+
+- 🔌 **[Model Context Protocol](https://modelcontextprotocol.io/)** — the MCP spec (Chapter 4)
+- 🔌 **[MCP Java SDK](https://modelcontextprotocol.io/sdk/java/mcp-overview)** — the `io.modelcontextprotocol` client/server library you used
+- 🌐 **[A2A Protocol](https://a2a-protocol.org/latest/)** — Agent-to-Agent specification (Chapter 5)
+- 🔧 **[Spring AI MCP](https://docs.spring.io/spring-ai/reference/api/mcp/mcp-overview.html)** — how Spring AI wires MCP into the `ChatClient`
+
+### 🎒 Tooling & Modern Java
+
+- 📖 **[JBang Documentation](https://www.jbang.dev/documentation/jbang-all/latest/index.html)** — JBang user guide
+- ☕ **[JEP 512: Compact Source Files & Instance Main Methods](https://openjdk.org/jeps/512)** — why `void main()` works without a class
+- 🧱 **[Spring Modulith](https://spring.io/projects/spring-modulith)** — when your agent grows past a single file and you want clean module boundaries
+
+### 🧭 Going to production
+
+- 🏗️ **[AWS Agentic AI Patterns](https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-patterns/agent-patterns.html)** — the pattern catalog (Tool-Based, RAG, Memory, Multi-Agent…) this workshop demonstrates
+- 🏢 **[Amazon Bedrock AgentCore](https://aws.amazon.com/bedrock/agentcore/)** — managed runtime, memory, gateway, and identity for taking these agents to production
 
 ---
 
