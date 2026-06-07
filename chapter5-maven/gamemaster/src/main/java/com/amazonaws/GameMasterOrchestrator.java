@@ -1,23 +1,3 @@
-///usr/bin/env jbang "$0" "$@" ; exit $?
-
-//JAVA 25+
-//SOURCES GameMasterService.java
-//SOURCES GameMasterController.java
-//REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
-//DEPS io.netty:netty-bom:4.2.9.Final@pom
-//DEPS org.springframework.boot:spring-boot-starter-web:4.0.2
-//DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0-M4
-//DEPS org.springframework.ai:spring-ai-client-chat:2.0.0-M4
-//DEPS org.springframework.ai:spring-ai-mcp:2.0.0-M4
-//DEPS io.modelcontextprotocol.sdk:mcp:1.0.0
-//DEPS io.github.a2asdk:a2a-java-sdk-client:0.3.3.Final
-//DEPS io.github.a2asdk:a2a-java-sdk-client-transport-jsonrpc:0.3.3.Final
-//DEPS software.amazon.awssdk:bedrockruntime:2.41.34
-//DEPS software.amazon.awssdk:auth:2.41.34
-//DEPS org.slf4j:slf4j-api:2.0.17
-//DEPS org.springframework:spring-core:7.0.3
-//RUNTIME_OPTIONS -Daws.region=us-west-2 --enable-native-access=ALL-UNNAMED
-
 package com.amazonaws;
 
 import io.modelcontextprotocol.client.McpClient;

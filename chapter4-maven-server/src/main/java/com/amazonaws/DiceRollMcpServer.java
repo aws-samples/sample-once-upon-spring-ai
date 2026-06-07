@@ -1,11 +1,3 @@
-///usr/bin/env jbang "$0" "$@" ; exit $?
-
-//JAVA 25+
-//FILES application.properties
-//REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
-//DEPS org.springframework.boot:spring-boot-starter-web:4.0.2
-//DEPS org.springframework.ai:spring-ai-starter-mcp-server-webmvc:2.0.0-M4
-
 package com.amazonaws;
 
 import org.slf4j.Logger;
@@ -14,9 +6,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Component;
 
-// TODO 1: Import the MCP annotation classes that will expose your tools over the network.
-//   Hint: The annotations are in org.springframework.ai.mcp.annotation (McpTool, McpToolParam)
-
+// Provided for you: the MCP annotation imports that expose your tools over the network.
+import org.springframework.ai.mcp.annotation.McpTool;
+import org.springframework.ai.mcp.annotation.McpToolParam;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -40,9 +32,9 @@ class DiceTools {
 
     record DiceRollResponse(int[] rolls, int total, String description) {}
 
-    // TODO 2: Annotate the method with @McpTool to expose it as an MCP tool
+    // TODO 1: Annotate the method with @McpTool to expose it as an MCP tool
 
-    // TODO 3: Annotate each parameter with @McpToolParam
+    // TODO 2: Annotate each parameter with @McpToolParam
     DiceRollResponse rollDice(int faces, int count) {
 
         var rolls = new int[count];

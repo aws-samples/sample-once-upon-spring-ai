@@ -1,17 +1,3 @@
-///usr/bin/env jbang "$0" "$@" ; exit $?
-
-//JAVA 25+
-//REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
-//DEPS io.netty:netty-bom:4.2.9.Final@pom
-//DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0-M4
-//DEPS org.springframework.ai:spring-ai-client-chat:2.0.0-M4
-//DEPS org.springframework.ai:spring-ai-mcp:2.0.0-M4
-//DEPS software.amazon.awssdk:bedrockruntime:2.41.34
-//DEPS software.amazon.awssdk:auth:2.41.34
-//DEPS org.slf4j:slf4j-api:2.0.17
-//DEPS org.slf4j:slf4j-simple:2.0.17
-//RUNTIME_OPTIONS -Daws.region=us-west-2 --enable-native-access=ALL-UNNAMED
-
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -20,13 +6,13 @@ import org.springframework.ai.bedrock.converse.BedrockProxyChatModel;
 import org.springframework.ai.bedrock.converse.BedrockChatOptions;
 import org.springframework.ai.chat.client.ChatClient;
 
-// TODO 1: Import the MCP client classes needed to connect to the MCP server.
-//   You need four imports covering:
-//     - The Spring AI bridge that converts MCP tools into Spring AI ToolCallbacks
-//     - The MCP client class itself
-//     - The HTTP Streamable transport layer
-//     - The MCP protocol schema types
-//   Hint: Check the io.modelcontextprotocol and org.springframework.ai.mcp packages.
+// Provided for you: the four MCP client imports (the Spring AI bridge, the MCP client,
+// the HTTP Streamable transport, and the MCP protocol schema types). JBang has no IDE
+// to auto-resolve these package paths, so they're here ready to use.
+import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
+import io.modelcontextprotocol.client.McpClient;
+import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
+import io.modelcontextprotocol.spec.McpSchema;
 
 import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
@@ -45,13 +31,13 @@ void main() {
     // Step 1: Connect to the D&D Dice Roll MCP Server via Streamable HTTP
     log.info("Connecting to D&D Dice Roll MCP Server...");
 
-    // TODO 2: Create the HTTP transport and MCP client
+    // TODO 1: Create the HTTP transport and MCP client
     //   Two steps:
     //   1. Build an HTTP Streamable transport pointing at localhost:8080 with the "/mcp" endpoint.
     //   2. Create a synchronous MCP client using that transport, with a client name and version.
 
     try {
-        // TODO 3: Initialize the MCP client, discover tools, and bridge them to Spring AI.
+        // TODO 2: Initialize the MCP client, discover tools, and bridge them to Spring AI.
         //   Three steps:
         //   1. Initialize the MCP client connection.
         //   2. List available tools from the server and log them.
@@ -103,7 +89,7 @@ void main() {
             try {
                 var response = agent.prompt()
                         .user(userInput)
-                        // TODO 4: Pass the MCP tools to the agent so it can call the remote dice server.
+                        // TODO 3: Pass the MCP tools to the agent so it can call the remote dice server.
                         //   Hint: MCP tools are already wrapped as ToolCallback objects, so you need
                         //   a different method than .tools() — check the ChatClient API for the right one.
                         .call()

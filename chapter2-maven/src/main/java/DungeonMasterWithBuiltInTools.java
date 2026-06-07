@@ -1,19 +1,5 @@
-///usr/bin/env jbang "$0" "$@" ; exit $?
-
-//JAVA 25+
-//REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
-//DEPS io.netty:netty-bom:4.2.9.Final@pom
-//DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0-M4
-//DEPS org.springframework.ai:spring-ai-client-chat:2.0.0-M4
-
-// TODO 1: Add the Spring AI Community agent-utils dependency that provides SmartWebFetchTool.
-
-
-//DEPS software.amazon.awssdk:bedrockruntime:2.41.34
-//DEPS software.amazon.awssdk:auth:2.41.34
-//DEPS org.slf4j:slf4j-api:2.0.17
-//DEPS org.slf4j:slf4j-simple:2.0.17
-//RUNTIME_OPTIONS -Daws.region=us-west-2 --enable-native-access=ALL-UNNAMED
+// Provided for you: the Spring AI Community agent-utils dependency that gives you SmartWebFetchTool.
+// (JBang has no IDE to auto-add dependencies, so the //DEPS line is here ready to go.)
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +10,8 @@ import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
-// TODO 2: Import the SmartWebFetchTool class from the community library.
-
+// Provided for you: the SmartWebFetchTool import from the community library.
+import org.springaicommunity.agent.tools.SmartWebFetchTool;
 
 private static final Logger log = LoggerFactory.getLogger("DungeonMasterWithBuiltInTools");
 
@@ -55,11 +41,14 @@ void main() {
         .build();
     var agent = ChatClient.builder(chatModel).build();
 
-    // TODO 3: Create a SmartWebFetchTool and use it to equip the agent.
+    // TODO 1: Create a SmartWebFetchTool from the agent. It uses a builder:
+    //   SmartWebFetchTool.builder(agent).maxContentLength(300_000).build()
+
 
     try {
         var response = agent.prompt()
             .user("Using the website https://en.wikipedia.org/wiki/Dungeons_%26_Dragons tell me the name of the designers of Dungeons and Dragons.")
+            // TODO 2: Pass your web-fetch tool to the agent with .tools(...) so it can read Wikipedia
             .call()
             .content();
 
