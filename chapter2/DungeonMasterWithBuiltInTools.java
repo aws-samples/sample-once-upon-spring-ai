@@ -3,6 +3,7 @@
 //JAVA 25+
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
 //DEPS io.netty:netty-bom:4.2.9.Final@pom
+//DEPS tools.jackson:jackson-bom:3.1.4@pom
 //DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0
 //DEPS org.springframework.ai:spring-ai-client-chat:2.0.0
 
