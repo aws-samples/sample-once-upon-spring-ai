@@ -50,16 +50,10 @@ void main() {
         .build();
 
     // TODO 1: Build a ChatClient with a system prompt that sets the AI personality
-    var agent = ChatClient.builder(chatModel).defaultSystem("You are a Game Master in a Dungeon & Dragon heroic fantasy Tabletop RPG")
-        .build();
+    
 
     // TODO 2: Send a message to the agent and print the response
-    var response = agent.prompt()
-        .user("I am going on an adventure!")
-        .call()
-        .content();
-    IO.println("Game Master says:");
-    IO.println(response);
+    
 
     log.info("\n=== Ending Dungeon Master AI Agent ===");
 }
