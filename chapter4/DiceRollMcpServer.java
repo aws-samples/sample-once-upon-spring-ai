@@ -4,7 +4,7 @@
 //FILES application.properties
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
 //DEPS org.springframework.boot:spring-boot-starter-web:4.0.2
-//DEPS org.springframework.ai:spring-ai-starter-mcp-server-webmvc:2.0.0-M4
+//DEPS org.springframework.ai:spring-ai-starter-mcp-server-webmvc:2.0.0
 
 package com.amazonaws;
 
