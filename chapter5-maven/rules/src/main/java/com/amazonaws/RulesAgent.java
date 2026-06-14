@@ -126,7 +126,7 @@ class RulesAgentConfig {
 
         return BedrockProxyChatModel.builder()
                 .bedrockRuntimeClient(bedrockClient)
-                .defaultOptions(options)
+                .options(options)
                 .build();
     }
 }

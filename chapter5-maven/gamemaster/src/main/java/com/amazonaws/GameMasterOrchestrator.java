@@ -194,7 +194,7 @@ class ChatModelConfig {
 
         return BedrockProxyChatModel.builder()
                 .bedrockRuntimeClient(bedrockClient)
-                .defaultOptions(options)
+                .options(options)
                 .toolCallingManager(new SanitizingToolCallingManager())
                 .build();
     }

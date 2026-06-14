@@ -57,7 +57,7 @@ void main() {
 
         var chatModel = BedrockProxyChatModel.builder()
                 .bedrockRuntimeClient(bedrockClient)
-                .defaultOptions(options)
+                .options(options)
                 .build();
 
         // Step 5: Build ChatClient with system prompt (tools come from MCP Server remotely!)

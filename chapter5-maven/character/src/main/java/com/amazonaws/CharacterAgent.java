@@ -138,7 +138,7 @@ class CharacterAgentConfig {
 
         return BedrockProxyChatModel.builder()
                 .bedrockRuntimeClient(bedrockClient)
-                .defaultOptions(options)
+                .options(options)
                 .build();
     }
 }

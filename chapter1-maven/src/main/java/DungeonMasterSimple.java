@@ -32,7 +32,7 @@ void main() {
 
     var chatModel = BedrockProxyChatModel.builder()
         .bedrockRuntimeClient(bedrockClient)
-        .defaultOptions(options)
+        .options(options)
         .build();
 
     // TODO 1: Build a ChatClient with a system prompt that sets the AI personality

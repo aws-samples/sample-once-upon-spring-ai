@@ -31,7 +31,7 @@ void main() {
 
     var chatModel = BedrockProxyChatModel.builder()
         .bedrockRuntimeClient(bedrockClient)
-        .defaultOptions(options)
+        .options(options)
         .build();
 
     var agent = ChatClient.builder(chatModel)
