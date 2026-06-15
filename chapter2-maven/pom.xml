@@ -41,12 +41,6 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.springaicommunity</groupId>
-			<artifactId>spring-ai-agent-utils</artifactId>
-			<version>0.10.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
 			<groupId>software.amazon.awssdk</groupId>
 			<artifactId>bedrockruntime</artifactId>
 			<version>2.41.34</version>
@@ -56,6 +50,12 @@
 			<groupId>software.amazon.awssdk</groupId>
 			<artifactId>auth</artifactId>
 			<version>2.41.34</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springaicommunity</groupId>
+			<artifactId>spring-ai-agent-utils</artifactId>
+			<version>0.10.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

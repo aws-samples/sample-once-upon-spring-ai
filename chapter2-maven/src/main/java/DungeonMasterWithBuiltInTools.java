@@ -1,5 +1,5 @@
 // Provided for you: the Spring AI Community agent-utils dependency that gives you SmartWebFetchTool.
-// (JBang has no IDE to auto-add dependencies, so the //DEPS line is here ready to go.)
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,13 +42,12 @@ void main() {
     var agent = ChatClient.builder(chatModel).build();
 
     // TODO 1: Create a SmartWebFetchTool from the agent. It uses a builder:
-    //   SmartWebFetchTool.builder(agent).maxContentLength(300_000).build()
-
+    
 
     try {
         var response = agent.prompt()
             .user("Using the website https://en.wikipedia.org/wiki/Dungeons_%26_Dragons tell me the name of the designers of Dungeons and Dragons.")
-            // TODO 2: Pass your web-fetch tool to the agent with .tools(...) so it can read Wikipedia
+            // TODO 2: Pass your web-fetch tool to the agent
             .call()
             .content();
 
