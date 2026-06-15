@@ -3,6 +3,7 @@
 //JAVA 25+
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
 //DEPS io.netty:netty-bom:4.2.9.Final@pom
+//DEPS com.fasterxml.jackson.core:jackson-annotations:2.21
 //DEPS org.springframework.ai:spring-ai-pdf-document-reader:2.0.0
 //DEPS org.springframework.ai:spring-ai-vector-store:2.0.0
 //DEPS org.springframework.ai:spring-ai-bedrock:2.0.0
