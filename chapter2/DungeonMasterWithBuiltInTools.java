@@ -6,12 +6,12 @@
 //DEPS tools.jackson:jackson-bom:3.1.4@pom
 //DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0
 //DEPS org.springframework.ai:spring-ai-client-chat:2.0.0
-
-// Provided for you: the Spring AI Community agent-utils dependency that gives you SmartWebFetchTool.
-// (JBang has no IDE to auto-add dependencies, so the //DEPS line is here ready to go.)
-//DEPS org.springaicommunity:spring-ai-agent-utils:0.10.0
 //DEPS software.amazon.awssdk:bedrockruntime:2.41.34
 //DEPS software.amazon.awssdk:auth:2.41.34
+
+// Provided for you: the Spring AI Community agent-utils dependency that gives you SmartWebFetchTool.
+//DEPS org.springaicommunity:spring-ai-agent-utils:0.10.0
+
 //DEPS org.slf4j:slf4j-api:2.0.17
 //DEPS org.slf4j:slf4j-simple:2.0.17
 //RUNTIME_OPTIONS -Daws.region=us-west-2 --enable-native-access=ALL-UNNAMED
@@ -57,13 +57,12 @@ void main() {
     var agent = ChatClient.builder(chatModel).build();
 
     // TODO 1: Create a SmartWebFetchTool from the agent. It uses a builder:
-    //   SmartWebFetchTool.builder(agent).maxContentLength(300_000).build()
-
+    
 
     try {
         var response = agent.prompt()
             .user("Using the website https://en.wikipedia.org/wiki/Dungeons_%26_Dragons tell me the name of the designers of Dungeons and Dragons.")
-            // TODO 2: Pass your web-fetch tool to the agent with .tools(...) so it can read Wikipedia
+            // TODO 2: Pass your web-fetch tool to the agent
             .call()
             .content();
 
