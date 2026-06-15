@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -106,6 +107,7 @@ class GameMasterController {
         try {
             var content = chatClient.prompt()
                     .user(request.question())
+                    .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, "gamemaster-session"))
                     .tools(remoteAgent)
                     .toolCallbacks(mcpTools)
                     .call()

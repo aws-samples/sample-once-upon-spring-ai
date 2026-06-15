@@ -27,12 +27,15 @@ import io.modelcontextprotocol.spec.McpSchema;
 
 import java.util.List;
 
+import io.micrometer.observation.ObservationRegistry;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.bedrock.converse.BedrockChatOptions;
 import org.springframework.ai.bedrock.converse.BedrockProxyChatModel;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.messages.AssistantMessage;
@@ -141,7 +144,11 @@ public class GameMasterOrchestrator {
                           ChatMemory chatMemory) {
         var systemPrompt = SYSTEM_PROMPT.formatted(remoteAgent.getAgentDescriptions());
         log.info("Initializing routing ChatClient with agents: {}", remoteAgent.getAgentNames());
-        return ChatClient.builder(chatModel)
+        // The tool-execution loop runs in the client-side ToolCallingAdvisor (Spring AI 2.0),
+        // so the sanitizer must be installed there — setting it on the model builder is a no-op.
+        var toolAdvisorBuilder = ToolCallingAdvisor.builder()
+                .toolCallingManager(new SanitizingToolCallingManager());
+        return ChatClient.builder(chatModel, ObservationRegistry.NOOP, null, null, toolAdvisorBuilder)
                 .defaultSystem(systemPrompt)
                 .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
                 .build();
@@ -213,7 +220,6 @@ class ChatModelConfig {
         return BedrockProxyChatModel.builder()
                 .bedrockRuntimeClient(bedrockClient)
                 .options(options)
-                .toolCallingManager(new SanitizingToolCallingManager())
                 .build();
     }
 }
