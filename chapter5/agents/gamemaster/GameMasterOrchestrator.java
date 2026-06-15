@@ -137,13 +137,20 @@ public class GameMasterOrchestrator {
     //   The system prompt includes a %s placeholder that gets filled with the discovered agent descriptions.
     //   Also wire in the ChatMemory via MessageChatMemoryAdvisor so the orchestrator remembers conversation context.
     //
+    //   In Spring AI 2.0 the tool-execution loop runs in the client-side ToolCallingAdvisor, so the
+    //   SanitizingToolCallingManager must be installed there — passing it to the model builder is a no-op.
+    //   (Requires: import io.micrometer.observation.ObservationRegistry;
+    //    import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;)
+    //
     //   @Bean
     //   ChatClient chatClient(BedrockProxyChatModel chatModel,
     //                          GameMasterService remoteAgent,
     //                          ChatMemory chatMemory) {
     //       var systemPrompt = SYSTEM_PROMPT.formatted(remoteAgent.getAgentDescriptions());
     //       log.info("Initializing routing ChatClient with agents: {}", remoteAgent.getAgentNames());
-    //       return ChatClient.builder(chatModel)
+    //       var toolAdvisorBuilder = ToolCallingAdvisor.builder()
+    //               .toolCallingManager(new SanitizingToolCallingManager());
+    //       return ChatClient.builder(chatModel, ObservationRegistry.NOOP, null, null, toolAdvisorBuilder)
     //               .defaultSystem(systemPrompt)
     //               .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
     //               .build();
@@ -216,7 +223,6 @@ class ChatModelConfig {
         return BedrockProxyChatModel.builder()
                 .bedrockRuntimeClient(bedrockClient)
                 .options(options)
-                .toolCallingManager(new SanitizingToolCallingManager())
                 .build();
     }
 }
