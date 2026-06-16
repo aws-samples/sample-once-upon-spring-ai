@@ -183,7 +183,7 @@ class McpClientConfig {
                     .endpoint("/mcp")
                     .build();
             var client = McpClient.sync(transport)
-                    .clientInfo(new McpSchema.Implementation("gamemaster-mcp-client", "1.0.0"))
+                    .clientInfo(McpSchema.Implementation.builder("gamemaster-mcp-client", "1.0.0").build())
                     .build();
             client.initialize();
             var tools = client.listTools().tools().stream().map(McpSchema.Tool::name).toList();

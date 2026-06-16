@@ -49,7 +49,7 @@ void main() {
             .build();
 
     var mcpClient = McpClient.sync(transport)
-            .clientInfo(new McpSchema.Implementation("dice-mcp-client", "1.0.0"))
+            .clientInfo(McpSchema.Implementation.builder("dice-mcp-client", "1.0.0").build())
             .build();
 
     try {
@@ -111,8 +111,9 @@ void main() {
             try {
                 var response = agent.prompt()
                         .user(userInput)
-                        // Step 7: MCP tools come pre-wrapped as ToolCallbacks — pass them with .toolCallbacks()
-                        .toolCallbacks(mcpTools)
+                        // Step 7: MCP tools come pre-wrapped as ToolCallbacks — pass them with .tools().
+                        //          Cast to Object[] so the array spreads as varargs (one tool per element).
+                        .tools((Object[]) mcpTools)
                         .call()
                         .content();
 

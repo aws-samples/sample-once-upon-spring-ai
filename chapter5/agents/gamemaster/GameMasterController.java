@@ -109,7 +109,7 @@ class GameMasterController {
                     .user(request.question())
                     .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, "gamemaster-session"))
                     .tools(remoteAgent)
-                    .toolCallbacks(mcpTools)
+                    .tools((Object[]) mcpTools)
                     .call()
                     .content();
 
