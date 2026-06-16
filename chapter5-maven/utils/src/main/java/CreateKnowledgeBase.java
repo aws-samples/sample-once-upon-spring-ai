@@ -70,7 +70,7 @@ void main() {
 
     // Step 4: Split into smaller chunks for better retrieval
     log.info("Splitting into chunks...");
-    var splitter = new TokenTextSplitter();
+    var splitter = TokenTextSplitter.builder().build();
     List<Document> chunks = splitter.apply(pages);
 
     // Filter out very short chunks (< 50 chars)
