@@ -3,7 +3,7 @@
 //JAVA 25+
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
 //DEPS io.netty:netty-bom:4.2.9.Final@pom
-//DEPS tools.jackson:jackson-bom:3.1.4@pom
+//DEPS com.fasterxml.jackson.core:jackson-annotations:2.21
 //DEPS org.springframework.ai:spring-ai-pdf-document-reader:2.0.0
 //DEPS org.springframework.ai:spring-ai-vector-store:2.0.0
 //DEPS org.springframework.ai:spring-ai-bedrock:2.0.0
@@ -70,7 +70,7 @@ void main() {
 
     // Step 4: Split into smaller chunks for better retrieval
     log.info("Splitting into chunks...");
-    var splitter = new TokenTextSplitter();
+    var splitter = TokenTextSplitter.builder().build();
     List<Document> chunks = splitter.apply(pages);
 
     // Filter out very short chunks (< 50 chars)
