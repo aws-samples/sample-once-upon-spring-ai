@@ -8,8 +8,8 @@
 //DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0
 //DEPS org.springframework.ai:spring-ai-client-chat:2.0.0
 //DEPS org.springframework.ai:spring-ai-mcp:2.0.0
-//DEPS software.amazon.awssdk:bedrockruntime:2.41.34
-//DEPS software.amazon.awssdk:auth:2.41.34
+//DEPS software.amazon.awssdk:bedrockruntime:2.49.1
+//DEPS software.amazon.awssdk:auth:2.49.1
 //DEPS org.slf4j:slf4j-api:2.0.17
 //DEPS org.slf4j:slf4j-simple:2.0.17
 //RUNTIME_OPTIONS -Daws.region=us-west-2 --enable-native-access=ALL-UNNAMED

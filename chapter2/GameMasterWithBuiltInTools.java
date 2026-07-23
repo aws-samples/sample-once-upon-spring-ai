@@ -7,8 +7,8 @@
 //DEPS com.fasterxml.jackson.core:jackson-annotations:2.21
 //DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0
 //DEPS org.springframework.ai:spring-ai-client-chat:2.0.0
-//DEPS software.amazon.awssdk:bedrockruntime:2.41.34
-//DEPS software.amazon.awssdk:auth:2.41.34
+//DEPS software.amazon.awssdk:bedrockruntime:2.49.1
+//DEPS software.amazon.awssdk:auth:2.49.1
 
 // Provided for you: the Spring AI Community agent-utils dependency that gives you SmartWebFetchTool.
 //DEPS org.springaicommunity:spring-ai-agent-utils:0.10.0
