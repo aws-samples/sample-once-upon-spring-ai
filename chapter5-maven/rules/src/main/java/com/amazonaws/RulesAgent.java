@@ -12,8 +12,8 @@
 //DEPS org.springframework.ai:spring-ai-vector-store:2.0.0
 //DEPS org.springframework.ai:spring-ai-bedrock:2.0.0
 //DEPS org.springaicommunity:spring-ai-a2a-server-autoconfigure:0.3.0
-//DEPS software.amazon.awssdk:bedrockruntime:2.41.34
-//DEPS software.amazon.awssdk:auth:2.41.34
+//DEPS software.amazon.awssdk:bedrockruntime:2.49.1
+//DEPS software.amazon.awssdk:auth:2.49.1
 //DEPS org.slf4j:slf4j-api:2.0.17
 //DEPS org.springframework:spring-core:7.0.3
 //RUNTIME_OPTIONS -Daws.region=us-west-2 --enable-native-access=ALL-UNNAMED
