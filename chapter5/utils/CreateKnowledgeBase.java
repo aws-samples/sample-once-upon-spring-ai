@@ -29,7 +29,7 @@ import java.io.File;
 import java.time.Duration;
 import java.util.List;
 
-/// Creates a D&D rules knowledge base from the Basic Rules PDF.
+/// Creates a TTRPG rules knowledge base from the Basic Rules PDF.
 /// Uses Spring AI's PagePdfDocumentReader and SimpleVectorStore with Bedrock Titan Embeddings.
 ///
 /// Prerequisites:
@@ -49,7 +49,7 @@ void main() {
     var pdfFile = new File(PDF_FILE);
     if (!pdfFile.exists()) {
         log.error("PDF file not found: {}", pdfFile.getAbsolutePath());
-        log.error("Download the D&D Basic Rules PDF and place it in this directory.");
+        log.error("Download the TTRPG Basic Rules PDF and place it in this directory.");
         return;
     }
     log.info("Found PDF: {} ({} bytes)", PDF_FILE, pdfFile.length());

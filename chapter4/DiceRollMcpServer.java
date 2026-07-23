@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 /// MCP Server that exposes dice rolling tools over HTTP.
-/// Run this first, then run DungeonMasterMCPClient.java to connect.
+/// Run this first, then run GameMasterMCPClient.java to connect.
 /// The key difference from Chapter 3: tools are now accessible over the NETWORK via MCP protocol.
 @SpringBootApplication
 public class DiceRollMcpServer {
@@ -43,7 +43,7 @@ class DiceTools {
 
     // Step 2: @McpTool exposes this method as a tool clients can discover and invoke.
     // Step 3: @McpToolParam describes each parameter so the calling AI knows what to pass.
-    @McpTool(description = "Roll dice for D&D game mechanics. Use this for attack rolls, damage, ability checks, or saving throws.")
+    @McpTool(description = "Roll dice for TTRPG game mechanics. Use this for attack rolls, damage, ability checks, or saving throws.")
     DiceRollResponse rollDice(
         @McpToolParam(description = "Number of faces on the dice (e.g. 6, 20)", required = true) int faces,
         @McpToolParam(description = "Number of dice to roll (e.g. 1, 3)", required = true) int count) {

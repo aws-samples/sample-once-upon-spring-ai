@@ -13,7 +13,7 @@ import org.springframework.ai.tool.annotation.ToolParam;
 import java.util.Arrays;
 import java.util.Random;
 
-/// Tool class containing D&D dice rolling methods the AI can call
+/// Tool class containing TTRPG dice rolling methods the AI can call
 class DiceTools {
 
     private static final Logger log = LoggerFactory.getLogger("DiceTools");
@@ -23,7 +23,7 @@ class DiceTools {
 
     // Step 2: @Tool tells the AI WHEN to call this method
     // Step 3: @ToolParam tells the AI WHAT to pass for each argument
-    @Tool(description = "Roll dice for D&D game mechanics. Use this for attack rolls, damage, ability checks, or saving throws.")
+    @Tool(description = "Roll dice for TTRPG game mechanics. Use this for attack rolls, damage, ability checks, or saving throws.")
     DiceRollResponse rollDice(
         @ToolParam(description = "Number of faces on the dice (e.g. 6, 20)", required = true) int faces,
         @ToolParam(description = "Number of dice to roll (e.g. 1, 3)", required = true) int count) {
