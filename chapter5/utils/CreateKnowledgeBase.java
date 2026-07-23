@@ -38,7 +38,7 @@ import java.util.List;
 ///
 /// Usage: jbang CreateKnowledgeBase.java
 ///
-/// Output: dnd_knowledge_base.json (SimpleVectorStore file)
+/// Output: gm_knowledge_base.json (SimpleVectorStore file)
 
 private static final Logger log = LoggerFactory.getLogger("CreateKnowledgeBase");
 private static final String PDF_FILE = "DnD_BasicRules_2018.pdf";
