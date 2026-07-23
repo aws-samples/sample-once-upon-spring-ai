@@ -104,13 +104,13 @@ class CharacterTools {
     }
 
     @Tool(description = """
-        Create a new D&D character. Roll dice to generate the stats_dict (ability scores).
+        Create a new TTRPG character. Roll dice to generate the stats_dict (ability scores).
         When rolling ability scores, remember the traditional method: roll 4d6, drop the lowest die.
         """)
     String createCharacter(
             @ToolParam(description = "Character's name") String name,
-            @ToolParam(description = "D&D class (Fighter, Wizard, etc.)") String characterClass,
-            @ToolParam(description = "D&D race (Human, Elf, etc.)") String race,
+            @ToolParam(description = "TTRPG class (Fighter, Wizard, etc.)") String characterClass,
+            @ToolParam(description = "TTRPG race (Human, Elf, etc.)") String race,
             @ToolParam(description = "Character's gender") String gender,
             @ToolParam(description = "Strength ability score") int strength,
             @ToolParam(description = "Dexterity ability score") int dexterity,

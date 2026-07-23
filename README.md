@@ -15,7 +15,7 @@ Your journey through the realms of AI agents is carefully structured as a progre
 ### 🧙‍♂️ [Chapter 1: The Art of Agent Summoning](chapter1/)
 **Master the fundamental ritual of agent creation**
 - Learn what Spring AI is and how it works
-- Summon your first AI companion — a Dungeon Master chatbot
+- Summon your first AI companion — a Game Master chatbot
 - Configure Amazon Bedrock models and system prompts
 - Understand the core concepts of agent development
 
@@ -42,7 +42,7 @@ Your journey through the realms of AI agents is carefully structured as a progre
 
 ### 🏰 [Chapter 5: The Council of Agents - A2A Mastery](chapter5/)
 **Command multiple agents in perfect harmony**
-- Build a complete multi-agent D&D system with character inventory management
+- Build a complete multi-agent TTRPG system with character inventory management
 - Master Agent-to-Agent (A2A) communication with `AgentCard` and `AgentExecutor`
 - Orchestrate specialized agents (Rules, Character, Game Master) working together
 - Implement conversation memory with `MessageChatMemoryAdvisor`
@@ -58,7 +58,7 @@ Before you start, commit to **one** of the two paths below. Both are first-class
 
 **Tooling:** JBang CLI + any text editor (VS Code, Sublime, nano — whatever you like).
 
-**You'll run code like this:** `jbang DungeonMasterSimple.java`
+**You'll run code like this:** `jbang GameMasterSimple.java`
 
 **The contract:** Follow the workshop instructions exactly as written. If you deviate, you're on your own.
 
@@ -72,7 +72,7 @@ Before you start, commit to **one** of the two paths below. Both are first-class
 
 **Prerequisite:** You already have **IntelliJ IDEA for Java** installed on your laptop (Community or Ultimate). This path does not cover installing the IDE.
 
-**You'll run code like this:** open `chapter1-maven/` in IntelliJ, click the green arrow next to `main()` in `DungeonMasterSimple.java`.
+**You'll run code like this:** open `chapter1-maven/` in IntelliJ, click the green arrow next to `main()` in `GameMasterSimple.java`.
 
 **The contract:** Work the way you normally do. If your IntelliJ / Maven / JDK setup has quirks, you're on your own.
 
@@ -200,20 +200,20 @@ The repo ships **two parallel views of the same content** — pick the tree that
 sample-once-upon-spring-ai/
 ├── README.md
 ├── chapter1/                          # 🧙‍♂️ The Art of Agent Summoning
-│   └── DungeonMasterSimple.java
+│   └── GameMasterSimple.java
 ├── chapter2/                          # ⚔️ AI Agent with Built-in Tools
-│   └── DungeonMasterWithBuiltInTools.java
+│   └── GameMasterWithBuiltInTools.java
 ├── chapter3/                          # 🔨 The Adventurer's Arsenal
 │   ├── DiceTools.java
-│   └── DungeonMasterWithCustomTools.java
+│   └── GameMasterWithCustomTools.java
 ├── chapter4/                          # 🌐 The Tavern Notice Board (MCP)
 │   ├── DiceRollMcpServer.java
-│   ├── DungeonMasterMCPClient.java
+│   ├── GameMasterMCPClient.java
 │   └── application.properties
 └── chapter5/                          # 🏰 The Council of Agents (A2A)
     ├── agents/
     │   ├── rules/
-    │   │   ├── RulesAgent.java                 # D&D rules lookup agent with RAG
+    │   │   ├── RulesAgent.java                 # TTRPG rules lookup agent with RAG
     │   │   └── RulesTools.java                 # PDF knowledge base search tools
     │   ├── character/
     │   │   ├── CharacterAgent.java             # Character management agent
@@ -233,11 +233,11 @@ sample-once-upon-spring-ai/
 
 ```
 sample-once-upon-spring-ai/
-├── chapter1-maven/                    # Mirror of chapter1 — runs DungeonMasterSimple
-├── chapter2-maven/                    # Mirror of chapter2 — runs DungeonMasterWithBuiltInTools
-├── chapter3-maven/                    # Mirror of chapter3 — runs DungeonMasterWithCustomTools
+├── chapter1-maven/                    # Mirror of chapter1 — runs GameMasterSimple
+├── chapter2-maven/                    # Mirror of chapter2 — runs GameMasterWithBuiltInTools
+├── chapter3-maven/                    # Mirror of chapter3 — runs GameMasterWithCustomTools
 ├── chapter4-maven-server/             # MCP server (DiceRollMcpServer + application.properties)
-├── chapter4-maven-client/             # MCP client (DungeonMasterMCPClient)
+├── chapter4-maven-client/             # MCP client (GameMasterMCPClient)
 └── chapter5-maven/                    # Multi-module Maven project for the A2A council
     ├── rules/                         # → RulesAgent, RulesTools
     ├── character/                     # → CharacterAgent, CharacterTools, characters.json

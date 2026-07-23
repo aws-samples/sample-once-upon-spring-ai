@@ -55,14 +55,14 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
-/// Rules Agent — D&D 5e rules lookup via A2A protocol with vector knowledge base.
+/// Rules Agent — TTRPG 5e rules lookup via A2A protocol with vector knowledge base.
 /// Prerequisites: Run utils/CreateKnowledgeBase.java first to generate the knowledge base.
 /// Run with: jbang RulesAgent.java
 @SpringBootApplication
 public class RulesAgent {
 
     private static final String SYSTEM_PROMPT = """
-        You are a D&D 5e rules expert. When asked about rules, ALWAYS use the queryDndRules tool
+        You are a TTRPG 5e rules expert. When asked about rules, ALWAYS use the queryDndRules tool
         to find the relevant rule from the official source — never answer from memory alone.
         Provide a clear, concise answer that includes:
         1. The rule mechanic (what dice to roll, what modifiers apply, DCs, etc.)

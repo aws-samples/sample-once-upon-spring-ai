@@ -1,7 +1,6 @@
 ///usr/bin/env jbang "$0" "$@" ; exit $?
 
 //JAVA 25+
-//SOURCES DiceTools.java
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
 //DEPS io.netty:netty-bom:4.2.9.Final@pom
 //DEPS tools.jackson:jackson-bom:3.1.4@pom
@@ -17,15 +16,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.bedrock.converse.BedrockProxyChatModel;
 import org.springframework.ai.bedrock.converse.BedrockChatOptions;
-import org.springframework.ai.chat.client.ChatClient;
 import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
-private static final Logger log = LoggerFactory.getLogger("DungeonMasterWithCustomTools");
+import org.springframework.ai.chat.client.ChatClient;
+
+private static final Logger log = LoggerFactory.getLogger("GameMasterSimple");
 
 void main() {
-    log.info("=== Starting Dungeon Master AI Agent with Custom Tools ===");
+    log.info("=== Starting Game Master AI Agent ===");
 
     var bearerToken = System.getenv("AWS_BEARER_TOKEN_BEDROCK");
     if (bearerToken == null || bearerToken.isBlank()) {
@@ -49,30 +49,11 @@ void main() {
         .options(options)
         .build();
 
-    var agent = ChatClient.builder(chatModel)
-        .defaultSystem("""
-            You are Lady Luck, the mystical keeper of dice and fortune in D&D adventures.
-            You speak with theatrical flair and always announce dice rolls with appropriate drama.
-            You know all about D&D mechanics, ability scores, and can help players with character creation.
-            When rolling ability scores, remember the traditional method: roll 4d6, drop the lowest die.
-            """)
-        .build();
+    // TODO 1: Build a ChatClient with a system prompt that sets the AI personality
+    
 
-    var playerMessage = "Help me create a new D&D character! Roll the strength, wisdom, charisma and intelligence abilities scores using 4d6 drop lowest method.";
-    log.info("Player: {}\n", playerMessage);
+    // TODO 2: Send a message to the agent and print the response
+    
 
-    try {
-        var response = agent.prompt()
-            .user(playerMessage)
-            // TODO 4: Pass the DiceTools to the agent using .tools()
-            .call()
-            .content();
-
-        log.info("Dungeon Master says:");
-        log.info(response);
-    } catch (Exception e) {
-        log.error("Error invoking AI agent: {}", e.getMessage());
-    } finally {
-        log.info("\n=== Ending Dungeon Master AI Agent with Custom Tools ===");
-    }
+    log.info("\n=== Ending Game Master AI Agent ===");
 }
