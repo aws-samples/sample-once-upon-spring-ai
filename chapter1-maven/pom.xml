@@ -4,7 +4,7 @@
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.example.project</groupId>
-	<artifactId>DungeonMasterSimple</artifactId>
+	<artifactId>GameMasterSimple</artifactId>
 	<version>999-SNAPSHOT</version>
 	<description></description>
 
@@ -98,7 +98,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>DungeonMasterSimple</mainClass>
+							<mainClass>GameMasterSimple</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

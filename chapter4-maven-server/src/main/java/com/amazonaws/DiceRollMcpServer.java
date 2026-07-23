@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 /// MCP Server that exposes dice rolling tools over HTTP.
-/// Run this first, then run DungeonMasterMCPClient.java to connect.
+/// Run this first, then run GameMasterMCPClient.java to connect.
 /// The key difference from Chapter 3: tools are now accessible over the NETWORK via MCP protocol.
 @SpringBootApplication
 public class DiceRollMcpServer {

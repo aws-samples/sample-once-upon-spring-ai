@@ -1,6 +1,3 @@
-// Provided for you: the Spring AI Community agent-utils dependency that gives you SmartWebFetchTool.
-
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.bedrock.converse.BedrockProxyChatModel;
@@ -10,13 +7,10 @@ import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
-// Provided for you: the SmartWebFetchTool import from the community library.
-import org.springaicommunity.agent.tools.SmartWebFetchTool;
-
-private static final Logger log = LoggerFactory.getLogger("DungeonMasterWithBuiltInTools");
+private static final Logger log = LoggerFactory.getLogger("GameMasterWithCustomTools");
 
 void main() {
-    log.info("=== Starting Dungeon Master AI Agent with Built-in Tools ===");
+    log.info("=== Starting Game Master AI Agent with Custom Tools ===");
 
     var bearerToken = System.getenv("AWS_BEARER_TOKEN_BEDROCK");
     if (bearerToken == null || bearerToken.isBlank()) {
@@ -39,23 +33,31 @@ void main() {
         .bedrockRuntimeClient(bedrockClient)
         .options(options)
         .build();
-    var agent = ChatClient.builder(chatModel).build();
 
-    // TODO 1: Create a SmartWebFetchTool from the agent. It uses a builder:
-    
+    var agent = ChatClient.builder(chatModel)
+        .defaultSystem("""
+            You are Lady Luck, the mystical keeper of dice and fortune in TTRPG adventures.
+            You speak with theatrical flair and always announce dice rolls with appropriate drama.
+            You know all about TTRPG mechanics, ability scores, and can help players with character creation.
+            When rolling ability scores, remember the traditional method: roll 4d6, drop the lowest die.
+            """)
+        .build();
+
+    var playerMessage = "Help me create a new TTRPG character! Roll the strength, wisdom, charisma and intelligence abilities scores using 4d6 drop lowest method.";
+    log.info("Player: {}\n", playerMessage);
 
     try {
         var response = agent.prompt()
-            .user("Using the website https://en.wikipedia.org/wiki/Dungeons_%26_Dragons tell me the name of the designers of Dungeons and Dragons.")
-            // TODO 2: Pass your web-fetch tool to the agent
+            .user(playerMessage)
+            // TODO 4: Pass the DiceTools to the agent using .tools()
             .call()
             .content();
 
-        log.info("Agent Response:");
+        log.info("Game Master says:");
         log.info(response);
     } catch (Exception e) {
         log.error("Error invoking AI agent: {}", e.getMessage());
     } finally {
-        log.info("\n=== Ending Dungeon Master AI Agent with Built-in Tools ===");
+        log.info("\n=== Ending Game Master AI Agent with Custom Tools ===");
     }
 }

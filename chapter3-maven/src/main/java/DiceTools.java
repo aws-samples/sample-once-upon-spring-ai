@@ -8,7 +8,7 @@ import org.springframework.ai.tool.annotation.ToolParam;
 import java.util.Arrays;
 import java.util.Random;
 
-/// Tool class containing D&D dice rolling methods the AI can call
+/// Tool class containing TTRPG dice rolling methods the AI can call
 class DiceTools {
 
     private static final Logger log = LoggerFactory.getLogger("DiceTools");

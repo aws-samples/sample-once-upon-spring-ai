@@ -25,14 +25,14 @@ import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 import java.util.List;
 import java.util.Map;
 
-/// Character Agent — D&D character management via A2A protocol.
+/// Character Agent — TTRPG character management via A2A protocol.
 /// Uses Spring AI A2A server autoconfiguration for agent discovery and communication.
 /// Run with: jbang CharacterAgent.java
 @SpringBootApplication
 public class CharacterAgent {
 
     private static final String SYSTEM_PROMPT = """
-        You are a D&D character management specialist. You handle character creation, lookup, and inventory.
+        You are a TTRPG character management specialist. You handle character creation, lookup, and inventory.
         When creating characters, always roll ability scores using the traditional method: roll 4d6 and drop
         the lowest die for each of the six abilities (Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma).
         Use the appropriate tools to create, find, or list characters as requested.
@@ -61,7 +61,7 @@ public class CharacterAgent {
     //                       @Value("${server.servlet.context-path:/a2a}") String contextPath) {
     //       return new AgentCard.Builder()
     //               .name("Character Agent")
-    //               .description("Specialized D&D character management agent...")
+    //               .description("Specialized TTRPG character management agent...")
     //               .url("http://localhost:" + port + contextPath + "/")
     //               .version("1.0.0")
     //               .capabilities(new AgentCapabilities.Builder().streaming(false).build())
@@ -70,7 +70,7 @@ public class CharacterAgent {
     //               .skills(List.of(
     //                   new AgentSkill.Builder()
     //                       .id("create_character").name("Create Character")
-    //                       .description("Create a new D&D character with rolled ability scores")
+    //                       .description("Create a new TTRPG character with rolled ability scores")
     //                       .tags(List.of("character", "creation", "dnd"))
     //                       .examples(List.of("Create a female Elf Wizard named Lyria"))
     //                       .build(),

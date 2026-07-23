@@ -8,7 +8,7 @@ import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
 
-/// Rules lookup tool — queries the vector store for D&D 5e rules.
+/// Rules lookup tool — queries the vector store for TTRPG 5e rules.
 @Service
 class RulesTools {
 
@@ -20,7 +20,7 @@ class RulesTools {
         this.vectorStore = vectorStore;
     }
 
-    @Tool(description = "Fast D&D 5e rule lookup. Returns brief rule with page reference.")
+    @Tool(description = "Fast TTRPG 5e rule lookup. Returns brief rule with page reference.")
     String queryDndRules(@ToolParam(description = "The rules question or topic to look up") String query) {
         log.info("Tool called: queryDndRules('{}')", query);
 

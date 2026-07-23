@@ -1,17 +1,22 @@
+// Provided for you: the Spring AI Community agent-utils dependency that gives you SmartWebFetchTool.
+
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.bedrock.converse.BedrockProxyChatModel;
 import org.springframework.ai.bedrock.converse.BedrockChatOptions;
+import org.springframework.ai.chat.client.ChatClient;
 import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
-import org.springframework.ai.chat.client.ChatClient;
+// Provided for you: the SmartWebFetchTool import from the community library.
+import org.springaicommunity.agent.tools.SmartWebFetchTool;
 
-private static final Logger log = LoggerFactory.getLogger("DungeonMasterSimple");
+private static final Logger log = LoggerFactory.getLogger("GameMasterWithBuiltInTools");
 
 void main() {
-    log.info("=== Starting Dungeon Master AI Agent ===");
+    log.info("=== Starting Game Master AI Agent with Built-in Tools ===");
 
     var bearerToken = System.getenv("AWS_BEARER_TOKEN_BEDROCK");
     if (bearerToken == null || bearerToken.isBlank()) {
@@ -34,12 +39,23 @@ void main() {
         .bedrockRuntimeClient(bedrockClient)
         .options(options)
         .build();
+    var agent = ChatClient.builder(chatModel).build();
 
-    // TODO 1: Build a ChatClient with a system prompt that sets the AI personality
+    // TODO 1: Create a SmartWebFetchTool from the agent. It uses a builder:
     
 
-    // TODO 2: Send a message to the agent and print the response
-    
+    try {
+        var response = agent.prompt()
+            .user("Using the website https://en.wikipedia.org/wiki/Dungeons_%26_Dragons tell me the name of the designers of Dungeons and Dragons.")
+            // TODO 2: Pass your web-fetch tool to the agent
+            .call()
+            .content();
 
-    log.info("\n=== Ending Dungeon Master AI Agent ===");
+        log.info("Agent Response:");
+        log.info(response);
+    } catch (Exception e) {
+        log.error("Error invoking AI agent: {}", e.getMessage());
+    } finally {
+        log.info("\n=== Ending Game Master AI Agent with Built-in Tools ===");
+    }
 }

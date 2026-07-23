@@ -4,7 +4,7 @@
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.example.project</groupId>
-	<artifactId>DungeonMasterWithCustomTools</artifactId>
+	<artifactId>GameMasterWithCustomTools</artifactId>
 	<version>999-SNAPSHOT</version>
 	<description></description>
 
@@ -98,7 +98,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>DungeonMasterWithCustomTools</mainClass>
+							<mainClass>GameMasterWithCustomTools</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
