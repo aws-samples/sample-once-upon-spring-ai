@@ -4,6 +4,7 @@
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
 //DEPS io.netty:netty-bom:4.2.9.Final@pom
 //DEPS tools.jackson:jackson-bom:3.1.4@pom
+//DEPS com.fasterxml.jackson.core:jackson-annotations:2.21
 //DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0
 //DEPS org.springframework.ai:spring-ai-client-chat:2.0.0
 //DEPS software.amazon.awssdk:bedrockruntime:2.41.34

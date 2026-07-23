@@ -4,6 +4,7 @@
 //FILES application.properties
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
 //DEPS tools.jackson:jackson-bom:3.1.4@pom
+//DEPS com.fasterxml.jackson.core:jackson-annotations:2.21
 //DEPS org.springframework.boot:spring-boot-starter-web:4.0.2
 //DEPS org.springframework.ai:spring-ai-starter-mcp-server-webmvc:2.0.0
 
