@@ -42,7 +42,7 @@ import java.util.List;
 
 private static final Logger log = LoggerFactory.getLogger("CreateKnowledgeBase");
 private static final String PDF_FILE = "DnD_BasicRules_2018.pdf";
-private static final String VECTOR_STORE_FILE = "dm_knowledge_base.json";
+private static final String VECTOR_STORE_FILE = "gm_knowledge_base.json";
 
 void main() {
     // Step 1: Validate PDF exists

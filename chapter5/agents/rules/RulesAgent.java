@@ -2,7 +2,7 @@
 
 //JAVA 25+
 //SOURCES RulesTools.java
-//FILES dm_knowledge_base.json=./../../utils/dm_knowledge_base.json
+//FILES gm_knowledge_base.json=./../../utils/gm_knowledge_base.json
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
 //DEPS io.netty:netty-bom:4.2.9.Final@pom
 //DEPS tools.jackson:jackson-bom:3.1.4@pom
@@ -98,7 +98,7 @@ public class RulesAgent {
 class VectorStoreConfig {
 
     private static final Logger log = LoggerFactory.getLogger("VectorStoreConfig");
-    private static final String VECTOR_STORE_RESOURCE = "dm_knowledge_base.json";
+    private static final String VECTOR_STORE_RESOURCE = "gm_knowledge_base.json";
 
     @Bean
     BedrockTitanEmbeddingModel embeddingModel() {
