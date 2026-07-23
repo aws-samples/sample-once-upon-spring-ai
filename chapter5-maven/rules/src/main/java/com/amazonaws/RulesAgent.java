@@ -2,7 +2,7 @@
 
 //JAVA 25+
 //SOURCES RulesTools.java
-//FILES dm_knowledge_base.json=./../../utils/dm_knowledge_base.json
+//FILES gm_knowledge_base.json=./../../utils/gm_knowledge_base.json
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
 //DEPS io.netty:netty-bom:4.2.9.Final@pom
 //DEPS org.springframework.boot:spring-boot-starter-web:4.0.2
@@ -55,14 +55,14 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
-/// Rules Agent — D&D 5e rules lookup via A2A protocol with vector knowledge base.
+/// Rules Agent — TTRPG 5e rules lookup via A2A protocol with vector knowledge base.
 /// Prerequisites: Run utils/CreateKnowledgeBase.java first to generate the knowledge base.
 /// Run with: jbang RulesAgent.java
 @SpringBootApplication
 public class RulesAgent {
 
     private static final String SYSTEM_PROMPT = """
-        You are a D&D 5e rules expert. When asked about rules, ALWAYS use the queryDndRules tool
+        You are a TTRPG 5e rules expert. When asked about rules, ALWAYS use the queryDndRules tool
         to find the relevant rule from the official source — never answer from memory alone.
         Provide a clear, concise answer that includes:
         1. The rule mechanic (what dice to roll, what modifiers apply, DCs, etc.)
@@ -87,8 +87,8 @@ public class RulesAgent {
         return new AgentCard.Builder()
                 .name("Rules Agent")
                 .description("""
-                    Specialized D&D 5e rules lookup agent that provides fast, authoritative rule clarifications
-                    from the Basic Rules. Queries a vector knowledge base containing indexed D&D content and returns
+                    Specialized TTRPG 5e rules lookup agent that provides fast, authoritative rule clarifications
+                    from the Basic Rules. Queries a vector knowledge base containing indexed TTRPG content and returns
                     brief, page-referenced rule explanations.""")
                 .url("http://localhost:" + port + contextPath + "/")
                 .version("1.0.0")
@@ -98,9 +98,9 @@ public class RulesAgent {
                 .skills(List.of(
                     new AgentSkill.Builder()
                         .id("rules_lookup")
-                        .name("D&D Rules Lookup")
+                        .name("TTRPG Rules Lookup")
                         .description("""
-                            Look up any D&D 5e rule from the official Basic Rules knowledge base. Covers combat, \
+                            Look up any TTRPG 5e rule from the official Basic Rules knowledge base. Covers combat, \
                             spellcasting, ability checks, saving throws, conditions, movement, equipment, and more. \
                             Returns the exact rule with page references.""")
                         .tags(List.of("rules", "dnd", "mechanics", "combat", "spells", "conditions"))
@@ -136,7 +136,7 @@ public class RulesAgent {
 class VectorStoreConfig {
 
     private static final Logger log = LoggerFactory.getLogger("VectorStoreConfig");
-    private static final String VECTOR_STORE_RESOURCE = "dm_knowledge_base.json";
+    private static final String VECTOR_STORE_RESOURCE = "gm_knowledge_base.json";
 
     @Bean
     BedrockTitanEmbeddingModel embeddingModel() {

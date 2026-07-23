@@ -30,7 +30,7 @@ import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
-private static final Logger log = LoggerFactory.getLogger("DungeonMasterMCPClient");
+private static final Logger log = LoggerFactory.getLogger("GameMasterMCPClient");
 
 void main() {
     // Step 0: Read the Bedrock API key from environment
@@ -40,8 +40,8 @@ void main() {
         return;
     }
 
-    // Step 1: Connect to the D&D Dice Roll MCP Server via Streamable HTTP
-    log.info("Connecting to D&D Dice Roll MCP Server...");
+    // Step 1: Connect to the TTRPG Dice Roll MCP Server via Streamable HTTP
+    log.info("Connecting to TTRPG Dice Roll MCP Server...");
 
     // Step 2: Build the HTTP Streamable transport and the synchronous MCP client.
     var transport = HttpClientStreamableHttpTransport.builder("http://localhost:8080")
@@ -85,14 +85,14 @@ void main() {
         // Step 5: Build ChatClient with system prompt (tools come from MCP Server remotely!)
         var agent = ChatClient.builder(chatModel)
                 .defaultSystem("""
-                        You are Lady Luck, the mystical keeper of dice and fortune in D&D adventures.
+                        You are Lady Luck, the mystical keeper of dice and fortune in TTRPG adventures.
                         You speak with theatrical flair and always announce dice rolls with appropriate drama.
-                        You know all about D&D mechanics, always use the appropriate tools when applicable - never make up results!
+                        You know all about TTRPG mechanics, always use the appropriate tools when applicable - never make up results!
                         """)
                 .build();
 
         // Step 6: Start interactive session - tools come from the remote MCP Server
-        IO.println("\n\uD83C\uDFB2 Lady Luck - D&D Gamemaster with MCP Dice Rolling");
+        IO.println("\n\uD83C\uDFB2 Lady Luck - TTRPG Gamemaster with MCP Dice Rolling");
         IO.println("=".repeat(60));
         IO.println("\n\uD83C\uDFAF Try: 'Roll a d20' or 'Roll a d6' or 'Roll a d100'");
 

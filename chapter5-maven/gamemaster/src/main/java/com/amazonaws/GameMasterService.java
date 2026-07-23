@@ -50,7 +50,7 @@ class GameMasterService {
 
     @Tool(description = """
         Sends a task to a remote agent. Use this to delegate work to specialized agents
-        such as the Rules Agent (D&D mechanics) or the Character Agent (character management).
+        such as the Rules Agent (TTRPG mechanics) or the Character Agent (character management).
         """)
     String sendMessage(
             @ToolParam(description = "The name of the agent to send the task to") String agentName,

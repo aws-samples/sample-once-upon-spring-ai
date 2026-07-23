@@ -1,6 +1,7 @@
 ///usr/bin/env jbang "$0" "$@" ; exit $?
 
 //JAVA 25+
+//SOURCES DiceTools.java
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
 //DEPS io.netty:netty-bom:4.2.9.Final@pom
 //DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0
@@ -15,16 +16,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.bedrock.converse.BedrockProxyChatModel;
 import org.springframework.ai.bedrock.converse.BedrockChatOptions;
+import org.springframework.ai.chat.client.ChatClient;
 import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
-import org.springframework.ai.chat.client.ChatClient;
-
-private static final Logger log = LoggerFactory.getLogger("DungeonMasterSimple");
+private static final Logger log = LoggerFactory.getLogger("GameMasterWithCustomTools");
 
 void main() {
-    log.info("=== Starting Dungeon Master AI Agent ===");
+    log.info("=== Starting Game Master AI Agent with Custom Tools ===");
 
     var bearerToken = System.getenv("AWS_BEARER_TOKEN_BEDROCK");
     if (bearerToken == null || bearerToken.isBlank()) {
@@ -48,28 +48,31 @@ void main() {
         .options(options)
         .build();
 
-    // Step 5: Build ChatClient with system prompt (defines AI personality)
     var agent = ChatClient.builder(chatModel)
-        .defaultSystem("You are a game master for a Dungeon & Dragon game")
+        .defaultSystem("""
+            You are Lady Luck, the mystical keeper of dice and fortune in TTRPG adventures.
+            You speak with theatrical flair and always announce dice rolls with appropriate drama.
+            You know all about TTRPG mechanics, ability scores, and can help players with character creation.
+            When rolling ability scores, remember the traditional method: roll 4d6, drop the lowest die.
+            """)
         .build();
 
-    // Step 6: Invoke the AI agent
-    var playerMessage = "Hi, I am an adventurer ready for adventure!";
-    log.info("Player: " + playerMessage + "\n");
+    var playerMessage = "Help me create a new TTRPG character! Roll the strength, wisdom, charisma and intelligence abilities scores using 4d6 drop lowest method.";
+    log.info("Player: {}\n", playerMessage);
 
     try {
-        var response = agent
-            .prompt()
+        var response = agent.prompt()
             .user(playerMessage)
+            // Step 4: Equip the agent with the DiceTools so it can roll dice during reasoning
+            .tools(new DiceTools())
             .call()
             .content();
 
-        log.info("Dungeon Master says:");
+        log.info("Game Master says:");
         log.info(response);
-
     } catch (Exception e) {
         log.error("Error invoking AI agent: {}", e.getMessage());
     } finally {
-        log.info("\n=== Ending Dungeon Master AI Agent ===");
+        log.info("\n=== Ending Game Master AI Agent with Custom Tools ===");
     }
 }

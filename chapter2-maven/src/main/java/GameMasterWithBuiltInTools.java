@@ -1,11 +1,15 @@
 ///usr/bin/env jbang "$0" "$@" ; exit $?
 
 //JAVA 25+
-//SOURCES DiceTools.java
 //REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
 //DEPS io.netty:netty-bom:4.2.9.Final@pom
 //DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0
 //DEPS org.springframework.ai:spring-ai-client-chat:2.0.0
+
+// Step 1: Spring AI Community agent-utils dependency provides the built-in SmartWebFetchTool.
+//DEPS org.springaicommunity:spring-ai-agent-utils:0.10.0
+
+
 //DEPS software.amazon.awssdk:bedrockruntime:2.41.34
 //DEPS software.amazon.awssdk:auth:2.41.34
 //DEPS org.slf4j:slf4j-api:2.0.17
@@ -21,10 +25,14 @@ import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
-private static final Logger log = LoggerFactory.getLogger("DungeonMasterWithCustomTools");
+// Step 2: Import the SmartWebFetchTool class from the community library.
+import org.springaicommunity.agent.tools.SmartWebFetchTool;
+
+
+private static final Logger log = LoggerFactory.getLogger("GameMasterWithBuiltInTools");
 
 void main() {
-    log.info("=== Starting Dungeon Master AI Agent with Custom Tools ===");
+    log.info("=== Starting Game Master AI Agent with Built-in Tools ===");
 
     var bearerToken = System.getenv("AWS_BEARER_TOKEN_BEDROCK");
     if (bearerToken == null || bearerToken.isBlank()) {
@@ -47,32 +55,26 @@ void main() {
         .bedrockRuntimeClient(bedrockClient)
         .options(options)
         .build();
+    var agent = ChatClient.builder(chatModel).build();
 
-    var agent = ChatClient.builder(chatModel)
-        .defaultSystem("""
-            You are Lady Luck, the mystical keeper of dice and fortune in D&D adventures.
-            You speak with theatrical flair and always announce dice rolls with appropriate drama.
-            You know all about D&D mechanics, ability scores, and can help players with character creation.
-            When rolling ability scores, remember the traditional method: roll 4d6, drop the lowest die.
-            """)
+    // Step 3: Create the SmartWebFetchTool — equips the agent to fetch and process web content
+    var webFetchTool = SmartWebFetchTool.builder(agent)
+        .maxContentLength(300_000)
         .build();
 
-    var playerMessage = "Help me create a new D&D character! Roll the strength, wisdom, charisma and intelligence abilities scores using 4d6 drop lowest method.";
-    log.info("Player: {}\n", playerMessage);
-
     try {
+        // Step 4: Ask the agent and pass the web-fetch tool so it can read Wikipedia
         var response = agent.prompt()
-            .user(playerMessage)
-            // Step 4: Equip the agent with the DiceTools so it can roll dice during reasoning
-            .tools(new DiceTools())
+            .user("Using the website https://en.wikipedia.org/wiki/Dungeons_%26_Dragons tell me the name of the designers of Dungeons and Dragons.")
+            .tools(webFetchTool)
             .call()
             .content();
 
-        log.info("Dungeon Master says:");
+        log.info("Agent Response:");
         log.info(response);
     } catch (Exception e) {
         log.error("Error invoking AI agent: {}", e.getMessage());
     } finally {
-        log.info("\n=== Ending Dungeon Master AI Agent with Custom Tools ===");
+        log.info("\n=== Ending Game Master AI Agent with Built-in Tools ===");
     }
 }
