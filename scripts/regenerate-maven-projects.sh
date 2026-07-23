@@ -14,15 +14,15 @@ cd "$REPO_ROOT"
 
 echo "Regenerating Maven projects under $REPO_ROOT ..."
 
-# RulesAgent.java declares `//FILES dm_knowledge_base.json=./../../utils/dm_knowledge_base.json`.
+# RulesAgent.java declares `//FILES gm_knowledge_base.json=./../../utils/gm_knowledge_base.json`.
 # The source copy is gitignored (it's produced by participants running CreateKnowledgeBase.java),
 # so a fresh checkout on CI does not have it and `jbang export` would abort with
-# "Failed to get contents from resource './../../utils/dm_knowledge_base.json'".
+# "Failed to get contents from resource './../../utils/gm_knowledge_base.json'".
 # The committed Maven copy (chapter5-maven/rules/src/main/resources/) carries the
 # same content and is our distribution seed — use it to satisfy //FILES if the
 # participant-generated source is absent, then remove the temporary seed afterwards.
-KB_SEED_IN_MAVEN="chapter5-maven/rules/src/main/resources/dm_knowledge_base.json"
-KB_SOURCE="chapter5/utils/dm_knowledge_base.json"
+KB_SEED_IN_MAVEN="chapter5-maven/rules/src/main/resources/gm_knowledge_base.json"
+KB_SOURCE="chapter5/utils/gm_knowledge_base.json"
 SEEDED_FROM_MAVEN=false
 if [ ! -f "$KB_SOURCE" ] && [ -f "$KB_SEED_IN_MAVEN" ]; then
     cp "$KB_SEED_IN_MAVEN" "$KB_SOURCE"
@@ -33,13 +33,13 @@ fi
 rm -rf chapter*-maven chapter*-maven-*
 
 # Single-entry-point chapters
-jbang export maven --force -O chapter1-maven         chapter1/DungeonMasterSimple.java
-jbang export maven --force -O chapter2-maven         chapter2/DungeonMasterWithBuiltInTools.java
-jbang export maven --force -O chapter3-maven         chapter3/DungeonMasterWithCustomTools.java
+jbang export maven --force -O chapter1-maven         chapter1/GameMasterSimple.java
+jbang export maven --force -O chapter2-maven         chapter2/GameMasterWithBuiltInTools.java
+jbang export maven --force -O chapter3-maven         chapter3/GameMasterWithCustomTools.java
 
 # Chapter 4 has two entry points
 jbang export maven --force -O chapter4-maven-server  chapter4/DiceRollMcpServer.java
-jbang export maven --force -O chapter4-maven-client  chapter4/DungeonMasterMCPClient.java
+jbang export maven --force -O chapter4-maven-client  chapter4/GameMasterMCPClient.java
 
 # Chapter 5 — multi-module Maven project. Each entry point becomes a module;
 # parent pom is the hand-authored template in scripts/.
