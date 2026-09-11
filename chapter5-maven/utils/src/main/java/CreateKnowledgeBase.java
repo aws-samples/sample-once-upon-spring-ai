@@ -25,7 +25,8 @@ import org.springframework.core.io.FileSystemResource;
 
 import io.micrometer.observation.ObservationRegistry;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.util.List;
 
@@ -33,23 +34,45 @@ import java.util.List;
 /// Uses Spring AI's PagePdfDocumentReader and SimpleVectorStore with Bedrock Titan Embeddings.
 ///
 /// Prerequisites:
-///   1. Download "DnD_BasicRules_2018.pdf" and place it in this directory
+///   1. Download "DnD_BasicRules_2018.pdf" into the chapter5 utils/ folder
+///      (JBang: chapter5/utils/  --  IntelliJ: chapter5-maven/utils/)
 ///   2. AWS credentials configured with Bedrock access in us-west-2
 ///
 /// Usage: jbang CreateKnowledgeBase.java
 ///
-/// Output: gm_knowledge_base.json (SimpleVectorStore file)
+/// Output: gm_knowledge_base.json, written into that same utils/ folder.
+///         Both paths resolve relative to utils/, not the process working
+///         directory, so the JBang and IntelliJ runs behave identically.
 
 private static final Logger log = LoggerFactory.getLogger("CreateKnowledgeBase");
 private static final String PDF_FILE = "DnD_BasicRules_2018.pdf";
 private static final String VECTOR_STORE_FILE = "gm_knowledge_base.json";
 
+/// Anchor file I/O to the chapter5 utils/ folder regardless of where the JVM
+/// was launched. JBang runs with the working directory set to chapter5/utils,
+/// but IntelliJ launches the Maven module from the project root -- without this,
+/// the PDF is looked up (and the knowledge base written) at the wrong place.
+private static Path resolveUtilsDir() {
+    var cwd = Path.of("").toAbsolutePath();
+    var name = cwd.getFileName();
+    if (name != null && name.toString().equals("utils")) {
+        return cwd;                   // already inside utils/ (JBang)
+    }
+    var child = cwd.resolve("utils");
+    if (Files.isDirectory(child)) {
+        return child;                 // parent of utils/ (IntelliJ project root)
+    }
+    return cwd;                       // fall back to the working directory
+}
+
+private static final Path UTILS_DIR = resolveUtilsDir();
+
 void main() {
-    // Step 1: Validate PDF exists
-    var pdfFile = new File(PDF_FILE);
+    // Step 1: Validate PDF exists (resolved inside utils/, not the working dir)
+    var pdfFile = UTILS_DIR.resolve(PDF_FILE).toFile();
     if (!pdfFile.exists()) {
         log.error("PDF file not found: {}", pdfFile.getAbsolutePath());
-        log.error("Download the TTRPG Basic Rules PDF and place it in this directory.");
+        log.error("Download the TTRPG Basic Rules PDF into the utils/ folder: {}", UTILS_DIR);
         return;
     }
     log.info("Found PDF: {} ({} bytes)", PDF_FILE, pdfFile.length());
@@ -95,8 +118,9 @@ void main() {
                 batch.size());
     }
 
-    // Step 6: Save to file
-    vectorStore.save(new File(VECTOR_STORE_FILE));
-    log.info("Knowledge base saved to: {}", VECTOR_STORE_FILE);
+    // Step 6: Save to file (written into utils/, next to the source PDF)
+    var vectorStoreFile = UTILS_DIR.resolve(VECTOR_STORE_FILE).toFile();
+    vectorStore.save(vectorStoreFile);
+    log.info("Knowledge base saved to: {}", vectorStoreFile.getAbsolutePath());
     log.info("Done! The RulesAgent will load this file at startup.");
 }
