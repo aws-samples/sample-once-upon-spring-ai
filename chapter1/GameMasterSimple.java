@@ -40,7 +40,7 @@ void main() {
         .overrideConfiguration(c -> c.putHeader("Authorization", "Bearer " + bearerToken))
         .build();
 
-    var modelId = "us.anthropic.claude-haiku-4-5-20251001-v1:0";
+    var modelId = "us.anthropic.claude-haiku-5-5";
     var options = BedrockChatOptions.builder()
         .model(modelId)
         .build();

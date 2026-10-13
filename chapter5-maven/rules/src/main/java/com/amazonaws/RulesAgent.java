@@ -121,7 +121,7 @@ class RulesAgentConfig {
                 .build();
 
         var options = BedrockChatOptions.builder()
-                .model("us.anthropic.claude-haiku-4-5-20251001-v1:0")
+                .model("us.anthropic.claude-haiku-5-5")
                 .build();
 
         return BedrockProxyChatModel.builder()
