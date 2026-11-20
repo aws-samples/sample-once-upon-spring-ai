@@ -147,9 +147,9 @@ class CharacterTools {
         if (match.isEmpty()) return "Character with name '%s' not found".formatted(name);
 
         var c = match.get();
-        return ("Found: %s — %s %s, Level %d, XP=%d. Stats: STR=%d DEX=%d CON=%d INT=%d WIS=%d CHA=%d. "
+        return ("Found: %s — %s %s, Gender %s, Level %d, XP=%d. Stats: STR=%d DEX=%d CON=%d INT=%d WIS=%d CHA=%d. "
                 + "Inventory: %s")
-                .formatted(c.name(), c.race(), c.characterClass(), c.level(), c.experience(),
+                .formatted(c.name(), c.race(), c.characterClass(), c.gender(), c.level(), c.experience(),
                         c.stats().strength(), c.stats().dexterity(), c.stats().constitution(),
                         c.stats().intelligence(), c.stats().wisdom(), c.stats().charisma(),
                         formatInventory(c.inventory()));
