@@ -86,7 +86,7 @@ Before embarking on this legendary adventure, ensure you have:
 
 1. **Java 25** (25.0.5.1 or later) as your trusty spellcasting focus.
 
-> **Java version:** use Java 25.0.5.1 or later, the latest Java 25 release on November 20, 2026. It fixes [CVE-2026-114938](https://securitylabs.datadoghq.com/articles/java4shell-remote-code-execution-in-openjdk-cve-2026-114938/), a bug in the JDK's Base64 decoder. If `java -version` shows an older 25 build, install the latest [Amazon Corretto 25](https://docs.aws.amazon.com/corretto/latest/corretto-25-ug/downloads-list.html) and open a new terminal.
+> **Java version:** use Java 25.0.5.1 or later, the latest Java 25 release on November 20, 2026. It fixes [CVE-2026-114938](https://nvd.nist.gov/vuln/detail/cve-2026-114938), a bug in the JDK's Base64 decoder. If `java -version` shows an older 25 build, install the latest [Amazon Corretto 25](https://docs.aws.amazon.com/corretto/latest/corretto-25-ug/downloads-list.html) and open a new terminal.
 
 #### 🧙 If you picked the JBang Path
 
