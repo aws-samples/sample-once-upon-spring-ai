@@ -84,7 +84,9 @@ Before you start, commit to **one** of the two paths below. Both are first-class
 
 Before embarking on this legendary adventure, ensure you have:
 
-1. **Java 25** as your trusty spellcasting focus.
+1. **Java 25** (25.0.5.1 or later) as your trusty spellcasting focus.
+
+> **Java version:** use Java 25.0.5.1 or later, the latest Java 25 release on November 20, 2026. It fixes [CVE-2026-114938](https://securitylabs.datadoghq.com/articles/java4shell-remote-code-execution-in-openjdk-cve-2026-114938/), a bug in the JDK's Base64 decoder. If `java -version` shows an older 25 build, install the latest [Amazon Corretto 25](https://docs.aws.amazon.com/corretto/latest/corretto-25-ug/downloads-list.html) and open a new terminal.
 
 #### 🧙 If you picked the JBang Path
 
@@ -103,7 +105,7 @@ jbang --version
 jbang jdk install 25
 jbang jdk default 25
 eval $(jbang jdk java-env)
-java -version   # Should show: openjdk version "25"
+java -version   # Should show: openjdk version "25.0.5.1" (or later)
 ```
 
 To make this permanent, add `eval $(jbang jdk java-env)` to your `~/.bashrc` or `~/.zshrc`.
@@ -112,10 +114,10 @@ To make this permanent, add `eval $(jbang jdk java-env)` to your `~/.bashrc` or 
 
 **Install Java 25**
 
-Install JDK 25 the way you normally do — [Amazon Corretto](https://docs.aws.amazon.com/corretto/latest/corretto-25-ug/downloads-list.html), Homebrew (`brew install openjdk@25`), or your usual JDK manager. Verify:
+Install JDK 25.0.5.1 or later the way you normally do — [Amazon Corretto](https://docs.aws.amazon.com/corretto/latest/corretto-25-ug/downloads-list.html), Homebrew (`brew install openjdk@25`), or your usual JDK manager. Verify:
 
 ```bash
-java -version   # Should show: openjdk version "25"
+java -version   # Should show: openjdk version "25.0.5.1" (or later)
 ```
 
 ---
@@ -146,7 +148,7 @@ Before running Chapter 1, paste this into your terminal — it gives a one-glanc
 java -version
 echo "Bedrock:  ${AWS_BEARER_TOKEN_BEDROCK:+OK (length=${#AWS_BEARER_TOKEN_BEDROCK})}${AWS_BEARER_TOKEN_BEDROCK:-MISSING — see step 3}"
 ```
-You should see `openjdk version "25"` line and `Bedrock: OK (length=NNNN)`.
+You should see `openjdk version "25.0.5.1"` (or later) line and `Bedrock: OK (length=NNNN)`.
 
 If `Bedrock` says `MISSING`, revisit Amazon Bedrock API Key step above.
 
