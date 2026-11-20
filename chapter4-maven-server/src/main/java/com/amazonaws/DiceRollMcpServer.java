@@ -2,8 +2,10 @@
 
 //JAVA 25+
 //FILES application.properties
-//REPOS mavencentral,spring-milestones=https://repo.spring.io/milestone
-//DEPS org.springframework.boot:spring-boot-starter-web:4.0.2
+//REPOS mavencentral
+//DEPS tools.jackson:jackson-bom:3.1.8@pom
+//DEPS org.springframework.boot:spring-boot-dependencies:4.0.10@pom
+//DEPS org.springframework.boot:spring-boot-starter-web:4.0.10
 //DEPS com.fasterxml.jackson.core:jackson-annotations:2.21
 //DEPS org.springframework.ai:spring-ai-starter-mcp-server-webmvc:2.0.0
 
