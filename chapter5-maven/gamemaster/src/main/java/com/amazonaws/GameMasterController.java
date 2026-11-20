@@ -1,9 +1,10 @@
 package com.amazonaws;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.PropertyNamingStrategies;
+import tools.jackson.databind.annotation.JsonNaming;
+import tools.jackson.databind.json.JsonMapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,8 +52,10 @@ class GameMasterController {
     private final ChatClient chatClient;
     private final GameMasterService remoteAgent;
     private final ToolCallback[] mcpTools;
-    private final ObjectMapper mapper = new ObjectMapper()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    // Jackson 3, the same Jackson Spring Boot 4 uses to write responses, so @JsonNaming applies both ways.
+    private final ObjectMapper mapper = JsonMapper.builder()
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .build();
     private final List<Map<String, String>> conversationHistory =
             Collections.synchronizedList(new ArrayList<>());
 
