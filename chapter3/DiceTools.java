@@ -23,7 +23,9 @@ class DiceTools {
 
     // Step 2: @Tool tells the AI WHEN to call this method
     // Step 3: @ToolParam tells the AI WHAT to pass for each argument
-    @Tool(description = "Roll dice for TTRPG game mechanics. Use this for attack rolls, damage, ability checks, or saving throws.")
+    // Step 5: requiresConfirmation = true pauses the agent before every roll until the player allows it
+    @Tool(description = "Roll dice for TTRPG game mechanics. Use this for attack rolls, damage, ability checks, or saving throws.",
+          requiresConfirmation = true)
     DiceRollResponse rollDice(
         @ToolParam(description = "Number of faces on the dice (e.g. 6, 20)", required = true) int faces,
         @ToolParam(description = "Number of dice to roll (e.g. 1, 3)", required = true) int count) {
