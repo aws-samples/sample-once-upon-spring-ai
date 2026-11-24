@@ -9,6 +9,7 @@ on:
       - 'chapter3/**/*.java'
       - 'chapter4/**/*.java'
       - 'chapter5/**/*.java'
+      - 'chapter6/**/*.java'
   workflow_dispatch:
 
 permissions:

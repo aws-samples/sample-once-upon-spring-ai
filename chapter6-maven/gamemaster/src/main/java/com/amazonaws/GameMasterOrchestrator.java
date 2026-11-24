@@ -129,7 +129,7 @@ public class GameMasterOrchestrator {
 
     // TODO 3: Build the ChatClient bean that the orchestrator uses to process user requests.
     //   The system prompt includes a %s placeholder that gets filled with the discovered agent descriptions.
-    //   Also wire in the session advisors so the orchestrator remembers conversation context: after 20 turns
+    //   Also wire in the session advisors from The Chronicle (Chapter 4) so the orchestrator remembers conversation context: after 20 turns
     //   they compact the history to the last 10, and SessionRecallTools lets the model search what was dropped.
     //
     //   In Spring AI 2.x the tool-execution loop runs in the client-side ToolCallingAdvisor, so the
@@ -167,7 +167,7 @@ class CorsConfig implements WebMvcConfigurer {
     }
 }
 
-/// MCP client connection to the Dice Roll Server from chapter4.
+/// MCP client connection to the Dice Roll Server from chapter5.
 /// Connects lazily — the orchestrator starts even if the dice server is down.
 @Configuration
 class McpClientConfig {
@@ -195,7 +195,7 @@ class McpClientConfig {
     //                   .getToolCallbacks();
     //       } catch (Exception e) {
     //           log.warn("MCP Dice Server not available — dice rolling disabled");
-    //           log.warn("Start it with: cd ../chapter4 && jbang DiceRollMcpServer.java");
+    //           log.warn("Start it with: cd ../chapter5 && jbang DiceRollMcpServer.java");
     //           return new ToolCallback[0];
     //       }
     //   }

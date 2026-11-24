@@ -1,3 +1,25 @@
+///usr/bin/env jbang "$0" "$@" ; exit $?
+
+//JAVA 25+
+//REPOS mavencentral
+//DEPS io.netty:netty-bom:4.2.21.Final@pom
+//DEPS tools.jackson:jackson-bom:3.1.8@pom
+//DEPS org.springframework:spring-framework-bom:7.1.0@pom
+//DEPS com.fasterxml.jackson.core:jackson-annotations:2.21
+//DEPS org.springframework.ai:spring-ai-bedrock-converse:2.1.0
+//DEPS org.springframework.ai:spring-ai-client-chat:2.1.0
+//DEPS org.springframework.ai:spring-ai-mcp:2.1.0
+//DEPS org.springframework.ai:spring-ai-session-advisor:2.1.0
+//DEPS software.amazon.awssdk:bedrockruntime:2.55.14
+//DEPS software.amazon.awssdk:auth:2.55.14
+//DEPS org.apache.httpcomponents.client5:httpclient5:5.6.5
+//DEPS org.apache.httpcomponents.core5:httpcore5:5.4.4
+//DEPS org.apache.httpcomponents.core5:httpcore5-h2:5.4.4
+//DEPS org.slf4j:slf4j-api:2.0.17
+//DEPS org.slf4j:slf4j-simple:2.0.17
+//RUNTIME_OPTIONS -Daws.region=us-west-2 --enable-native-access=ALL-UNNAMED
+
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -10,6 +32,13 @@ import org.springframework.ai.chat.client.ChatClient;
 // the HTTP Streamable transport, and the MCP protocol schema types). JBang has no IDE
 // to auto-resolve these package paths, so they're here ready to use.
 import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
+import org.springframework.ai.session.CreateSessionRequest;
+import org.springframework.ai.session.DefaultSessionService;
+import org.springframework.ai.session.InMemorySessionRepository;
+import org.springframework.ai.session.advisor.SessionAdvisors;
+import org.springframework.ai.session.compaction.TurnCountTrigger;
+import org.springframework.ai.session.compaction.WindowCompactionStrategy;
+import org.springframework.ai.session.tool.SessionRecallTools;
 import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
 import io.modelcontextprotocol.spec.McpSchema;
@@ -64,6 +93,13 @@ void main() {
                 .options(options)
                 .build();
 
+        // The Chronicle from Chapter 4: one in-memory session keeps Lady Luck's memory of your rolls.
+        var sessionService = DefaultSessionService.builder()
+                .sessionRepository(InMemorySessionRepository.builder().build())
+                .build();
+        var sessionId = "lady-luck";
+        sessionService.findOrCreate(CreateSessionRequest.builder().id(sessionId).build());
+
         // Step 5: Build ChatClient with system prompt (tools come from MCP Server remotely!)
         var agent = ChatClient.builder(chatModel)
                 .defaultSystem("""
@@ -71,6 +107,10 @@ void main() {
                         You speak with theatrical flair and always announce dice rolls with appropriate drama.
                         You know all about TTRPG mechanics, always use the appropriate tools when applicable - never make up results!
                         """)
+                // TODO 4: Reuse The Chronicle from Chapter 4 so Lady Luck remembers your earlier rolls.
+                //   Add SessionAdvisors.builder(sessionService) with a compaction (TurnCountTrigger(20),
+                //   WindowCompactionStrategy keeping the last 10 turns), and register SessionRecallTools.
+
                 .build();
 
         // Step 6: Start interactive session - tools come from the remote MCP Server
@@ -93,6 +133,8 @@ void main() {
             try {
                 var response = agent.prompt()
                         .user(userInput)
+                        // TODO 5: Name the session on every call (.advisors(SessionAdvisors.session(sessionId)))
+                        //   and pass the session id to the recall tool (.toolContext(...)), as in Chapter 4.
                         // TODO 3: Pass the MCP tools to the agent so it can call the remote dice server.
                         
                         .call()

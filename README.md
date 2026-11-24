@@ -33,19 +33,26 @@ Your journey through the realms of AI agents is carefully structured as a progre
 - Master the `//SOURCES` directive for multi-file JBang projects
 - Build domain-specific capabilities using Java 25 records
 
-### 🌐 [Chapter 4: The Tavern Notice Board - MCP Integration](chapter4/)
+### 📜 [Chapter 4: The Chronicle - Session Memory](chapter4/)
+**Give your Game Master a memory that survives long adventures**
+- Remember the conversation with Spring AI 2.1 session memory (`SessionAdvisors`)
+- Watch compaction trim what the model sees while the session log keeps every turn
+- Let the model search what was trimmed with `SessionRecallTools`
+- Reuse the same session memory in Chapters 5 and 6
+
+### 🌐 [Chapter 5: The Tavern Notice Board - MCP Integration](chapter5/)
 **Expose tools as remote services through Model Context Protocol**
 - Build and deploy an MCP server with Spring Boot and `@McpTool`
 - Create an MCP client with an interactive REPL
 - Understand distributed tool architectures over Streamable HTTP
 - Master external service connections using `SyncMcpToolCallbackProvider`
 
-### 🏰 [Chapter 5: The Council of Agents - A2A Mastery](chapter5/)
+### 🏰 [Chapter 6: The Council of Agents - A2A Mastery](chapter6/)
 **Command multiple agents in perfect harmony**
 - Build a complete multi-agent TTRPG system with character inventory management
 - Master Agent-to-Agent (A2A) communication with `AgentCard` and `AgentExecutor`
 - Orchestrate specialized agents (Rules, Character, Game Master) working together
-- Implement conversation memory with `MessageChatMemoryAdvisor`
+- Reuse The Chronicle's session memory in the orchestrator
 - Combine A2A, MCP, and RAG in a single architecture
 
 ## 🗺️ Choose Your Path
@@ -208,11 +215,13 @@ sample-once-upon-spring-ai/
 ├── chapter3/                          # 🔨 The Adventurer's Arsenal
 │   ├── DiceTools.java
 │   └── GameMasterWithCustomTools.java
-├── chapter4/                          # 🌐 The Tavern Notice Board (MCP)
+├── chapter4/                          # 📜 The Chronicle (session memory)
+│   └── GameMasterChronicle.java
+├── chapter5/                          # 🌐 The Tavern Notice Board (MCP)
 │   ├── DiceRollMcpServer.java
 │   ├── GameMasterMCPClient.java
 │   └── application.properties
-└── chapter5/                          # 🏰 The Council of Agents (A2A)
+└── chapter6/                          # 🏰 The Council of Agents (A2A)
     ├── agents/
     │   ├── rules/
     │   │   ├── RulesAgent.java                 # TTRPG rules lookup agent with RAG
@@ -238,16 +247,17 @@ sample-once-upon-spring-ai/
 ├── chapter1-maven/                    # Mirror of chapter1 — runs GameMasterSimple
 ├── chapter2-maven/                    # Mirror of chapter2 — runs GameMasterWithBuiltInTools
 ├── chapter3-maven/                    # Mirror of chapter3 — runs GameMasterWithCustomTools
-├── chapter4-maven-server/             # MCP server (DiceRollMcpServer + application.properties)
-├── chapter4-maven-client/             # MCP client (GameMasterMCPClient)
-└── chapter5-maven/                    # Multi-module Maven project for the A2A council
+├── chapter4-maven/                    # Mirror of chapter4 — runs GameMasterChronicle
+├── chapter5-maven-server/             # MCP server (DiceRollMcpServer + application.properties)
+├── chapter5-maven-client/             # MCP client (GameMasterMCPClient)
+└── chapter6-maven/                    # Multi-module Maven project for the A2A council
     ├── rules/                         # → RulesAgent, RulesTools
     ├── character/                     # → CharacterAgent, CharacterTools, characters.json
     ├── gamemaster/                    # → GameMasterOrchestrator, Service, Controller
     └── utils/                         # → CreateKnowledgeBase
 ```
 
-> 💡 Chapter 4 is split into **two** Maven projects (`-server` and `-client`) because MCP requires the server and client to run as independent processes — each gets its own `pom.xml` and IntelliJ run config. Chapter 5 is a single multi-module project so the four agents share dependencies and can be launched from one IntelliJ window.
+> 💡 Chapter 5 is split into **two** Maven projects (`-server` and `-client`) because MCP requires the server and client to run as independent processes — each gets its own `pom.xml` and IntelliJ run config. Chapter 6 is a single multi-module project so the four agents share dependencies and can be launched from one IntelliJ window.
 
 ## ☁️ Amazon Bedrock Models
 
@@ -256,7 +266,7 @@ You must have **permissions to Amazon Bedrock** in an AWS account. You can use a
 This content default to:
 
 - 🎭 **Anthropic Claude** (via Amazon Bedrock) — All chapters
-- 🧮 **Amazon Titan Embed Text V2** — Chapter 5 (vector store embeddings)
+- 🧮 **Amazon Titan Embed Text V2** — Chapter 6 (vector store embeddings)
 
 ## 🎓 Learning Objectives
 
@@ -280,26 +290,26 @@ can dive into whatever caught your interest.
 
 - 📖 **[Spring AI Reference Documentation](https://docs.spring.io/spring-ai/reference/)** — the complete guide
 - 🤖 **[ChatClient API](https://docs.spring.io/spring-ai/reference/api/chatclient.html)** — fluent prompts, system prompts, entity mapping
-- 🧩 **[Advisors API](https://docs.spring.io/spring-ai/reference/api/advisors.html)** — the interceptor chain behind memory, RAG, and logging (Chapter 5 uses `MessageChatMemoryAdvisor`)
+- 🧩 **[Advisors API](https://docs.spring.io/spring-ai/reference/api/advisors.html)** — the interceptor chain behind memory, RAG, and logging (Chapters 4 to 6 use `SessionAdvisors`)
 - 🔧 **[Tool Calling](https://docs.spring.io/spring-ai/reference/api/tools.html)** — the full `@Tool` / `@ToolParam` model from Chapters 3–4
-- 📚 **[Retrieval-Augmented Generation (RAG)](https://docs.spring.io/spring-ai/reference/api/retrieval-augmented-generation.html)** — the patterns behind Chapter 5's rules agent
+- 📚 **[Retrieval-Augmented Generation (RAG)](https://docs.spring.io/spring-ai/reference/api/retrieval-augmented-generation.html)** — the patterns behind Chapter 6's rules agent
 - 🗂️ **[Vector Stores](https://docs.spring.io/spring-ai/reference/api/vectordbs.html)** — swap the in-memory `SimpleVectorStore` for OpenSearch, pgvector, and more
-- 🧠 **[Chat Memory](https://docs.spring.io/spring-ai/reference/api/chat-memory.html)** — short-term conversation memory, the foundation for stateful agents
+- 🧠 **[Session Memory](https://docs.spring.io/spring-ai/reference/api/session.html)** — sessions, compaction and recall, the foundation for stateful agents (Chapter 4)
 - 💻 **[Spring AI GitHub](https://github.com/spring-projects/spring-ai)** — source, issues, and release notes
-- 🌱 **[Spring AI Community](https://github.com/spring-ai-community)** — `agent-utils` (Chapter 2) and the A2A bindings (Chapter 5) live here
+- 🌱 **[Spring AI Community](https://github.com/spring-ai-community)** — `agent-utils` (Chapter 2) and the A2A bindings (Chapter 6) live here
 
 ### ☁️ Amazon Bedrock
 
 - ☁️ **[Amazon Bedrock Documentation](https://docs.aws.amazon.com/bedrock/)** — model access and setup
 - 🎭 **[Bedrock Converse API](https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html)** — the unified inference API `BedrockProxyChatModel` calls under the hood
 - 🔑 **[Bedrock API keys](https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys.html)** — the short-term key you generated in setup
-- 🧮 **[Titan Text Embeddings V2](https://docs.aws.amazon.com/bedrock/latest/userguide/titan-embedding-models.html)** — the embedding model powering Chapter 5's RAG
+- 🧮 **[Titan Text Embeddings V2](https://docs.aws.amazon.com/bedrock/latest/userguide/titan-embedding-models.html)** — the embedding model powering Chapter 6's RAG
 
 ### 🌐 Protocols — MCP & A2A
 
-- 🔌 **[Model Context Protocol](https://modelcontextprotocol.io/)** — the MCP spec (Chapter 4)
+- 🔌 **[Model Context Protocol](https://modelcontextprotocol.io/)** — the MCP spec (Chapter 5)
 - 🔌 **[MCP Java SDK](https://modelcontextprotocol.io/sdk/java/mcp-overview)** — the `io.modelcontextprotocol` client/server library you used
-- 🌐 **[A2A Protocol](https://a2a-protocol.org/latest/)** — Agent-to-Agent specification (Chapter 5)
+- 🌐 **[A2A Protocol](https://a2a-protocol.org/latest/)** — Agent-to-Agent specification (Chapter 6)
 - 🔧 **[Spring AI MCP](https://docs.spring.io/spring-ai/reference/api/mcp/mcp-overview.html)** — how Spring AI wires MCP into the `ChatClient`
 
 ### 🎒 Tooling & Modern Java
