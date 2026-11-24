@@ -10,7 +10,7 @@
 //DEPS org.springframework.ai:spring-ai-client-chat:2.1.0
 
 // Step 1: Spring AI Community agent-utils dependency provides the built-in SmartWebFetchTool.
-//DEPS org.springaicommunity:spring-ai-agent-utils:0.10.0
+//DEPS org.springaicommunity:spring-ai-agent-utils:0.14.0
 //DEPS org.jsoup:jsoup:1.24.1
 
 
