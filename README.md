@@ -261,7 +261,7 @@ sample-once-upon-spring-ai/
 
 ## ☁️ Amazon Bedrock Models
 
-You must have **permissions to Amazon Bedrock** in an AWS account. You can use any model available in your Bedrock console — simply update the model ID in each chapter's source file to match your preferred model.
+You must have **permissions to Amazon Bedrock** in an AWS account. You can use any model available in your Bedrock console — update the model ID in each chapter's source file to match your preferred model.
 
 This content default to:
 

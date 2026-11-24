@@ -67,7 +67,7 @@ import java.util.Map;
 public class RulesAgent {
 
     private static final String SYSTEM_PROMPT = """
-        You are a TTRPG 5e rules expert. When asked about rules, ALWAYS use the queryDndRules tool
+        You are a TTRPG 5e rules expert. When asked about rules, ALWAYS use the queryRules tool
         to find the relevant rule from the official source — never answer from memory alone.
         Provide a clear, concise answer that includes:
         1. The rule mechanic (what dice to roll, what modifiers apply, DCs, etc.)
@@ -111,7 +111,7 @@ public class RulesAgent {
                             Look up any TTRPG 5e rule from the official Basic Rules knowledge base. Covers combat, \
                             spellcasting, ability checks, saving throws, conditions, movement, equipment, and more. \
                             Returns the exact rule with page references.""")
-                        .tags(List.of("rules", "dnd", "mechanics", "combat", "spells", "conditions"))
+                        .tags(List.of("rules", "ttrpg", "mechanics", "combat", "spells", "conditions"))
                         .examples(List.of(
                             "How do attack rolls work?",
                             "What is armor class and how is it calculated?",
