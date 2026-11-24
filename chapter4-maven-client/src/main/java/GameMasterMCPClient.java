@@ -44,7 +44,7 @@ void main() {
         //   2. List available tools from the server and log them.
         //   3. Build a SyncMcpToolCallbackProvider from the MCP client. It's a Spring AI
         //      ToolCallbackProvider — hand the provider itself to the agent via .tools(...) in
-        //      TODO 3. (In Spring AI 2.0 the .tools(provider) path is preferred; manually pulling
+        //      TODO 3. (In Spring AI 2.x the .tools(provider) path is preferred; manually pulling
         //      out a ToolCallback[] to pass around is the legacy approach.)
 
         // Step 4: Create AWS Bedrock ChatModel

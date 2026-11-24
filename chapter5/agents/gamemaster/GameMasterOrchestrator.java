@@ -6,17 +6,17 @@
 //REPOS mavencentral
 //DEPS io.netty:netty-bom:4.2.21.Final@pom
 //DEPS tools.jackson:jackson-bom:3.1.8@pom
-//DEPS org.springframework.boot:spring-boot-dependencies:4.0.10@pom
+//DEPS org.springframework.boot:spring-boot-dependencies:4.2.0@pom
 //DEPS com.fasterxml.jackson.core:jackson-annotations:2.21
-//DEPS org.springframework.boot:spring-boot-starter-web:4.0.10
-//DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0
-//DEPS org.springframework.ai:spring-ai-client-chat:2.0.0
-//DEPS org.springframework.ai:spring-ai-mcp:2.0.0
-//DEPS io.modelcontextprotocol.sdk:mcp:2.0.0
+//DEPS org.springframework.boot:spring-boot-starter-web:4.2.0
+//DEPS org.springframework.ai:spring-ai-bedrock-converse:2.1.0
+//DEPS org.springframework.ai:spring-ai-client-chat:2.1.0
+//DEPS org.springframework.ai:spring-ai-mcp:2.1.0
+//DEPS io.modelcontextprotocol.sdk:mcp:2.2.0
 //DEPS io.github.a2asdk:a2a-java-sdk-client:0.3.3.Final
 //DEPS io.github.a2asdk:a2a-java-sdk-client-transport-jsonrpc:0.3.3.Final
-//DEPS software.amazon.awssdk:bedrockruntime:2.49.1
-//DEPS software.amazon.awssdk:auth:2.49.1
+//DEPS software.amazon.awssdk:bedrockruntime:2.55.14
+//DEPS software.amazon.awssdk:auth:2.55.14
 //DEPS org.apache.httpcomponents.client5:httpclient5:5.6.5
 //DEPS org.apache.httpcomponents.core5:httpcore5:5.4.4
 //DEPS org.apache.httpcomponents.core5:httpcore5-h2:5.4.4
@@ -144,7 +144,7 @@ public class GameMasterOrchestrator {
     //   The system prompt includes a %s placeholder that gets filled with the discovered agent descriptions.
     //   Also wire in the ChatMemory via MessageChatMemoryAdvisor so the orchestrator remembers conversation context.
     //
-    //   In Spring AI 2.0 the tool-execution loop runs in the client-side ToolCallingAdvisor, so the
+    //   In Spring AI 2.x the tool-execution loop runs in the client-side ToolCallingAdvisor, so the
     //   SanitizingToolCallingManager must be installed there — passing it to the model builder is a no-op.
     //   (Requires: import io.micrometer.observation.ObservationRegistry;
     //    import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;)

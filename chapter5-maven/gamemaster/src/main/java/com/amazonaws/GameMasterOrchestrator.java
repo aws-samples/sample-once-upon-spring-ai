@@ -119,7 +119,7 @@ public class GameMasterOrchestrator {
     //   The system prompt includes a %s placeholder that gets filled with the discovered agent descriptions.
     //   Also wire in the ChatMemory via MessageChatMemoryAdvisor so the orchestrator remembers conversation context.
     //
-    //   In Spring AI 2.0 the tool-execution loop runs in the client-side ToolCallingAdvisor, so the
+    //   In Spring AI 2.x the tool-execution loop runs in the client-side ToolCallingAdvisor, so the
     //   SanitizingToolCallingManager must be installed there — passing it to the model builder is a no-op.
     //   (Requires: import io.micrometer.observation.ObservationRegistry;
     //    import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;)
