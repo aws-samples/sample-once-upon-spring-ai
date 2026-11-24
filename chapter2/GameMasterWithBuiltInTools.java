@@ -64,15 +64,25 @@ void main() {
         .build();
     var agent = ChatClient.builder(chatModel).build();
 
+    // The Game Master knows where the rules live: the Open5e API, an open Systems Reference Document.
+    var systemPrompt = """
+        You are a game master for a fantasy role-playing game.
+        When asked about a spell or a monster, look it up on the Open5e API and answer from the data:
+        - spells:   https://api.open5e.com/v2/spells/srd_<key>/
+        - monsters: https://api.open5e.com/v2/creatures/srd_<key>/
+        where <key> is the lowercase name with hyphens (e.g. fireball, adult-red-dragon).
+        """;
+
     // Step 3: Create the SmartWebFetchTool — equips the agent to fetch and process web content
     var webFetchTool = SmartWebFetchTool.builder(agent)
         .maxContentLength(300_000)
         .build();
 
     try {
-        // Step 4: Ask the agent and pass the web-fetch tool so it can read Wikipedia
+        // Step 4: Ask the agent and pass the web-fetch tool so it can read the Open5e API
         var response = agent.prompt()
-            .user("Using the website https://en.wikipedia.org/wiki/Dungeons_%26_Dragons tell me the name of the designers of Dungeons and Dragons.")
+            .system(systemPrompt)
+            .user("What does the Fireball spell do, and how much damage does it deal?")
             .tools(webFetchTool)
             .call()
             .content();
