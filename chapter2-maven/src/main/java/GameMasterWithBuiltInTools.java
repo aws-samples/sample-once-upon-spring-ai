@@ -4,18 +4,18 @@
 //REPOS mavencentral
 //DEPS io.netty:netty-bom:4.2.21.Final@pom
 //DEPS tools.jackson:jackson-bom:3.1.8@pom
-//DEPS org.springframework:spring-framework-bom:7.0.11@pom
+//DEPS org.springframework:spring-framework-bom:7.1.0@pom
 //DEPS com.fasterxml.jackson.core:jackson-annotations:2.21
-//DEPS org.springframework.ai:spring-ai-bedrock-converse:2.0.0
-//DEPS org.springframework.ai:spring-ai-client-chat:2.0.0
+//DEPS org.springframework.ai:spring-ai-bedrock-converse:2.1.0
+//DEPS org.springframework.ai:spring-ai-client-chat:2.1.0
 
 // Step 1: Spring AI Community agent-utils dependency provides the built-in SmartWebFetchTool.
 //DEPS org.springaicommunity:spring-ai-agent-utils:0.10.0
 //DEPS org.jsoup:jsoup:1.24.1
 
 
-//DEPS software.amazon.awssdk:bedrockruntime:2.49.1
-//DEPS software.amazon.awssdk:auth:2.49.1
+//DEPS software.amazon.awssdk:bedrockruntime:2.55.14
+//DEPS software.amazon.awssdk:auth:2.55.14
 //DEPS org.apache.httpcomponents.client5:httpclient5:5.6.5
 //DEPS org.apache.httpcomponents.core5:httpcore5:5.4.4
 //DEPS org.apache.httpcomponents.core5:httpcore5-h2:5.4.4
