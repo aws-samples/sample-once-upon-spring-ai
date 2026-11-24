@@ -1,6 +1,5 @@
 package com.amazonaws;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,15 +7,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import io.a2a.A2A;
-import io.a2a.client.Client;
-import io.a2a.client.TaskEvent;
-import io.a2a.client.config.ClientConfig;
-import io.a2a.client.transport.jsonrpc.JSONRPCTransport;
-import io.a2a.client.transport.jsonrpc.JSONRPCTransportConfig;
-import io.a2a.spec.AgentCard;
-import io.a2a.spec.Message;
-import io.a2a.spec.TextPart;
+import org.a2aproject.sdk.A2A;
+import org.a2aproject.sdk.client.Client;
+import org.a2aproject.sdk.client.TaskEvent;
+import org.a2aproject.sdk.client.config.ClientConfig;
+import org.a2aproject.sdk.client.transport.jsonrpc.JSONRPCTransport;
+import org.a2aproject.sdk.client.transport.jsonrpc.JSONRPCTransportConfig;
+import org.a2aproject.sdk.spec.AgentCard;
+import org.a2aproject.sdk.spec.Message;
+import org.a2aproject.sdk.spec.TextPart;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,8 +37,7 @@ class GameMasterService {
         for (var url : agentUrls) {
             try {
                 log.info("Resolving agent card from: {}", url);
-                var path = new URI(url).getPath();
-                var card = A2A.getAgentCard(url, path + ".well-known/agent-card.json", null);
+                var card = A2A.getAgentCard(url);
                 cards.put(card.name(), card);
                 log.info("Discovered agent: {} at {}", card.name(), url);
             } catch (Exception e) {
@@ -65,9 +63,9 @@ class GameMasterService {
         }
 
         try {
-            var message = new Message.Builder()
-                    .role(Message.Role.USER)
-                    .parts(List.of(new TextPart(task, null)))
+            var message = Message.builder()
+                    .role(Message.Role.ROLE_USER)
+                    .parts(List.of(new TextPart(task)))
                     .build();
 
             var responseFuture = new CompletableFuture<String>();
@@ -78,13 +76,13 @@ class GameMasterService {
                     .addConsumers(List.of((event, _) -> {
                         if (event instanceof TaskEvent taskEvent) {
                             var completedTask = taskEvent.getTask();
-                            log.info("Received task response: status={}", completedTask.getStatus().state());
+                            log.info("Received task response: status={}", completedTask.status().state());
                             var sb = new StringBuilder();
-                            if (completedTask.getArtifacts() != null) {
-                                for (var artifact : completedTask.getArtifacts()) {
+                            if (completedTask.artifacts() != null) {
+                                for (var artifact : completedTask.artifacts()) {
                                     if (artifact.parts() == null) continue;
                                     for (var part : artifact.parts()) {
-                                        if (part instanceof TextPart textPart) sb.append(textPart.getText());
+                                        if (part instanceof TextPart textPart) sb.append(textPart.text());
                                     }
                                 }
                             }

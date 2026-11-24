@@ -14,8 +14,8 @@
 //DEPS org.springframework.ai:spring-ai-mcp:2.1.0
 //DEPS org.springframework.ai:spring-ai-session-advisor:2.1.0
 //DEPS io.modelcontextprotocol.sdk:mcp:2.2.0
-//DEPS io.github.a2asdk:a2a-java-sdk-client:0.3.3.Final
-//DEPS io.github.a2asdk:a2a-java-sdk-client-transport-jsonrpc:0.3.3.Final
+//DEPS org.a2aproject.sdk:a2a-java-sdk-client:1.4.0.Final
+//DEPS org.a2aproject.sdk:a2a-java-sdk-client-transport-jsonrpc:1.4.0.Final
 //DEPS software.amazon.awssdk:bedrockruntime:2.55.14
 //DEPS software.amazon.awssdk:auth:2.55.14
 //DEPS org.apache.httpcomponents.client5:httpclient5:5.6.5

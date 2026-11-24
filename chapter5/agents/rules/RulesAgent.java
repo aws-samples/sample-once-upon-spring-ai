@@ -13,7 +13,7 @@
 //DEPS org.springframework.ai:spring-ai-client-chat:2.1.0
 //DEPS org.springframework.ai:spring-ai-vector-store:2.1.0
 //DEPS org.springframework.ai:spring-ai-bedrock:2.1.0
-//DEPS org.springaicommunity:spring-ai-a2a-server-autoconfigure:0.3.0
+//DEPS org.springaicommunity:spring-ai-a2a-server-autoconfigure:0.4.0
 //DEPS software.amazon.awssdk:bedrockruntime:2.55.14
 //DEPS software.amazon.awssdk:auth:2.55.14
 //DEPS org.apache.httpcomponents.client5:httpclient5:5.6.5
@@ -24,10 +24,11 @@
 
 package com.amazonaws;
 
-import io.a2a.server.agentexecution.AgentExecutor;
-import io.a2a.spec.AgentCapabilities;
-import io.a2a.spec.AgentCard;
-import io.a2a.spec.AgentSkill;
+import org.a2aproject.sdk.server.agentexecution.AgentExecutor;
+import org.a2aproject.sdk.spec.AgentCapabilities;
+import org.a2aproject.sdk.spec.AgentCard;
+import org.a2aproject.sdk.spec.AgentInterface;
+import org.a2aproject.sdk.spec.AgentSkill;
 import io.micrometer.observation.ObservationRegistry;
 
 import org.slf4j.Logger;
@@ -77,18 +78,21 @@ public class RulesAgent {
 
     public static void main(final String[] args) {
         // TODO 1: Configure Spring Boot properties for this A2A agent server.
-        //   Use System.setProperty() to set four properties before SpringApplication.run():
+        //   Use System.setProperty() to set five properties before SpringApplication.run():
         //     - Server port (this agent runs on port 8000)
         //     - Servlet context path (A2A convention uses "/a2a")
         //     - Application name
         //     - Enable the A2A server auto-configuration
+        //     - "a2a.authorization.required" → "false" (A2A SDK 1.4 rejects every request without a
+        //       TaskAuthorizationProvider; this local workshop turns that check off)
 
         SpringApplication.run(RulesAgent.class, args);
     }
 
     // TODO 2: Create an AgentCard bean that describes this agent to the A2A network.
     //   The AgentCard is published at /.well-known/agent-card.json so other agents can discover you.
-    //   Use AgentCard.Builder to set: name, description, url, version, capabilities, I/O modes, skills, and protocol version.
+    //   Use AgentCard.builder() to set: name, description, supportedInterfaces (one JSONRPC AgentInterface
+    //   with the agent URL), version, capabilities, I/O modes, and skills.
     //   Inject the port and context path via @Value to construct the URL dynamically.
     //   Define at least one AgentSkill for rules lookup with an id, name, description, tags, and examples.
 
