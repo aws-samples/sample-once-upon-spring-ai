@@ -35,19 +35,26 @@ Your journey through the realms of AI agents is carefully structured as a progre
 - Master the `//SOURCES` directive for multi-file JBang projects
 - Build domain-specific capabilities using Java 25 records
 
-### 🌐 [Chapter 4: The Tavern Notice Board - MCP Integration](chapter4/)
+### 📜 [Chapter 4: The Chronicle - Session Memory](chapter4/)
+**Give your Game Master a memory that survives long adventures**
+- Remember the conversation with Spring AI 2.1 session memory (`SessionAdvisors`)
+- Watch compaction trim what the model sees while the session log keeps every turn
+- Let the model search what was trimmed with `SessionRecallTools`
+- Reuse the same session memory in Chapters 5 and 6
+
+### 🌐 [Chapter 5: The Tavern Notice Board - MCP Integration](chapter5/)
 **Expose tools as remote services through Model Context Protocol**
 - Build and deploy an MCP server with Spring Boot and `@McpTool`
 - Create an MCP client with an interactive REPL
 - Understand distributed tool architectures over Streamable HTTP
 - Master external service connections using `SyncMcpToolCallbackProvider`
 
-### 🏰 [Chapter 5: The Council of Agents - A2A Mastery](chapter5/)
+### 🏰 [Chapter 6: The Council of Agents - A2A Mastery](chapter6/)
 **Command multiple agents in perfect harmony**
 - Build a complete multi-agent TTRPG system with character inventory management
 - Master Agent-to-Agent (A2A) communication with `AgentCard` and `AgentExecutor`
 - Orchestrate specialized agents (Rules, Character, Game Master) working together
-- Implement conversation memory with `MessageChatMemoryAdvisor`
+- Reuse The Chronicle's session memory in the orchestrator
 - Combine A2A, MCP, and RAG in a single architecture
 
 ## 🗺️ Choose Your Path
@@ -208,11 +215,13 @@ sample-once-upon-spring-ai/
 ├── chapter3/                          # 🔨 The Adventurer's Arsenal
 │   ├── DiceTools.java
 │   └── GameMasterWithCustomTools.java
-├── chapter4/                          # 🌐 The Tavern Notice Board (MCP)
+├── chapter4/                          # 📜 The Chronicle (session memory)
+│   └── GameMasterChronicle.java
+├── chapter5/                          # 🌐 The Tavern Notice Board (MCP)
 │   ├── DiceRollMcpServer.java
 │   ├── GameMasterMCPClient.java
 │   └── application.properties
-└── chapter5/                          # 🏰 The Council of Agents (A2A)
+└── chapter6/                          # 🏰 The Council of Agents (A2A)
     ├── agents/
     │   ├── rules/
     │   │   ├── RulesAgent.java                 # TTRPG rules lookup agent with RAG
@@ -238,16 +247,17 @@ sample-once-upon-spring-ai/
 ├── chapter1-maven/                    # Mirror of chapter1 — runs GameMasterSimple
 ├── chapter2-maven/                    # Mirror of chapter2 — runs GameMasterWithBuiltInTools
 ├── chapter3-maven/                    # Mirror of chapter3 — runs GameMasterWithCustomTools
-├── chapter4-maven-server/             # MCP server (DiceRollMcpServer + application.properties)
-├── chapter4-maven-client/             # MCP client (GameMasterMCPClient)
-└── chapter5-maven/                    # Multi-module Maven project for the A2A council
+├── chapter4-maven/                    # Mirror of chapter4 — runs GameMasterChronicle
+├── chapter5-maven-server/             # MCP server (DiceRollMcpServer + application.properties)
+├── chapter5-maven-client/             # MCP client (GameMasterMCPClient)
+└── chapter6-maven/                    # Multi-module Maven project for the A2A council
     ├── rules/                         # → RulesAgent, RulesTools
     ├── character/                     # → CharacterAgent, CharacterTools, characters.json
     ├── gamemaster/                    # → GameMasterOrchestrator, Service, Controller
     └── utils/                         # → CreateKnowledgeBase
 ```
 
-> 💡 Chapter 4 is split into **two** Maven projects (`-server` and `-client`) because MCP requires the server and client to run as independent processes — each gets its own `pom.xml` and IntelliJ run config. Chapter 5 is a single multi-module project so the four agents share dependencies and can be launched from one IntelliJ window.
+> 💡 Chapter 5 is split into **two** Maven projects (`-server` and `-client`) because MCP requires the server and client to run as independent processes — each gets its own `pom.xml` and IntelliJ run config. Chapter 6 is a single multi-module project so the four agents share dependencies and can be launched from one IntelliJ window.
 
 ## ☁️ Amazon Bedrock Models
 
@@ -256,7 +266,7 @@ You must have **permissions to Amazon Bedrock** in an AWS account. You can use a
 This content default to:
 
 - 🎭 **Anthropic Claude** (via Amazon Bedrock) — All chapters
-- 🧮 **Amazon Titan Embed Text V2** — Chapter 5 (vector store embeddings)
+- 🧮 **Amazon Titan Embed Text V2** — Chapter 6 (vector store embeddings)
 
 ## 🎓 Learning Objectives
 

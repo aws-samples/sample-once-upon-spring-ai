@@ -1,0 +1,131 @@
+///usr/bin/env jbang "$0" "$@" ; exit $?
+
+//JAVA 25+
+//REPOS mavencentral
+//DEPS io.netty:netty-bom:4.2.21.Final@pom
+//DEPS tools.jackson:jackson-bom:3.1.8@pom
+//DEPS org.springframework:spring-framework-bom:7.1.0@pom
+//DEPS com.fasterxml.jackson.core:jackson-annotations:2.21
+//DEPS org.springframework.ai:spring-ai-pdf-document-reader:2.1.0
+//DEPS org.springframework.ai:spring-ai-vector-store:2.1.0
+//DEPS org.springframework.ai:spring-ai-bedrock:2.1.0
+//DEPS software.amazon.awssdk:bedrockruntime:2.55.14
+//DEPS software.amazon.awssdk:auth:2.55.14
+//DEPS org.apache.httpcomponents.client5:httpclient5:5.6.5
+//DEPS org.apache.httpcomponents.core5:httpcore5:5.4.4
+//DEPS org.apache.httpcomponents.core5:httpcore5-h2:5.4.4
+//DEPS org.slf4j:slf4j-api:2.0.17
+//DEPS org.slf4j:slf4j-simple:2.0.17
+//RUNTIME_OPTIONS --enable-native-access=ALL-UNNAMED
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.ai.bedrock.titan.BedrockTitanEmbeddingModel;
+import org.springframework.ai.bedrock.titan.api.TitanEmbeddingBedrockApi;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.reader.pdf.PagePdfDocumentReader;
+import org.springframework.ai.transformer.splitter.TokenTextSplitter;
+import org.springframework.ai.vectorstore.SimpleVectorStore;
+import org.springframework.core.io.FileSystemResource;
+
+import io.micrometer.observation.ObservationRegistry;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Duration;
+import java.util.List;
+
+/// Creates a TTRPG rules knowledge base from the Basic Rules PDF.
+/// Uses Spring AI's PagePdfDocumentReader and SimpleVectorStore with Bedrock Titan Embeddings.
+///
+/// Prerequisites:
+///   1. Download "DnD_BasicRules_2018.pdf" into the chapter6 utils/ folder
+///      (JBang: chapter6/utils/  --  IntelliJ: chapter6-maven/utils/)
+///   2. AWS credentials configured with Bedrock access in us-west-2
+///
+/// Usage: jbang CreateKnowledgeBase.java
+///
+/// Output: gm_knowledge_base.json, written into that same utils/ folder.
+///         Both paths resolve relative to utils/, not the process working
+///         directory, so the JBang and IntelliJ runs behave identically.
+
+private static final Logger log = LoggerFactory.getLogger("CreateKnowledgeBase");
+private static final String PDF_FILE = "DnD_BasicRules_2018.pdf";
+private static final String VECTOR_STORE_FILE = "gm_knowledge_base.json";
+
+/// Anchor file I/O to the chapter6 utils/ folder regardless of where the JVM
+/// was launched. JBang runs with the working directory set to chapter6/utils,
+/// but IntelliJ launches the Maven module from the project root -- without this,
+/// the PDF is looked up (and the knowledge base written) at the wrong place.
+private static Path resolveUtilsDir() {
+    var cwd = Path.of("").toAbsolutePath();
+    var name = cwd.getFileName();
+    if (name != null && name.toString().equals("utils")) {
+        return cwd;                   // already inside utils/ (JBang)
+    }
+    var child = cwd.resolve("utils");
+    if (Files.isDirectory(child)) {
+        return child;                 // parent of utils/ (IntelliJ project root)
+    }
+    return cwd;                       // fall back to the working directory
+}
+
+private static final Path UTILS_DIR = resolveUtilsDir();
+
+void main() {
+    // Step 1: Validate PDF exists (resolved inside utils/, not the working dir)
+    var pdfFile = UTILS_DIR.resolve(PDF_FILE).toFile();
+    if (!pdfFile.exists()) {
+        log.error("PDF file not found: {}", pdfFile.getAbsolutePath());
+        log.error("Download the TTRPG Basic Rules PDF into the utils/ folder: {}", UTILS_DIR);
+        return;
+    }
+    log.info("Found PDF: {} ({} bytes)", PDF_FILE, pdfFile.length());
+
+    // Step 2: Create Bedrock Titan Embedding Model
+    log.info("Initializing Bedrock Titan Embedding Model...");
+    var titanApi = new TitanEmbeddingBedrockApi(
+            "amazon.titan-embed-text-v2:0",
+            "us-west-2",
+            Duration.ofSeconds(60));
+    var embeddingModel = new BedrockTitanEmbeddingModel(titanApi, ObservationRegistry.NOOP);
+
+    // Step 3: Read PDF — one Document per page, with page metadata
+    log.info("Reading PDF...");
+    var pdfReader = new PagePdfDocumentReader(new FileSystemResource(pdfFile));
+    List<Document> pages = pdfReader.get();
+    log.info("Extracted {} pages from PDF", pages.size());
+
+    // Step 4: Split into smaller chunks for better retrieval
+    log.info("Splitting into chunks...");
+    var splitter = TokenTextSplitter.builder().build();
+    List<Document> chunks = splitter.apply(pages);
+
+    // Filter out very short chunks (< 50 chars)
+    chunks = chunks.stream()
+            .filter(doc -> doc.getText().length() >= 50)
+            .toList();
+    log.info("Created {} chunks after filtering", chunks.size());
+
+    // Step 5: Create SimpleVectorStore and add documents (embeddings computed automatically)
+    log.info("Creating vector store and computing embeddings (this may take a while)...");
+    var vectorStore = SimpleVectorStore.builder(embeddingModel).build();
+
+    // Add in batches of 100 for efficient processing
+    int batchSize = 100;
+    for (int i = 0; i < chunks.size(); i += batchSize) {
+        int end = Math.min(i + batchSize, chunks.size());
+        var batch = chunks.subList(i, end);
+        vectorStore.add(batch);
+        log.info("  Added batch {}/{} ({} documents)",
+                (i / batchSize) + 1,
+                (int) Math.ceil((double) chunks.size() / batchSize),
+                batch.size());
+    }
+
+    // Step 6: Save to file (written into utils/, next to the source PDF)
+    var vectorStoreFile = UTILS_DIR.resolve(VECTOR_STORE_FILE).toFile();
+    vectorStore.save(vectorStoreFile);
+    log.info("Knowledge base saved to: {}", vectorStoreFile.getAbsolutePath());
+    log.info("Done! The RulesAgent will load this file at startup.");
+}
