@@ -12,6 +12,7 @@
 //DEPS org.springframework.ai:spring-ai-bedrock-converse:2.1.0
 //DEPS org.springframework.ai:spring-ai-client-chat:2.1.0
 //DEPS org.springframework.ai:spring-ai-mcp:2.1.0
+//DEPS org.springframework.ai:spring-ai-session-advisor:2.1.0
 //DEPS io.modelcontextprotocol.sdk:mcp:2.2.0
 //DEPS io.github.a2asdk:a2a-java-sdk-client:0.3.3.Final
 //DEPS io.github.a2asdk:a2a-java-sdk-client-transport-jsonrpc:0.3.3.Final
@@ -38,15 +39,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ai.bedrock.converse.BedrockChatOptions;
 import org.springframework.ai.bedrock.converse.BedrockProxyChatModel;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.ToolCallingAdvisor;
-import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
+import org.springframework.ai.session.CreateSessionRequest;
+import org.springframework.ai.session.DefaultSessionService;
+import org.springframework.ai.session.InMemorySessionRepository;
+import org.springframework.ai.session.SessionService;
+import org.springframework.ai.session.advisor.SessionAdvisors;
+import org.springframework.ai.session.compaction.TurnCountTrigger;
+import org.springframework.ai.session.compaction.WindowCompactionStrategy;
+import org.springframework.ai.session.tool.SessionRecallTools;
 import org.springframework.ai.model.tool.DefaultToolCallingManager;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
 import org.springframework.ai.model.tool.ToolCallingManager;
@@ -134,18 +140,26 @@ public class GameMasterOrchestrator {
         SpringApplication.run(GameMasterOrchestrator.class, args);
     }
 
+    /// One session holds the whole adventure. The workshop keeps it in memory, like the chat memory before it.
+    static final String SESSION_ID = "gamemaster-session";
+
     @Bean
-    ChatMemory chatMemory() {
-        return MessageWindowChatMemory.builder().maxMessages(20).build();
+    SessionService sessionService() {
+        var sessionService = DefaultSessionService.builder()
+                .sessionRepository(InMemorySessionRepository.builder().build())
+                .build();
+        sessionService.findOrCreate(CreateSessionRequest.builder().id(SESSION_ID).build());
+        return sessionService;
     }
 
     // Step 3: Build the ChatClient the orchestrator uses to process player requests.
     //          The %s placeholder in SYSTEM_PROMPT is filled with the discovered remote agent descriptions.
-    //          The ChatMemory advisor lets the orchestrator remember conversation context across turns.
+    //          The session advisors remember the conversation across turns. After 20 turns they compact it
+    //          to the last 10, and SessionRecallTools lets the model search what compaction dropped.
     @Bean
     ChatClient chatClient(BedrockProxyChatModel chatModel,
                           GameMasterService remoteAgent,
-                          ChatMemory chatMemory) {
+                          SessionService sessionService) {
         var systemPrompt = SYSTEM_PROMPT.formatted(remoteAgent.getAgentDescriptions());
         log.info("Initializing routing ChatClient with agents: {}", remoteAgent.getAgentNames());
         // The tool-execution loop runs in the client-side ToolCallingAdvisor (Spring AI 2.x),
@@ -154,7 +168,10 @@ public class GameMasterOrchestrator {
                 .toolCallingManager(new SanitizingToolCallingManager());
         return ChatClient.builder(chatModel, ObservationRegistry.NOOP, null, null, toolAdvisorBuilder)
                 .defaultSystem(systemPrompt)
-                .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
+                .defaultAdvisors(SessionAdvisors.builder(sessionService)
+                        .compaction(new TurnCountTrigger(20), WindowCompactionStrategy.builder().lastTurns(10).build())
+                        .build())
+                .defaultTools(SessionRecallTools.builder(sessionService).build())
                 .build();
     }
 }

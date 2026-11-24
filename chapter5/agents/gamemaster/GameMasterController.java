@@ -9,7 +9,8 @@ import tools.jackson.databind.json.JsonMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.session.advisor.SessionAdvisors;
+import org.springframework.ai.session.tool.SessionRecallTools;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -110,7 +111,8 @@ class GameMasterController {
         try {
             var content = chatClient.prompt()
                     .user(request.question())
-                    .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, "gamemaster-session"))
+                    .advisors(SessionAdvisors.session(GameMasterOrchestrator.SESSION_ID))
+                    .toolContext(Map.of(SessionRecallTools.SESSION_ID_CONTEXT_KEY, GameMasterOrchestrator.SESSION_ID))
                     .tools(remoteAgent)
                     .tools((Object[]) mcpTools)
                     .call()
