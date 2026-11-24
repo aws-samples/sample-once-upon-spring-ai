@@ -23,6 +23,7 @@ class DiceTools {
     // TODO 1: Add the @Tool annotation with a description telling the AI when to use this method
 
     // TODO 2: Add @ToolParam annotations to each parameter so the AI knows what values to pass
+    // TODO 5: Add requiresConfirmation = true to the @Tool annotation so the agent asks the player before every roll
     DiceRollResponse rollDice(int faces, int count) {
 
         var rolls = new int[count];
