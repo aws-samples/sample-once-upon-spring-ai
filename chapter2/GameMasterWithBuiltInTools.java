@@ -15,7 +15,7 @@
 //DEPS org.apache.httpcomponents.core5:httpcore5-h2:5.4.4
 
 // Provided for you: the Spring AI Community agent-utils dependency that gives you SmartWebFetchTool.
-//DEPS org.springaicommunity:spring-ai-agent-utils:0.10.0
+//DEPS org.springaicommunity:spring-ai-agent-utils:0.14.0
 //DEPS org.jsoup:jsoup:1.24.1
 
 //DEPS org.slf4j:slf4j-api:2.0.17
