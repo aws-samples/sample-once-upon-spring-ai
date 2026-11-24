@@ -5,7 +5,7 @@ A React + Vite frontend for the Once Upon Agentic AI workshop. Connects to the G
 ## Prerequisites
 
 - Node.js 18+
-- The Game Master backend running (see Chapter 5 of the workshop)
+- The Game Master backend running (see Chapter 6 of the workshop)
 
 ## Setup
 
