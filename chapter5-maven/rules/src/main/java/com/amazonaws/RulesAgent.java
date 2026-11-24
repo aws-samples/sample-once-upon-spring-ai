@@ -13,7 +13,7 @@
 //DEPS org.springframework.ai:spring-ai-client-chat:2.1.0
 //DEPS org.springframework.ai:spring-ai-vector-store:2.1.0
 //DEPS org.springframework.ai:spring-ai-bedrock:2.1.0
-//DEPS org.springaicommunity:spring-ai-a2a-server-autoconfigure:0.3.0
+//DEPS org.springaicommunity:spring-ai-a2a-server-autoconfigure:0.4.0
 //DEPS software.amazon.awssdk:bedrockruntime:2.55.14
 //DEPS software.amazon.awssdk:auth:2.55.14
 //DEPS org.apache.httpcomponents.client5:httpclient5:5.6.5
@@ -24,10 +24,11 @@
 
 package com.amazonaws;
 
-import io.a2a.server.agentexecution.AgentExecutor;
-import io.a2a.spec.AgentCapabilities;
-import io.a2a.spec.AgentCard;
-import io.a2a.spec.AgentSkill;
+import org.a2aproject.sdk.server.agentexecution.AgentExecutor;
+import org.a2aproject.sdk.spec.AgentCapabilities;
+import org.a2aproject.sdk.spec.AgentCard;
+import org.a2aproject.sdk.spec.AgentInterface;
+import org.a2aproject.sdk.spec.AgentSkill;
 import io.micrometer.observation.ObservationRegistry;
 
 import org.slf4j.Logger;
@@ -81,6 +82,9 @@ public class RulesAgent {
         System.setProperty("server.servlet.context-path", "/a2a");
         System.setProperty("spring.application.name", "rules-agent");
         System.setProperty("spring.ai.a2a.server.enabled", "true");
+        // A2A SDK 1.4 rejects every request unless a TaskAuthorizationProvider is configured.
+        // This local workshop turns that check off; see the warning in the workshop instructions.
+        System.setProperty("a2a.authorization.required", "false");
         SpringApplication.run(RulesAgent.class, args);
     }
 
@@ -88,19 +92,19 @@ public class RulesAgent {
     @Bean
     AgentCard agentCard(@Value("${server.port:8000}") int port,
                         @Value("${server.servlet.context-path:/a2a}") String contextPath) {
-        return new AgentCard.Builder()
+        return AgentCard.builder()
                 .name("Rules Agent")
                 .description("""
                     Specialized TTRPG 5e rules lookup agent that provides fast, authoritative rule clarifications
                     from the Basic Rules. Queries a vector knowledge base containing indexed TTRPG content and returns
                     brief, page-referenced rule explanations.""")
-                .url("http://localhost:" + port + contextPath + "/")
+                .supportedInterfaces(List.of(new AgentInterface("JSONRPC", "http://localhost:" + port + contextPath + "/")))
                 .version("1.0.0")
-                .capabilities(new AgentCapabilities.Builder().streaming(false).build())
+                .capabilities(AgentCapabilities.builder().streaming(false).build())
                 .defaultInputModes(List.of("text"))
                 .defaultOutputModes(List.of("text"))
                 .skills(List.of(
-                    new AgentSkill.Builder()
+                    AgentSkill.builder()
                         .id("rules_lookup")
                         .name("TTRPG Rules Lookup")
                         .description("""
@@ -116,7 +120,6 @@ public class RulesAgent {
                             "What happens when a character is grappled?",
                             "Rules for saving throws"))
                         .build()))
-                .protocolVersion("0.3.0")
                 .build();
     }
 

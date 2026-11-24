@@ -10,7 +10,7 @@
 //DEPS com.fasterxml.jackson.core:jackson-annotations:2.21
 //DEPS org.springframework.ai:spring-ai-bedrock-converse:2.1.0
 //DEPS org.springframework.ai:spring-ai-client-chat:2.1.0
-//DEPS org.springaicommunity:spring-ai-a2a-server-autoconfigure:0.3.0
+//DEPS org.springaicommunity:spring-ai-a2a-server-autoconfigure:0.4.0
 //DEPS software.amazon.awssdk:bedrockruntime:2.55.14
 //DEPS software.amazon.awssdk:auth:2.55.14
 //DEPS org.apache.httpcomponents.client5:httpclient5:5.6.5
@@ -21,10 +21,11 @@
 
 package com.amazonaws;
 
-import io.a2a.server.agentexecution.AgentExecutor;
-import io.a2a.spec.AgentCapabilities;
-import io.a2a.spec.AgentCard;
-import io.a2a.spec.AgentSkill;
+import org.a2aproject.sdk.server.agentexecution.AgentExecutor;
+import org.a2aproject.sdk.spec.AgentCapabilities;
+import org.a2aproject.sdk.spec.AgentCard;
+import org.a2aproject.sdk.spec.AgentInterface;
+import org.a2aproject.sdk.spec.AgentSkill;
 
 import org.springaicommunity.a2a.server.executor.DefaultAgentExecutor;
 import org.springframework.ai.bedrock.converse.BedrockChatOptions;
@@ -68,6 +69,9 @@ public class CharacterAgent {
         System.setProperty("server.servlet.context-path", "/a2a");
         System.setProperty("spring.application.name", "character-agent");
         System.setProperty("spring.ai.a2a.server.enabled", "true");
+        // A2A SDK 1.4 rejects every request unless a TaskAuthorizationProvider is configured.
+        // This local workshop turns that check off; see the warning in the workshop instructions.
+        System.setProperty("a2a.authorization.required", "false");
         SpringApplication.run(CharacterAgent.class, args);
     }
 
@@ -75,50 +79,49 @@ public class CharacterAgent {
     @Bean
     AgentCard agentCard(@Value("${server.port:8001}") int port,
                         @Value("${server.servlet.context-path:/a2a}") String contextPath) {
-        return new AgentCard.Builder()
+        return AgentCard.builder()
                 .name("Character Agent")
                 .description("""
                     Specialized TTRPG character management agent that handles character creation, storage, and retrieval.
                     Creates new characters with proper ability score generation (4d6 drop lowest), manages character data
                     in persistent storage, and provides character lookup services. Maintains complete character profiles
                     including stats, inventory, and progression data for TTRPG campaigns.""")
-                .url("http://localhost:" + port + contextPath + "/")
+                .supportedInterfaces(List.of(new AgentInterface("JSONRPC", "http://localhost:" + port + contextPath + "/")))
                 .version("1.0.0")
-                .capabilities(new AgentCapabilities.Builder().streaming(false).build())
+                .capabilities(AgentCapabilities.builder().streaming(false).build())
                 .defaultInputModes(List.of("text"))
                 .defaultOutputModes(List.of("text"))
                 .skills(List.of(
-                    new AgentSkill.Builder()
+                    AgentSkill.builder()
                         .id("create_character").name("Create Character")
                         .description("Create a new TTRPG character with rolled ability scores")
                         .tags(List.of("character", "creation", "dnd"))
                         .examples(List.of("Create a female Elf Wizard named Lyria"))
                         .build(),
-                    new AgentSkill.Builder()
+                    AgentSkill.builder()
                         .id("find_character").name("Find Character")
                         .description("Find an existing character by name — returns full stats, level, XP, and inventory")
                         .tags(List.of("character", "lookup", "inventory"))
                         .examples(List.of("Find the character named Ragnar"))
                         .build(),
-                    new AgentSkill.Builder()
+                    AgentSkill.builder()
                         .id("list_characters").name("List Characters")
                         .description("List all characters in the database with their inventory")
                         .tags(List.of("character", "list"))
                         .examples(List.of("List all characters"))
                         .build(),
-                    new AgentSkill.Builder()
+                    AgentSkill.builder()
                         .id("add_inventory").name("Add Inventory Item")
                         .description("Add an item to a character's inventory — use for loot, purchases, or quest rewards")
                         .tags(List.of("character", "inventory", "loot"))
                         .examples(List.of("Add a Longsword to Ragnar's inventory", "Give Lyria 50 gold pieces"))
                         .build(),
-                    new AgentSkill.Builder()
+                    AgentSkill.builder()
                         .id("remove_inventory").name("Remove Inventory Item")
                         .description("Remove an item from a character's inventory — use when items are consumed, sold, or lost")
                         .tags(List.of("character", "inventory"))
                         .examples(List.of("Remove a health potion from Ragnar's inventory"))
                         .build()))
-                .protocolVersion("0.3.0")
                 .build();
     }
 
