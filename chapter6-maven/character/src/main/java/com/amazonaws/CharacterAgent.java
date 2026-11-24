@@ -73,7 +73,7 @@ public class CharacterAgent {
     //                   AgentSkill.builder()
     //                       .id("create_character").name("Create Character")
     //                       .description("Create a new TTRPG character with rolled ability scores")
-    //                       .tags(List.of("character", "creation", "dnd"))
+    //                       .tags(List.of("character", "creation", "ttrpg"))
     //                       .examples(List.of("Create a female Elf Wizard named Lyria"))
     //                       .build(),
     //                   AgentSkill.builder()

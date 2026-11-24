@@ -43,7 +43,7 @@ import java.util.Map;
 public class RulesAgent {
 
     private static final String SYSTEM_PROMPT = """
-        You are a TTRPG 5e rules expert. When asked about rules, ALWAYS use the queryDndRules tool
+        You are a TTRPG 5e rules expert. When asked about rules, ALWAYS use the queryRules tool
         to find the relevant rule from the official source — never answer from memory alone.
         Provide a clear, concise answer that includes:
         1. The rule mechanic (what dice to roll, what modifiers apply, DCs, etc.)

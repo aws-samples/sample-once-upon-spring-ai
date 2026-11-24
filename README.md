@@ -261,7 +261,7 @@ sample-once-upon-spring-ai/
 
 ## ☁️ Amazon Bedrock Models
 
-You must have **permissions to Amazon Bedrock** in an AWS account. You can use any model available in your Bedrock console — simply update the model ID in each chapter's source file to match your preferred model.
+You must have **permissions to Amazon Bedrock** in an AWS account. You can use any model available in your Bedrock console — update the model ID in each chapter's source file to match your preferred model.
 
 This content default to:
 
@@ -308,7 +308,7 @@ can dive into whatever caught your interest.
 ### 🌐 Protocols — MCP & A2A
 
 - 🔌 **[Model Context Protocol](https://modelcontextprotocol.io/)** — the MCP spec (Chapter 5)
-- 🔌 **[MCP Java SDK](https://modelcontextprotocol.io/sdk/java/mcp-overview)** — the `io.modelcontextprotocol` client/server library you used
+- 🔌 **[MCP Java SDK](https://java.sdk.modelcontextprotocol.io/)** — the `io.modelcontextprotocol` client/server library you used
 - 🌐 **[A2A Protocol](https://a2a-protocol.org/latest/)** — Agent-to-Agent specification (Chapter 6)
 - 🔧 **[Spring AI MCP](https://docs.spring.io/spring-ai/reference/api/mcp/mcp-overview.html)** — how Spring AI wires MCP into the `ChatClient`
 

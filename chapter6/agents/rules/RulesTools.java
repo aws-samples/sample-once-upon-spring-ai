@@ -21,8 +21,8 @@ class RulesTools {
     }
 
     @Tool(description = "Fast TTRPG 5e rule lookup. Returns brief rule with page reference.")
-    String queryDndRules(@ToolParam(description = "The rules question or topic to look up") String query) {
-        log.info("Tool called: queryDndRules('{}')", query);
+    String queryRules(@ToolParam(description = "The rules question or topic to look up") String query) {
+        log.info("Tool called: queryRules('{}')", query);
 
         var results = vectorStore.similaritySearch(
                 SearchRequest.builder().query(query).topK(3).build());
